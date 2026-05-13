@@ -101,29 +101,65 @@ ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Dogodek FOREIGN KEY (
 
 --inserti
 
-INSERT INTO Regija (ime_regije) VALUES ('Osrednjeslovenska'), ('Obalno-kraška'), ('Štajerska');
+INSERT INTO Regija (ime_regije) VALUES 
+('Osrednjeslovenska'), 
+('Obalno-kraška'), 
+('Štajerska'),
+('Gorenjska'), 
+('Dolenjska');
 
 INSERT INTO Kraj (postna_stevilka, ime_kraja, TK_regija) VALUES 
 (1000, 'Ljubljana', 1), 
 (6000, 'Koper', 2), 
-(2000, 'Maribor', 3);
+(2000, 'Maribor', 3),
+(4000, 'Kranj', 4),
+(8000, 'Novo mesto', 5);
 
-INSERT INTO Kategorija (naziv) VALUES ('Koncert'), ('Šport'), ('Delavnica'), ('Kultura');
+INSERT INTO Kategorija (naziv) VALUES 
+('Koncert'), 
+('Šport'), 
+('Delavnica'), 
+('Kultura'),
+('Izobraževanje'), 
+('Zabava');
 
 INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga) VALUES 
 ('Janez', 'Novak', 'janez@email.si', 'geslo123', 'uporabnik'),
-('klemen', 'Admin', 'admin@dogodki.si', 'varnoGeslo!', 'admin');
+('klemen', 'Admin', 'admin@dogodki.si', 'varnoGeslo!', 'admin'),
+('Maja', 'Kovač', 'maja.kovac@email.si', 'skritoGeslo1', 'uporabnik'),
+('Luka', 'Zupan', 'luka.zupan@email.si', 'superVarno!', 'uporabnik');
 
 INSERT INTO Organizator (naziv, spletna_stran) VALUES 
 ('Kulturno društvo radlje', 'https://www.kdradlje.si'),
-('Športni center pokljuka', 'https://www.center-pokljuka.si/en/home/');
+('Športni center pokljuka', 'https://www.center-pokljuka.si/en/home/'),
+('Kino Šiška', 'https://www.kinosiska.si'),
+('Študentska organizacija', 'https://www.sou.si');
 
 INSERT INTO Dogodek (TK_organizator, Naslov, opis, TK_kraj, ulica, datum_zacetka, datum_konca, telefon, email, status, TK_kategorija) VALUES 
 (1, 'Koncert pod zvezdami', 'Nepozaben večer slovenske popevke na prostem.', 1000, 'Prešernov trg 1', '2026-06-15 20:00:00', '2026-06-15 23:00:00', '040 741 242', 'tajnistvo@kdradlje.si', 'promoviran', 1),
-(2, 'Lokalni maraton', 'Tek po Pokljuki za vse generacije.', 6000, 'Pristaniška ulica 2', '2026-07-10 09:00:00', '2026-07-10 13:00:00', '056667788', 'maraton@koper.si', 'aktiven', 2);
+(2, 'Lokalni maraton', 'Tek po Pokljuki za vse generacije.', 6000, 'Pristaniška ulica 2', '2026-07-10 09:00:00', '2026-07-10 13:00:00', '056667788', 'maraton@koper.si', 'aktiven', 2),
+(3, 'Indie Rock Večer', 'Nastop treh neuveljavljenih slovenskih indie skupin.', 1000, 'Trg prekomorskih brigad 3', '2026-08-20 20:00:00', '2026-08-20 23:59:00', '01 500 30 00', 'info@kinosiska.si', 'aktiven', 1),
+(4, 'Teden programiranja', 'Sklop delavnic za začetnike v Pythonu in JavaScriptu.', 2000, 'Gosposvetska cesta 83', '2026-09-01 16:00:00', '2026-09-05 20:00:00', '031 222 333', 'info@sou.si', 'v_pripravi', 3),
+(1, 'Lutkovna predstava za otroke', 'Tradicionalna slovenska pravljica v obliki lutkovne predstave za najmlajše.', 4000, 'Glavni trg 2', '2026-10-15 10:00:00', '2026-10-15 11:30:00', '040 741 242', 'tajnistvo@kdradlje.si', 'aktiven', 4);
 
-INSERT INTO Prijava (TK_uporabnik, TK_dogodek, opomnik_poslan) VALUES (1, 1, 0);
+INSERT INTO Prijava (TK_uporabnik, TK_dogodek, opomnik_poslan) VALUES 
+(1, 1, 0),
+(3, 3, 0),
+(4, 4, 1),
+(1, 4, 0);
 
-INSERT INTO Priljubljeni_dogodki (TK_uporabnik, TK_dogodek) VALUES (1, 2);
+INSERT INTO Priljubljeni_dogodki (TK_uporabnik, TK_dogodek) VALUES 
+(1, 2),
+(3, 4),
+(4, 3),
+(4, 5);
 
-INSERT INTO Ocena_komentar (ocena, komentar, TK_uporabnik, TK_dogodek) VALUES (5, 'Odličen koncert, komaj čakam naslednjega!', 1, 1);
+INSERT INTO Ocena_komentar (ocena, komentar, TK_uporabnik, TK_dogodek) VALUES 
+(5, 'Odličen koncert, komaj čakam naslednjega!', 1, 1),
+(4, 'Zelo poučno, vendar je bilo premalo časa za vsa vprašanja.', 4, 4),
+(5, 'Odličen izbor glasbenih skupin!', 3, 3);
+
+INSERT INTO Priljubljeni_organizatorji (TK_uporabnik, TK_organizator) VALUES 
+(1, 3),
+(3, 1),
+(4, 4);
