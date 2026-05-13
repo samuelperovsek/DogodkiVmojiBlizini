@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moj profil — DogodkiVMojiBližini.si</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="bi bi-geo-alt-fill"></i>DogodkiVMojiBližini
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Domov</a></li>
+          <li class="nav-item"><a class="nav-link" href="dogodki.html">Dogodki</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#kategorije">Kategorije</a></li>
+          <li class="nav-item"><a class="nav-link" href="dodaj-dogodek.html">Dodaj dogodek</a></li>
+        </ul>
+        <div class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle"></i> Ana
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item active" href="profil.html"><i class="bi bi-person"></i> Moj profil</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-heart"></i> Priljubljeni</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Nastavitve</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="prijava.html"><i class="bi bi-box-arrow-right"></i> Odjava</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <h1>Moj profil</h1>
+      <p class="lead">Upravljaj svoje dogodke, oceni preteklost in spremljaj prihodnost.</p>
+    </div>
+  </header>
+
+  <section class="section-padding">
+    <div class="container">
+
+      <div class="profile-card mb-4">
+        <div class="row align-items-center g-3">
+          <div class="col-md-auto text-center text-md-start">
+            <div class="profile-avatar mx-auto mx-md-0">AP</div>
+          </div>
+          <div class="col-md">
+            <h2 class="mb-1">Ana Perovšek
+              <i class="bi bi-patch-check-fill text-primary"></i>
+            </h2>
+            <p class="text-muted mb-3">
+              <i class="bi bi-geo-alt"></i> Ljubljana, Slovenija
+              <span class="ms-3"><i class="bi bi-envelope"></i> ana.perovsek@email.si</span>
+            </p>
+            <div class="profile-stats">
+              <div class="profile-stat">
+                <div class="num">23</div>
+                <div class="label">Obiskanih</div>
+              </div>
+              <div class="profile-stat">
+                <div class="num">7</div>
+                <div class="label">Prihodnji</div>
+              </div>
+              <div class="profile-stat">
+                <div class="num">12</div>
+                <div class="label">Priljubljeni</div>
+              </div>
+              <div class="profile-stat">
+                <div class="num">18</div>
+                <div class="label">Ocen</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-auto">
+            <button class="btn btn-outline-primary"><i class="bi bi-pencil"></i> Uredi profil</button>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+          <a class="nav-link active" href="#"><i class="bi bi-calendar-event"></i> Prihajajoči (7)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bi bi-check2-circle"></i> Obiskani (23)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bi bi-heart-fill"></i> Priljubljeni (12)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Moje ocene (18)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#"><i class="bi bi-bookmark-heart"></i> Organizatorji (4)</a>
+        </li>
+      </ul>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <h4 class="mb-3">Prihajajoči dogodki</h4>
+
+          <div class="upcoming-event">
+            <div class="row align-items-center g-3">
+              <div class="col-auto">
+                <div class="event-date" style="position: static;">
+                  <span class="day">28</span><span class="month">JUN</span>
+                </div>
+              </div>
+              <div class="col">
+                <span class="badge bg-light text-dark">Koncert</span>
+                <small class="text-muted ms-2"><i class="bi bi-clock"></i> 20:00 • <i class="bi bi-geo-alt"></i> Maribor</small>
+                <h5 class="mb-0 mt-1"><a href="dogodek.html">Festival Lent — Otvoritveni koncert</a></h5>
+                <small class="text-warning"><i class="bi bi-bell-fill"></i> Opomnik aktiviran (24h pred)</small>
+              </div>
+              <div class="col-auto">
+                <span class="badge bg-success">
+                  <i class="bi bi-ticket-perforated"></i> Prijavljen
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="upcoming-event">
+            <div class="row align-items-center g-3">
+              <div class="col-auto">
+                <div class="event-date" style="position: static;">
+                  <span class="day">05</span><span class="month">JUL</span>
+                </div>
+              </div>
+              <div class="col">
+                <span class="badge bg-light text-dark">Delavnica</span>
+                <small class="text-muted ms-2"><i class="bi bi-clock"></i> 17:30 • <i class="bi bi-geo-alt"></i> Ljubljana</small>
+                <h5 class="mb-0 mt-1"><a href="dogodek.html">Keramika za začetnike</a></h5>
+                <small class="text-warning"><i class="bi bi-bell-fill"></i> Opomnik aktiviran</small>
+              </div>
+              <div class="col-auto">
+                <span class="badge bg-success">
+                  <i class="bi bi-ticket-perforated"></i> Prijavljen
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="upcoming-event">
+            <div class="row align-items-center g-3">
+              <div class="col-auto">
+                <div class="event-date" style="position: static;">
+                  <span class="day">12</span><span class="month">JUL</span>
+                </div>
+              </div>
+              <div class="col">
+                <span class="badge bg-light text-dark">Šport</span>
+                <small class="text-muted ms-2"><i class="bi bi-clock"></i> 09:00 • <i class="bi bi-geo-alt"></i> Bled</small>
+                <h5 class="mb-0 mt-1"><a href="dogodek.html">Maraton Franja BTC</a></h5>
+                <small class="text-info"><i class="bi bi-info-circle"></i> Čaka na potrditev plačila</small>
+              </div>
+              <div class="col-auto">
+                <span class="badge bg-warning text-dark">
+                  <i class="bi bi-hourglass-split"></i> V čakanju
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="mt-4 mb-3">Moja zadnja ocena</h4>
+          <div class="card p-3">
+            <div class="d-flex gap-3">
+              <img src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=200&q=80" alt="" style="width: 100px; height: 100px; border-radius: 8px; object-fit: cover;">
+              <div class="flex-grow-1">
+                <h5 class="mb-1"><a href="dogodek.html">Tartinijeve poletne noči</a></h5>
+                <div class="text-warning mb-2">
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <small class="text-muted ms-2">— pred 5 dnevi</small>
+                </div>
+                <p class="mb-0">Magičen večer ob morju. Akustika na trgu je bila izvrstna, program raznolik. Toplo priporočam!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="col-lg-4">
+          <div class="filter-sidebar mb-4">
+            <h4><i class="bi bi-tags"></i> Moji interesi</h4>
+            <div>
+              <span class="badge bg-primary me-1 mb-1 p-2">Koncerti</span>
+              <span class="badge bg-primary me-1 mb-1 p-2">Delavnice</span>
+              <span class="badge bg-primary me-1 mb-1 p-2">Kolesarjenje</span>
+              <span class="badge bg-primary me-1 mb-1 p-2">Kultura</span>
+              <span class="badge bg-primary me-1 mb-1 p-2">Joga</span>
+              <span class="badge bg-light text-dark me-1 mb-1 p-2">+ Dodaj</span>
+            </div>
+          </div>
+
+          <div class="filter-sidebar mb-4">
+            <h4><i class="bi bi-lightbulb"></i> Predlogi za vas</h4>
+
+            <div class="d-flex gap-3 mb-3">
+              <div class="event-date" style="position: static;">
+                <span class="day">08</span><span class="month">AVG</span>
+              </div>
+              <div>
+                <small class="text-muted"><i class="bi bi-geo-alt"></i> Piran</small>
+                <strong class="d-block"><a href="dogodek.html">Tartinijeve poletne noči</a></strong>
+                <span class="event-price">18 €</span>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3 mb-3">
+              <div class="event-date" style="position: static;">
+                <span class="day">15</span><span class="month">AVG</span>
+              </div>
+              <div>
+                <small class="text-muted"><i class="bi bi-geo-alt"></i> Bohinj</small>
+                <strong class="d-block"><a href="dogodek.html">Joga ob jezeru</a></strong>
+                <span class="event-price free">Brezplačno</span>
+              </div>
+            </div>
+
+            <div class="d-flex gap-3">
+              <div class="event-date" style="position: static;">
+                <span class="day">22</span><span class="month">AVG</span>
+              </div>
+              <div>
+                <small class="text-muted"><i class="bi bi-geo-alt"></i> Ljubljana</small>
+                <strong class="d-block"><a href="dogodek.html">Akustična noč v Križankah</a></strong>
+                <span class="event-price">25 €</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-sidebar">
+            <h4><i class="bi bi-bookmark-heart"></i> Sledim organizatorjem</h4>
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 0.85rem;">NM</div>
+              <div class="flex-grow-1">
+                <strong>Narodni dom Maribor</strong>
+                <small class="d-block text-muted">47 dogodkov</small>
+              </div>
+              <i class="bi bi-patch-check-fill text-primary"></i>
+            </div>
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 0.85rem;">KT</div>
+              <div class="flex-grow-1">
+                <strong>Keramika Tia</strong>
+                <small class="d-block text-muted">12 dogodkov</small>
+              </div>
+              <i class="bi bi-patch-check-fill text-primary"></i>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="profile-avatar" style="width: 40px; height: 40px; font-size: 0.85rem;">KD</div>
+              <div class="flex-grow-1">
+                <strong>KD Rog Ljubljana</strong>
+                <small class="d-block text-muted">8 dogodkov</small>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5><i class="bi bi-geo-alt-fill"></i> DogodkiVMojiBližini</h5>
+          <p>Slovenska platforma, ki povezuje organizatorje dogodkov z lokalno skupnostjo.</p>
+          <div class="footer-social">
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-instagram"></i></a>
+            <a href="#"><i class="bi bi-tiktok"></i></a>
+          </div>
+        </div>
+        <div class="col-6 col-md-2">
+          <h5>Razišči</h5>
+          <a href="dogodki.html">Vsi dogodki</a>
+          <a href="index.html#kategorije">Kategorije</a>
+        </div>
+        <div class="col-6 col-md-2">
+          <h5>Organizator</h5>
+          <a href="dodaj-dogodek.html">Dodaj dogodek</a>
+        </div>
+        <div class="col-md-4">
+          <h5>Novičnik</h5>
+          <form onsubmit="event.preventDefault();">
+            <div class="input-group">
+              <input type="email" class="form-control" placeholder="tvoja@e-posta.si">
+              <button class="btn btn-primary" type="submit">Naroči se</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="footer-bottom d-flex justify-content-between flex-wrap">
+        <span>© 2026 DogodkiVMojiBližini.si</span>
+        <div>
+          <a href="#" style="display: inline; margin-right: 1rem;">Pogoji</a>
+          <a href="#" style="display: inline;">Zasebnost</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
