@@ -413,6 +413,10 @@
     const VLOGE = ['uporabnik', 'organizator', 'admin'];
     const trenutni = Auth.getUporabnik();
 
+    if (!trenutni || trenutni.vloga !== 'admin') {
+      window.location.href = 'index.html';
+    }
+
     document.querySelectorAll('[data-user-name]').forEach(el => {
       el.textContent = trenutni?.ime || 'admin';
     });
