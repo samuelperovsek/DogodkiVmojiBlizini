@@ -10,7 +10,7 @@ Node.js + Express + MySQL.
 
 ### 2. Ustvari bazo
 
-V MySQL ustvari prazno bazo (ime po želji, npr. `dogodki_db`), nato uvozi celotno shemo iz [`docs/dogodki_v_moji_blizini.sql`](../docs/dogodki_v_moji_blizini.sql). SQL datoteka vsebuje:
+V MySQL ustvari prazno bazo (ime po želji, npr. `dogodki_db`), nato uvozi celotno shemo iz (../docs/dogodki_v_moji_blizini.sql). SQL datoteka vsebuje:
 - vse tabele (Uporabnik, Dogodek, Organizator, Prijava, Ocena_komentar, Priljubljeni_*, Prosnja_organizator, ...)
 - foreign key constrainte
 - začetne podatke (regije, kraji, kategorije, test uporabnike, demo dogodke)
@@ -48,7 +48,7 @@ Strežnik teče na `http://localhost:3001`.
 
 ### 5. Enkratno: hashiraj test gesla
 
-Originalni SQL ima uporabnike z navadnimi gesli (`geslo123`, `varnoGeslo!` itd.). Da se lahko prijavijo preko API-ja, jih moramo enkrat hashirati v bcrypt:
+Če dodamo novega uporabnika direktno v bazo in ne prek registracijske forme na spletni strani, moramo njegovo geslo najprej hashirati za varnost. Da se lahko prijavijo preko API-ja, jih moramo enkrat hashirati v bcrypt:
 
 ```bash
 node scripts/hash-existing-passwords.js
@@ -57,7 +57,6 @@ node scripts/hash-existing-passwords.js
 ## Test uporabniki (po hashiranju)
 
 | Email | Geslo | Vloga |
-|---|---|---|
 | `admin@dogodki.si` | `varnoGeslo!` | admin |
 | `janez@email.si` | `geslo123` | uporabnik |
 | `maja.kovac@email.si` | `skritoGeslo1` | uporabnik |
