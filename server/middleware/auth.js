@@ -28,9 +28,9 @@ export function zahtevajAdmina(req, res, next) {
   next();
 }
 
-export function zahtevajOrganizatorjaAliAdmina(req, res, next) {
-  if (req.uporabnik?.vloga !== 'organizator' && req.uporabnik?.vloga !== 'admin') {
-    return res.status(403).json({ napaka: 'Dostop zavrnjen. Nimate ustreznih pravic (organizator ali admin).' });
+export function zahtevajOrganizatorja(req, res, next) {
+  if (req.uporabnik?.vloga !== 'organizator') {
+    return res.status(403).json({ napaka: 'Dostop zavrnjen. Dogodke lahko dodajajo samo organizatorji.' });
   }
   next();
 }

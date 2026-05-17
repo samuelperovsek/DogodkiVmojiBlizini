@@ -7,7 +7,8 @@
 
   <script>
     (() => {
-      const u = JSON.parse(localStorage.getItem('uporabnik') || 'null');
+      const raw = sessionStorage.getItem('uporabnik') || localStorage.getItem('uporabnik');
+      const u = JSON.parse(raw || 'null');
       if (u && u.vloga === 'admin') location.replace('admin.html');
     })();
   </script>
@@ -169,7 +170,10 @@
               <span class="badge bg-primary" id="prijaveCount">0</span>
             </div>
             <div id="prijaveList">
-              <div class="text-center text-muted py-4">Nalagam...</div>
+              <div class="flex flex-col gap-3">
+                <div class="upcoming-event"><div class="flex items-center gap-3"><div class="skeleton" style="width:56px;height:48px;border-radius:8px;"></div><div style="flex:1"><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text medium"></div></div></div></div>
+                <div class="upcoming-event"><div class="flex items-center gap-3"><div class="skeleton" style="width:56px;height:48px;border-radius:8px;"></div><div style="flex:1"><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text medium"></div></div></div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -181,7 +185,10 @@
               <span class="badge bg-primary" id="priljubljeniCount">0</span>
             </div>
             <div id="priljubljeniList">
-              <div class="text-center text-muted py-3" style="font-size: 0.9rem;">Nalagam...</div>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2"><div class="skeleton" style="width:42px;height:42px;border-radius:8px;"></div><div style="flex:1"><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text medium"></div></div></div>
+                <div class="flex items-center gap-2"><div class="skeleton" style="width:42px;height:42px;border-radius:8px;"></div><div style="flex:1"><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text medium"></div></div></div>
+              </div>
             </div>
           </div>
 
@@ -191,7 +198,10 @@
               <span class="badge bg-primary" id="organizatorjiCount">0</span>
             </div>
             <div id="organizatorjiList">
-              <div class="text-center text-muted py-3" style="font-size: 0.9rem;">Nalagam...</div>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2"><div class="skeleton skeleton-circle" style="width:40px;height:40px;"></div><div style="flex:1"><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
+                <div class="flex items-center gap-2"><div class="skeleton skeleton-circle" style="width:40px;height:40px;"></div><div style="flex:1"><div class="skeleton skeleton-text medium"></div><div class="skeleton skeleton-text short"></div></div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -206,7 +216,10 @@
               <span class="badge bg-primary" id="oceneCount">0</span>
             </div>
             <div id="oceneList">
-              <div class="text-center text-muted py-3" style="font-size: 0.9rem;">Nalagam...</div>
+              <div class="row g-3">
+                <div class="col-md-6"><div class="card p-3"><div class="skeleton skeleton-text long" style="height:16px;"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text long"></div></div></div>
+                <div class="col-md-6"><div class="card p-3"><div class="skeleton skeleton-text long" style="height:16px;"></div><div class="skeleton skeleton-text short"></div><div class="skeleton skeleton-text long"></div></div></div>
+              </div>
             </div>
           </div>
         </div>
@@ -272,12 +285,12 @@
 
               <div class="mb-3">
                 <label class="form-label">Trenutno geslo</label>
-                <input type="password" name="staro_geslo" class="form-control" required>
+                <input type="password" name="staro_geslo" class="form-control" required data-toggle-password>
               </div>
 
               <div class="mb-3">
                 <label class="form-label">Novo geslo</label>
-                <input type="password" name="novo_geslo" id="novoGesloInput" class="form-control" required minlength="8">
+                <input type="password" name="novo_geslo" id="novoGesloInput" class="form-control" required minlength="8" data-toggle-password>
                 <div class="password-strength" id="strengthBars">
                   <div class="password-strength-bar"></div>
                   <div class="password-strength-bar"></div>
@@ -289,7 +302,7 @@
 
               <div class="mb-3">
                 <label class="form-label">Potrdi novo geslo</label>
-                <input type="password" name="potrdi_geslo" id="potrdiGesloInput" class="form-control" required>
+                <input type="password" name="potrdi_geslo" id="potrdiGesloInput" class="form-control" required data-toggle-password>
                 <span class="field-hint" id="potrdiHint"></span>
               </div>
             </form>
@@ -348,7 +361,7 @@
     </div>
   </footer>
 
-  <script src="js/components.js"></script>
+  <script type="module" src="js/components.js"></script>
   <script src="js/dropdown.js"></script>
   <script type="module" src="js/nav.js"></script>
 
@@ -739,7 +752,7 @@
             email: podatkiForm.email.value.trim(),
           };
           const odgovor = await apiFetch('/me', { method: 'PATCH', body: JSON.stringify(podatki) });
-          Auth.prijavi(Auth.getToken(), odgovor.uporabnik);
+          Auth.osveziUporabnika(odgovor.uporabnik);
           trenutniUporabnik = odgovor.uporabnik;
           napolniProfil(odgovor.uporabnik);
           pokaziUspeh(podatkiAlert, odgovor.sporocilo);

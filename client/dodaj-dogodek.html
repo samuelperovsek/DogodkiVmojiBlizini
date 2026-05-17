@@ -7,7 +7,8 @@
 
   <script>
     (() => {
-      const u = JSON.parse(localStorage.getItem('uporabnik') || 'null');
+      const raw = sessionStorage.getItem('uporabnik') || localStorage.getItem('uporabnik');
+      const u = JSON.parse(raw || 'null');
       if (!u) {
         location.replace('prijava.html?razlog=potrebna-prijava&povratek=dodaj-dogodek.html');
       } else if (u.vloga === 'admin') {
@@ -154,7 +155,7 @@
         </aside>
 
         <div class="col-lg-9">
-          <form onsubmit="event.preventDefault(); alert('Dogodek poslan v pregled!');">
+          <form onsubmit="event.preventDefault(); window.pokaziToast && window.pokaziToast('success', 'Dogodek je poslan v pregled uredništvu.', 'Uspešno oddano');">
 
             <div class="form-section">
               <h3>1. Osnovne informacije</h3>
@@ -227,17 +228,21 @@
               </div>
 
               <div class="row g-3 mt-1">
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label">Datum *</label>
-                  <input type="date" class="form-control" required>
+                  <input type="date" class="form-control" required data-zacetni-datum>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label">Začetek *</label>
-                  <input type="time" class="form-control" required>
+                  <input type="time" class="form-control" required data-zacetna-ura>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
+                  <label class="form-label">Datum konca</label>
+                  <input type="date" class="form-control" data-koncni-datum>
+                </div>
+                <div class="col-md-3">
                   <label class="form-label">Konec</label>
-                  <input type="time" class="form-control">
+                  <input type="time" class="form-control" data-koncna-ura>
                 </div>
               </div>
 
@@ -390,8 +395,14 @@
     </div>
   </footer>
 
-  <script src="js/components.js"></script>
+  <script type="module" src="js/components.js"></script>
   <script src="js/dropdown.js"></script>
   <script type="module" src="js/nav.js"></script>
+  <script>
+    (() => {
+      const zac = document.querySelector('[data-zacetni-datum]');
+      if (zac) zac.min = new Date().toISOString().split('T')[0];
+    })();
+  </script>
 </body>
 </html>

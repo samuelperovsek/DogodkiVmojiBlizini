@@ -7,7 +7,8 @@
 
   <script>
     (() => {
-      const u = JSON.parse(localStorage.getItem('uporabnik') || 'null');
+      const raw = sessionStorage.getItem('uporabnik') || localStorage.getItem('uporabnik');
+      const u = JSON.parse(raw || 'null');
       if (!u || u.vloga !== 'admin') {
         location.replace('prijava.html?razlog=samo-admin');
       }
@@ -58,7 +59,7 @@
   <div class="admin-layout">
 
     <aside class="admin-sidebar">
-      <a class="brand" href="index.html">
+      <a class="brand" href="#pregled">
         <i class="bi bi-geo-alt-fill"></i> DogodkiVMojiBližini
       </a>
 
@@ -117,10 +118,19 @@
           <span id="prosnjeCount" class="badge bg-warning text-dark fs-6"></span>
         </div>
 
-        <div id="prosnjeAlert" class="alert d-none" role="alert"></div>
-
         <div id="prosnjeList">
-          <div class="text-center text-muted py-3">Nalagam prošnje...</div>
+          <div class="flex flex-col gap-3">
+            <div class="p-4 rounded-xl border border-ink-200">
+              <div class="skeleton skeleton-text medium" style="height: 18px;"></div>
+              <div class="skeleton skeleton-text short" style="height: 12px;"></div>
+              <div class="skeleton skeleton-block" style="height: 50px; margin-top: 0.5rem;"></div>
+            </div>
+            <div class="p-4 rounded-xl border border-ink-200">
+              <div class="skeleton skeleton-text medium" style="height: 18px;"></div>
+              <div class="skeleton skeleton-text short" style="height: 12px;"></div>
+              <div class="skeleton skeleton-block" style="height: 50px; margin-top: 0.5rem;"></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -132,8 +142,6 @@
           </div>
           <span id="userCount" class="badge bg-primary fs-6"></span>
         </div>
-
-        <div id="usersAlert" class="alert d-none" role="alert"></div>
 
         <div class="table-responsive">
           <table class="admin-table">
@@ -147,7 +155,20 @@
               </tr>
             </thead>
             <tbody id="usersTbody">
-              <tr><td colspan="5" class="text-center text-muted py-4">Nalagam uporabnike...</td></tr>
+              <tr>
+                <td><div class="flex items-center gap-2"><div class="skeleton skeleton-circle" style="width:36px;height:36px;"></div><div style="flex:1"><div class="skeleton skeleton-text medium" style="height:14px;"></div></div></div></td>
+                <td><div class="skeleton skeleton-text medium" style="height:12px;"></div></td>
+                <td><div class="skeleton skeleton-text short" style="height:12px;"></div></td>
+                <td><div class="skeleton" style="width:90px;height:22px;border-radius:9999px;"></div></td>
+                <td><div class="skeleton" style="width:120px;height:32px;border-radius:8px;margin-left:auto;"></div></td>
+              </tr>
+              <tr>
+                <td><div class="flex items-center gap-2"><div class="skeleton skeleton-circle" style="width:36px;height:36px;"></div><div style="flex:1"><div class="skeleton skeleton-text medium" style="height:14px;"></div></div></div></td>
+                <td><div class="skeleton skeleton-text medium" style="height:12px;"></div></td>
+                <td><div class="skeleton skeleton-text short" style="height:12px;"></div></td>
+                <td><div class="skeleton" style="width:90px;height:22px;border-radius:9999px;"></div></td>
+                <td><div class="skeleton" style="width:120px;height:32px;border-radius:8px;margin-left:auto;"></div></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -446,10 +467,11 @@
     </main>
   </div>
 
-  <script src="js/components.js"></script>
+  <script type="module" src="js/components.js"></script>
 
   <script type="module">
     import { Auth, apiFetch, ApiError } from './js/auth.js';
+    import { pokaziToast, potrdiAkcijo } from './js/components.js';
 
     const VLOGE = ['uporabnik', 'organizator', 'admin'];
     const trenutni = Auth.getUporabnik();
@@ -472,13 +494,9 @@
 
     const tbody = document.getElementById('usersTbody');
     const counter = document.getElementById('userCount');
-    const alertEl = document.getElementById('usersAlert');
 
     function pokaziSporocilo(tip, besedilo) {
-      alertEl.className = `alert alert-${tip}`;
-      alertEl.textContent = besedilo;
-      alertEl.classList.remove('d-none');
-      setTimeout(() => alertEl.classList.add('d-none'), 4000);
+      pokaziToast(tip, besedilo);
     }
 
     function vlogaBadge(vloga) {
@@ -560,14 +578,10 @@
 
     const prosnjeList = document.getElementById('prosnjeList');
     const prosnjeCount = document.getElementById('prosnjeCount');
-    const prosnjeAlert = document.getElementById('prosnjeAlert');
     const sidebarBadge = document.getElementById('sidebarProsnjeBadge');
 
     function pokaziProsnjeSporocilo(tip, besedilo) {
-      prosnjeAlert.className = `alert alert-${tip}`;
-      prosnjeAlert.textContent = besedilo;
-      prosnjeAlert.classList.remove('d-none');
-      setTimeout(() => prosnjeAlert.classList.add('d-none'), 4500);
+      pokaziToast(tip, besedilo);
     }
 
     function statusBadge(status) {
@@ -644,7 +658,23 @@
 
       let opomba = null;
       if (akcija === 'zavrni') {
-        opomba = prompt('Razlog zavrnitve (neobvezno):') || null;
+        const rezultat = await potrdiAkcijo({
+          naslov: 'Zavrni prošnjo',
+          sporocilo: 'Uporabnik bo obveščen o zavrnitvi. Razlog je neobvezen, vendar zaželen.',
+          vnos: { label: 'Razlog zavrnitve (neobvezno)', placeholder: 'npr. Pomanjkljiv opis dejavnosti...' },
+          gumbPotrdi: 'Zavrni prošnjo',
+          tipGumba: 'btn-danger',
+        });
+        if (rezultat === null) return;
+        opomba = rezultat.trim() || null;
+      } else if (akcija === 'odobri') {
+        const rezultat = await potrdiAkcijo({
+          naslov: 'Odobri prošnjo',
+          sporocilo: 'Uporabnik bo dobil vlogo <strong>organizator</strong> in bo lahko dodajal dogodke. Si prepričan?',
+          gumbPotrdi: 'Odobri',
+          tipGumba: 'btn-primary',
+        });
+        if (!rezultat) return;
       }
 
       const vsi = document.querySelectorAll(`[data-prosnja-row="${id}"] [data-akcija]`);

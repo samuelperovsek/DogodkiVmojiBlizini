@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       try {
         const { uporabnik } = await apiFetch('/me');
-        Auth.prijavi(Auth.getToken(), uporabnik);
+        Auth.osveziUporabnika(uporabnik);
         pokaziPrijavljenega(uporabnik);
         aplicirajVlogo(uporabnik.vloga);
       } catch (err) {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function aplicirajVlogo(vloga) {
-    const sme = vloga === 'organizator' || vloga === 'admin';
+    const sme = vloga === 'organizator';
     document.querySelectorAll('[data-only-organizator]').forEach(el => {
       el.classList.toggle('d-none', !sme);
     });

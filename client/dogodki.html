@@ -7,7 +7,8 @@
 
   <script>
     (() => {
-      const u = JSON.parse(localStorage.getItem('uporabnik') || 'null');
+      const raw = sessionStorage.getItem('uporabnik') || localStorage.getItem('uporabnik');
+      const u = JSON.parse(raw || 'null');
       if (u && u.vloga === 'admin') location.replace('admin.html');
     })();
   </script>
@@ -467,7 +468,7 @@
     </div>
   </footer>
 
-  <script src="js/components.js"></script>
+  <script type="module" src="js/components.js"></script>
   <script src="js/dropdown.js"></script>
   <script type="module" src="js/nav.js"></script>
   <script type="module" src="js/dogodki.js"></script>
