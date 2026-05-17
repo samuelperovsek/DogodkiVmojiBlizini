@@ -5,9 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prijava / Registracija — DogodkiVMojiBližini.si</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script>
+    (() => {
+      const u = JSON.parse(localStorage.getItem('uporabnik') || 'null');
+      if (u && u.vloga === 'admin' && !location.search.includes('razlog')) {
+        location.replace('admin.html');
+      }
+    })();
+  </script>
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      corePlugins: { preflight: false, container: false },
+      theme: {
+        extend: {
+          colors: {
+            brand:  { 50:'#f5f3ff', 100:'#ede9fe', 200:'#ddd6fe', 500:'#8b5cf6', 600:'#7c3aed', 700:'#6d28d9', 800:'#5b21b6', 900:'#4c1d95' },
+            accent: { 500:'#ec4899', 600:'#db2777', 700:'#be185d' },
+            ink:    { 50:'#f8fafc', 100:'#f1f5f9', 200:'#e2e8f0', 500:'#64748b', 700:'#334155', 900:'#0f172a' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          boxShadow: {
+            glow:    '0 10px 40px -10px rgba(109,40,217,0.4)',
+            'glow-pink': '0 10px 40px -10px rgba(236,72,153,0.4)',
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out',
+            'slide-up': 'slideUp 0.5s ease-out',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
+            slideUp: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
+          },
+        },
+      },
+    }
+  </script>
+
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body style="background-color: #f5f3ff;">
@@ -29,6 +67,11 @@
     <div class="container">
 
       <div class="auth-card">
+
+        <div id="redirectInfo" class="alert alert-warning d-none mb-4" role="alert">
+          <i class="bi bi-shield-lock"></i> <strong>Za ta del strani je potrebna prijava.</strong>
+          <br><small>Prosim, prijavite se ali ustvarite račun.</small>
+        </div>
 
         <ul class="nav nav-pills mb-4 justify-content-center" role="tablist">
           <li class="nav-item">
@@ -63,14 +106,16 @@
 
             <div class="text-center text-muted mb-3">— ali z e-pošto —</div>
 
-            <form onsubmit="event.preventDefault(); window.location='profil.html';">
+            <form id="loginForm" novalidate>
+              <div id="loginError" class="alert alert-danger d-none" role="alert"></div>
+
               <div class="mb-3">
                 <label class="form-label">E-poštni naslov</label>
-                <input type="email" class="form-control" placeholder="ime@email.si" required>
+                <input type="email" name="email" class="form-control" placeholder="ime@email.si" required>
               </div>
               <div class="mb-3">
                 <label class="form-label">Geslo</label>
-                <input type="password" class="form-control" placeholder="••••••••" required>
+                <input type="password" name="geslo" class="form-control" placeholder="••••••••" required>
               </div>
               <div class="d-flex justify-content-between mb-3">
                 <div class="form-check">
@@ -79,7 +124,7 @@
                 </div>
                 <a href="#">Pozabljeno geslo?</a>
               </div>
-              <button type="submit" class="btn btn-primary w-100">Prijava</button>
+              <button type="submit" class="btn btn-primary w-100" id="loginSubmit">Prijava</button>
             </form>
 
             <p class="text-center mt-3 mb-0">
@@ -94,26 +139,35 @@
             <h2 class="text-center">Ustvari račun</h2>
             <p class="text-muted text-center mb-4">Brezplačna registracija v dveh minutah.</p>
 
-            <form onsubmit="event.preventDefault(); window.location='profil.html';">
+            <form id="registerForm" novalidate>
+              <div id="registerError" class="alert alert-danger d-none" role="alert"></div>
+
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Ime</label>
-                  <input type="text" class="form-control" placeholder="Ana" required>
+                  <input type="text" name="ime" class="form-control" placeholder="Samuel" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Priimek</label>
-                  <input type="text" class="form-control" placeholder="Perovšek" required>
+                  <input type="text" name="priimek" class="form-control" placeholder="Perovšek" required>
                 </div>
               </div>
 
               <div class="mt-3">
                 <label class="form-label">E-poštni naslov</label>
-                <input type="email" class="form-control" placeholder="ime@email.si" required>
+                <input type="email" name="email" class="form-control" placeholder="ime@email.si" required>
               </div>
 
               <div class="mt-3">
                 <label class="form-label">Geslo</label>
-                <input type="password" class="form-control" placeholder="Najmanj 8 znakov" required>
+                <input type="password" name="geslo" id="regGeslo" class="form-control" placeholder="Najmanj 8 znakov, velika črka in številka" required>
+                <div class="password-strength" id="regStrengthBars">
+                  <div class="password-strength-bar"></div>
+                  <div class="password-strength-bar"></div>
+                  <div class="password-strength-bar"></div>
+                  <div class="password-strength-bar"></div>
+                </div>
+                <span class="field-hint" id="regStrengthLabel">Vsaj 8 znakov, ena velika črka in ena številka.</span>
               </div>
 
               <div class="mt-3">
@@ -174,7 +228,7 @@
                 </label>
               </div>
 
-              <button type="submit" class="btn btn-primary w-100">Ustvari račun</button>
+              <button type="submit" class="btn btn-primary w-100" id="registerSubmit">Ustvari račun</button>
             </form>
 
             <p class="text-center mt-3 mb-0">
@@ -191,11 +245,171 @@
     </div>
   </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
+  <script src="js/components.js"></script>
+
+  <script type="module">
+    import { apiFetch, Auth, ApiError } from './js/auth.js';
+
     if (window.location.hash === '#registracija') {
       document.querySelector('[data-bs-target="#register"]').click();
     }
+
+    function pot(vloga) {
+      if (vloga === 'admin') return 'admin.html';
+      if (vloga === 'organizator') return 'dodaj-dogodek.html';
+      return 'profil.html';
+    }
+
+    const url = new URL(window.location.href);
+    const povratek = url.searchParams.get('povratek');
+    const razlog = url.searchParams.get('razlog');
+
+    if (razlog) {
+      const el = document.getElementById('redirectInfo');
+      const sporocila = {
+        'potrebna-prijava': 'Za ta del strani je potrebna prijava.',
+        'samo-admin': 'Ta stran je dostopna samo administratorjem.',
+        'samo-organizator': 'Ta stran je dostopna samo organizatorjem.',
+      };
+      const msg = sporocila[razlog];
+      if (msg) {
+        el.querySelector('strong').textContent = msg;
+        el.classList.remove('d-none');
+      }
+    }
+
+    if (Auth.jePrijavljen()) {
+      window.location.href = povratek || pot(Auth.getUporabnik()?.vloga);
+    }
+
+    function nadaljujPoPrijavi(uporabnik) {
+      window.location.href = povratek || pot(uporabnik.vloga);
+    }
+
+    function pokaziNapako(elId, sporocilo, podrobnosti = []) {
+      const el = document.getElementById(elId);
+      let html = `<strong>${sporocilo}</strong>`;
+      if (podrobnosti.length) {
+        html += '<ul class="mb-0 mt-1">' +
+          podrobnosti.map(p => `<li>${p}</li>`).join('') +
+          '</ul>';
+      }
+      el.innerHTML = html;
+      el.classList.remove('d-none');
+    }
+
+    function skrijNapako(elId) {
+      document.getElementById(elId).classList.add('d-none');
+    }
+
+    const regGeslo = document.getElementById('regGeslo');
+    if (regGeslo) {
+      const bars = document.querySelectorAll('#regStrengthBars .password-strength-bar');
+      const label = document.getElementById('regStrengthLabel');
+
+      regGeslo.addEventListener('input', () => {
+        const g = regGeslo.value;
+        bars.forEach(b => { b.className = 'password-strength-bar'; });
+
+        if (!g) {
+          label.textContent = 'Vsaj 8 znakov, ena velika črka in ena številka.';
+          label.className = 'field-hint';
+          return;
+        }
+
+        let score = 0;
+        if (g.length >= 8) score++;
+        if (/[A-Z]/.test(g)) score++;
+        if (/[0-9]/.test(g)) score++;
+        if (/[^A-Za-z0-9]/.test(g) || g.length >= 12) score++;
+
+        const labels = ['Prešibko', 'Šibko', 'Srednje', 'Močno', 'Odlično'];
+        const klase = ['weak', 'weak', 'medium', 'strong', 'strong'];
+        for (let i = 0; i < score; i++) bars[i].classList.add(klase[score]);
+        label.textContent = labels[score];
+        label.className = 'field-hint ' + (score < 2 ? 'invalid' : score < 4 ? '' : 'valid');
+      });
+    }
+
+    document.querySelectorAll('input[type="email"]').forEach(input => {
+      let hint = input.parentElement.querySelector('.field-hint.email-hint');
+      if (!hint) {
+        hint = document.createElement('span');
+        hint.className = 'field-hint email-hint';
+        input.parentElement.appendChild(hint);
+      }
+      input.addEventListener('input', () => {
+        const v = input.value.trim();
+        if (!v) { hint.textContent = ''; hint.className = 'field-hint email-hint'; return; }
+        const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
+        hint.textContent = ok ? '✓ Veljaven format.' : '✗ Vnesi veljaven email.';
+        hint.className = 'field-hint email-hint ' + (ok ? 'valid' : 'invalid');
+      });
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      skrijNapako('loginError');
+
+      const gumb = document.getElementById('loginSubmit');
+      gumb.disabled = true;
+      gumb.textContent = 'Prijavljam...';
+
+      const podatki = {
+        email: e.target.email.value.trim(),
+        geslo: e.target.geslo.value,
+      };
+
+      try {
+        const odgovor = await apiFetch('/prijava', {
+          method: 'POST',
+          body: JSON.stringify(podatki),
+        });
+        Auth.prijavi(odgovor.token, odgovor.uporabnik);
+        nadaljujPoPrijavi(odgovor.uporabnik);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          pokaziNapako('loginError', err.message, err.podrobnosti);
+        } else {
+          pokaziNapako('loginError', 'Strežnik ni dosegljiv. Preveri, če teče.');
+        }
+        gumb.disabled = false;
+        gumb.textContent = 'Prijava';
+      }
+    });
+
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      skrijNapako('registerError');
+
+      const gumb = document.getElementById('registerSubmit');
+      gumb.disabled = true;
+      gumb.textContent = 'Ustvarjam račun...';
+
+      const podatki = {
+        ime:     e.target.ime.value.trim(),
+        priimek: e.target.priimek.value.trim(),
+        email:   e.target.email.value.trim(),
+        geslo:   e.target.geslo.value,
+      };
+
+      try {
+        const odgovor = await apiFetch('/registracija', {
+          method: 'POST',
+          body: JSON.stringify(podatki),
+        });
+        Auth.prijavi(odgovor.token, odgovor.uporabnik);
+        nadaljujPoPrijavi(odgovor.uporabnik);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          pokaziNapako('registerError', err.message, err.podrobnosti);
+        } else {
+          pokaziNapako('registerError', 'Strežnik ni dosegljiv. Preveri, če teče.');
+        }
+        gumb.disabled = false;
+        gumb.textContent = 'Ustvari račun';
+      }
+    });
   </script>
 </body>
 </html>
