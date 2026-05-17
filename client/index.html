@@ -87,14 +87,20 @@
   </nav>
 
   <section class="hero">
+    <div class="absolute top-20 left-10 w-64 h-64 bg-pink-500/25 rounded-full blur-3xl animate-float pointer-events-none"></div>
+    <div class="absolute bottom-10 right-20 w-72 h-72 bg-violet-400/25 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: -3s;"></div>
+
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-7 animate-slide-up">
-          <span class="inline-flex items-center gap-2 px-3 py-1 mb-5 rounded-full bg-white/15 backdrop-blur-sm text-white text-sm font-medium ring-1 ring-white/20">
-            <span class="w-2 h-2 rounded-full bg-pink-400 animate-pulse"></span>
-            Tedensko 248 novih dogodkov
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full bg-white/15 backdrop-blur-md text-white text-sm font-medium ring-1 ring-white/25 shadow-lg">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-400"></span>
+            </span>
+            Tedensko <strong class="font-bold">248 novih</strong> dogodkov
           </span>
-          <h1>Odkrijte dogodke v vaši okolici</h1>
+          <h1>Odkrijte dogodke <br class="hidden md:block">v vaši <span class="relative inline-block">okolici<svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M2,10 Q60,2 100,6 T198,4" stroke="#fbcfe8" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/></svg></span></h1>
           <p class="lead">
             Od koncertov in delavnic do športnih dogodkov in sejmov — vse dogajanje v Sloveniji
             na enem mestu, prilagojeno vašim interesom.
@@ -103,10 +109,16 @@
           <form class="search-box" onsubmit="event.preventDefault(); window.location='dogodki.html';">
             <div class="row g-2">
               <div class="col-md-4">
-                <input type="text" class="form-control" placeholder="Kaj iščete?">
+                <div class="relative">
+                  <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-500 pointer-events-none"></i>
+                  <input type="text" class="form-control pl-9" style="padding-left: 2.4rem;" placeholder="Kaj iščete?">
+                </div>
               </div>
               <div class="col-md-3">
-                <input type="text" class="form-control" placeholder="Lokacija">
+                <div class="relative">
+                  <i class="bi bi-geo-alt absolute left-3 top-1/2 -translate-y-1/2 text-ink-500 pointer-events-none"></i>
+                  <input type="text" class="form-control" style="padding-left: 2.4rem;" placeholder="Lokacija">
+                </div>
               </div>
               <div class="col-md-3">
                 <select class="form-select">
@@ -146,81 +158,106 @@
         </div>
 
         <div class="col-lg-5 d-none d-lg-block text-center relative">
-          <div class="absolute -top-8 -left-8 w-32 h-32 bg-pink-500/40 rounded-full blur-3xl"></div>
-          <div class="absolute -bottom-8 -right-8 w-40 h-40 bg-violet-400/40 rounded-full blur-3xl"></div>
-          <img class="hero-img relative rotate-1 hover:rotate-0 transition-transform duration-500" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80" alt="Koncert">
+          <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-500/50 rounded-full blur-3xl animate-float pointer-events-none"></div>
+          <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-400/50 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: -2s;"></div>
+
+          <div class="absolute -top-4 -left-6 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -1s;">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 text-white flex items-center justify-center shadow-md">
+              <i class="bi bi-ticket-perforated text-lg"></i>
+            </div>
+            <div class="text-left">
+              <div class="text-xs text-ink-500 font-medium">Pravkar rezervirano</div>
+              <div class="text-sm font-bold text-ink-900">Festival Lent</div>
+            </div>
+          </div>
+
+          <div class="absolute -bottom-2 -right-4 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -4s;">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 text-white flex items-center justify-center shadow-md">
+              <i class="bi bi-star-fill text-lg"></i>
+            </div>
+            <div class="text-left">
+              <div class="text-xs text-ink-500 font-medium">Ocena</div>
+              <div class="text-sm font-bold text-ink-900">4.8 / 5.0</div>
+            </div>
+          </div>
+
+          <img class="hero-img relative rotate-1 hover:rotate-0 transition-transform duration-700" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80" alt="Koncert">
         </div>
       </div>
     </div>
   </section>
 
-  <section id="kategorije" class="section-padding">
-    <div class="container">
+  <section id="kategorije" class="section-padding relative">
+    <div class="absolute top-1/2 left-0 w-72 h-72 -translate-y-1/2 bg-brand-200/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="container relative">
       <div class="row g-4 align-items-center">
 
-        <div class="col-lg-3">
-          <span class="inline-block px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-100 rounded-full">8 kategorij</span>
-          <h2 class="mb-2">Brskaj po kategorijah</h2>
+        <div class="col-lg-3 reveal">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-brand-700 bg-gradient-to-r from-brand-100 to-pink-100 rounded-full ring-1 ring-brand-200/50">
+            <i class="bi bi-grid-fill text-[10px]"></i> 8 kategorij
+          </span>
+          <h2 class="mb-2">Brskaj po <span class="gradient-text">kategorijah</span></h2>
           <p class="text-muted mb-3">Vse vrste dogajanja, na enem mestu — od koncertov do delavnic.</p>
-          <a href="dogodki.html" class="inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-800">
-            Vse kategorije <i class="bi bi-arrow-right"></i>
+          <a href="dogodki.html" class="group inline-flex items-center gap-2 font-semibold text-brand-700 hover:text-brand-800">
+            Vse kategorije
+            <i class="bi bi-arrow-right transition-transform group-hover:translate-x-1"></i>
           </a>
         </div>
 
-        <div class="col-lg-9">
+        <div class="col-lg-9 reveal">
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             <a href="dogodki.html?cat=koncerti" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-music-note-beamed"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Koncerti</div>
                 <div class="text-xs text-ink-500">412 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=sejmi" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-shop"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Sejmi</div>
                 <div class="text-xs text-ink-500">186 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=delavnice" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-tools"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Delavnice</div>
                 <div class="text-xs text-ink-500">298 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=sport" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-trophy-fill"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Šport</div>
                 <div class="text-xs text-ink-500">524 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=zabave" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-stars"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Zabave</div>
                 <div class="text-xs text-ink-500">221 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=izobrazevanja" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-mortarboard-fill"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Izobraževanja</div>
                 <div class="text-xs text-ink-500">163 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=druzina" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-people-fill"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Družinski</div>
                 <div class="text-xs text-ink-500">147 dogodkov</div>
               </div>
             </a>
             <a href="dogodki.html?cat=kultura" class="category-card-mini">
               <div class="cat-icon-mini"><i class="bi bi-palette-fill"></i></div>
-              <div>
+              <div class="relative z-10">
                 <div class="font-semibold text-ink-900">Kultura</div>
                 <div class="text-xs text-ink-500">279 dogodkov</div>
               </div>
@@ -234,66 +271,247 @@
 
   <section class="section-padding bg-light-purple">
     <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2 reveal">
         <div>
-          <span class="inline-block px-3 py-1 mb-2 text-xs font-bold uppercase tracking-wider text-accent-600 bg-pink-100 rounded-full">izpostavljeno</span>
-          <h2 class="mb-0">Najboljši dogodki ta mesec</h2>
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 mb-2 text-xs font-bold uppercase tracking-wider text-accent-700 bg-gradient-to-r from-pink-100 to-rose-100 rounded-full ring-1 ring-pink-200/50">
+            <i class="bi bi-fire text-[10px]"></i> Izpostavljeno
+          </span>
+          <h2 class="mb-0">Najboljši dogodki <span class="gradient-text">ta mesec</span></h2>
         </div>
-        <a href="dogodki.html" class="btn btn-outline-primary">
-          Vsi dogodki <i class="bi bi-arrow-right"></i>
+        <a href="dogodki.html" class="group btn btn-outline-primary">
+          Vsi dogodki <i class="bi bi-arrow-right transition-transform group-hover:translate-x-1"></i>
         </a>
       </div>
 
+<<<<<<< HEAD
       <div class="row g-4" id="najboljši-dogodki-kontejner">
+=======
+      <div class="row g-4 reveal">
+
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80" alt="Koncert">
+              <div class="event-date">
+                <span class="day">28</span>
+                <span class="month">JUN</span>
+              </div>
+              <span class="event-cat-tag">Koncert</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <i class="bi bi-geo-alt"></i>Maribor
+                <span class="ms-2"><i class="bi bi-clock"></i>20:00</span>
+              </div>
+              <h5><a href="dogodek.html">Festival Lent — Otvoritveni koncert</a></h5>
+              <p class="event-card-desc">Največji slovenski poletni festival se začne z velikim koncertom ob reki Dravi.</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price">22 €</span>
+                <button class="event-fav"><i class="bi bi-heart"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="https://images.unsplash.com/photo-1559223669-e0065fa7f142?w=800&q=80" alt="Delavnica">
+              <div class="event-date">
+                <span class="day">05</span>
+                <span class="month">JUL</span>
+              </div>
+              <span class="event-cat-tag">Delavnica</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <i class="bi bi-geo-alt"></i>Ljubljana
+                <span class="ms-2"><i class="bi bi-clock"></i>17:30</span>
+              </div>
+              <h5><a href="dogodek.html">Keramika za začetnike</a></h5>
+              <p class="event-card-desc">Tridnevna delavnica, kjer boste izdelali svojo prvo skledo pod vodstvom mojstrice.</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price">68 €</span>
+                <button class="event-fav"><i class="bi bi-heart-fill"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80" alt="Maraton">
+              <div class="event-date">
+                <span class="day">12</span>
+                <span class="month">JUL</span>
+              </div>
+              <span class="event-cat-tag">Šport</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <i class="bi bi-geo-alt"></i>Bled
+                <span class="ms-2"><i class="bi bi-clock"></i>09:00</span>
+              </div>
+              <h5><a href="dogodek.html">Maraton Franja BTC</a></h5>
+              <p class="event-card-desc">Tradicionalni kolesarski maraton okoli Blejskega jezera in po Bohinju.</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price">45 €</span>
+                <button class="event-fav"><i class="bi bi-heart"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80" alt="Sejem">
+              <div class="event-date">
+                <span class="day">18</span>
+                <span class="month">JUL</span>
+              </div>
+              <span class="event-cat-tag">Sejem</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <i class="bi bi-geo-alt"></i>Koper
+                <span class="ms-2"><i class="bi bi-clock"></i>10:00</span>
+              </div>
+              <h5><a href="dogodek.html">Istrski okusi — kulinarični sejem</a></h5>
+              <p class="event-card-desc">Lokalni pridelovalci, vinarji in mojstri olja predstavljajo najboljše iz Istre.</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price free">Brezplačno</span>
+                <button class="event-fav"><i class="bi bi-heart"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80" alt="Zabava">
+              <div class="event-date">
+                <span class="day">26</span>
+                <span class="month">JUL</span>
+              </div>
+              <span class="event-cat-tag">Zabava</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <i class="bi bi-geo-alt"></i>Ljubljana
+                <span class="ms-2"><i class="bi bi-clock"></i>22:00</span>
+              </div>
+              <h5><a href="dogodek.html">Open Air pod zvezdami</a></h5>
+              <p class="event-card-desc">Najboljši domači DJ-ji se zbirajo na vrtu Metelkove za nepozabno poletno noč.</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price">15 €</span>
+                <button class="event-fav"><i class="bi bi-heart"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&q=80" alt="Izobraževanje">
+              <div class="event-date">
+                <span class="day">02</span>
+                <span class="month">AVG</span>
+              </div>
+              <span class="event-cat-tag">Izobraževanje</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta">
+                <i class="bi bi-geo-alt"></i>Kranj
+                <span class="ms-2"><i class="bi bi-clock"></i>18:00</span>
+              </div>
+              <h5><a href="dogodek.html">Uvod v umetno inteligenco</a></h5>
+              <p class="event-card-desc">Predavanje in praktični del za vse, ki želijo razumeti, kako AI olajša delo in učenje.</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price">12 €</span>
+                <button class="event-fav"><i class="bi bi-heart"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+>>>>>>> 4efc1ca7d2eceadf0b60cccce8c729095e9b2b7e
 
       </div>
     </div>
   </section>
 
-  <section id="kako-deluje" class="section-padding">
-    <div class="container">
+  <section id="kako-deluje" class="section-padding relative overflow-hidden">
+    <div class="absolute top-0 right-0 w-96 h-96 bg-pink-200/20 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="container relative">
       <div class="row g-4 align-items-stretch">
 
-        <div class="col-lg-7">
-          <span class="inline-block px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-brand-700 bg-brand-100 rounded-full">3 koraki</span>
-          <h2 class="mb-4">Kako deluje?</h2>
+        <div class="col-lg-7 reveal">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-brand-700 bg-gradient-to-r from-brand-100 to-violet-100 rounded-full ring-1 ring-brand-200/50">
+            <i class="bi bi-lightning-charge-fill text-[10px]"></i> 3 enostavni koraki
+          </span>
+          <h2 class="mb-4">Kako <span class="gradient-text">deluje</span>?</h2>
 
           <div class="flex flex-col gap-3">
-            <div class="flex items-start gap-4 p-4 rounded-2xl bg-white border border-ink-200 hover:border-brand-200 hover:shadow-md transition-all">
-              <div class="cat-icon-mini" style="width:48px;height:48px;font-size:1.3rem;"><i class="bi bi-search"></i></div>
-              <div class="flex-1">
-                <h4 class="mb-1">1. Brskajte</h4>
+            <div class="group relative flex items-start gap-4 p-5 rounded-2xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div class="absolute top-0 right-0 text-[7rem] leading-none font-black text-brand-50 select-none pointer-events-none">1</div>
+              <div class="cat-icon-mini relative z-10" style="width:52px;height:52px;font-size:1.4rem;"><i class="bi bi-search"></i></div>
+              <div class="flex-1 relative z-10">
+                <h4 class="mb-1">Brskajte</h4>
                 <p class="text-muted mb-0 text-sm">Filtrirajte dogodke po lokaciji, datumu in vaših interesih.</p>
               </div>
             </div>
 
-            <div class="flex items-start gap-4 p-4 rounded-2xl bg-white border border-ink-200 hover:border-brand-200 hover:shadow-md transition-all">
-              <div class="cat-icon-mini" style="width:48px;height:48px;font-size:1.3rem;"><i class="bi bi-ticket-perforated"></i></div>
-              <div class="flex-1">
-                <h4 class="mb-1">2. Prijavite se</h4>
+            <div class="group relative flex items-start gap-4 p-5 rounded-2xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div class="absolute top-0 right-0 text-[7rem] leading-none font-black text-brand-50 select-none pointer-events-none">2</div>
+              <div class="cat-icon-mini relative z-10" style="width:52px;height:52px;font-size:1.4rem;"><i class="bi bi-ticket-perforated"></i></div>
+              <div class="flex-1 relative z-10">
+                <h4 class="mb-1">Prijavite se</h4>
                 <p class="text-muted mb-0 text-sm">Z enim klikom rezervirajte mesto in prejmite opomnik pred začetkom.</p>
               </div>
             </div>
 
-            <div class="flex items-start gap-4 p-4 rounded-2xl bg-white border border-ink-200 hover:border-brand-200 hover:shadow-md transition-all">
-              <div class="cat-icon-mini" style="width:48px;height:48px;font-size:1.3rem;"><i class="bi bi-star"></i></div>
-              <div class="flex-1">
-                <h4 class="mb-1">3. Ocenite</h4>
+            <div class="group relative flex items-start gap-4 p-5 rounded-2xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div class="absolute top-0 right-0 text-[7rem] leading-none font-black text-brand-50 select-none pointer-events-none">3</div>
+              <div class="cat-icon-mini relative z-10" style="width:52px;height:52px;font-size:1.4rem;"><i class="bi bi-star"></i></div>
+              <div class="flex-1 relative z-10">
+                <h4 class="mb-1">Ocenite</h4>
                 <p class="text-muted mb-0 text-sm">Po dogodku pustite oceno in komentar ter pomagajte drugim.</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col-lg-5">
-          <div class="relative overflow-hidden rounded-3xl h-full p-8 bg-gradient-to-br from-brand-900 via-brand-700 to-accent-600 shadow-glow flex flex-col justify-center">
-            <div class="absolute -top-12 -right-12 w-48 h-48 bg-pink-400/30 rounded-full blur-3xl"></div>
-            <div class="absolute -bottom-8 -left-8 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="col-lg-5 reveal">
+          <div class="relative overflow-hidden rounded-3xl h-full p-8 bg-gradient-to-br from-brand-900 via-brand-700 to-accent-600 shadow-glow flex flex-col justify-center animate-glow-pulse">
+            <div class="absolute -top-16 -right-16 w-56 h-56 bg-pink-400/40 rounded-full blur-3xl animate-float"></div>
+            <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
+            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 22px 22px;"></div>
 
             <div class="relative">
-              <span class="inline-block px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-white bg-white/20 backdrop-blur-sm rounded-full">organizatorjem</span>
-              <h2 class="text-white text-2xl md:text-3xl mb-3">Imaš dogodek?</h2>
-              <p class="text-white/85 mb-5">Brezplačna registracija, enostavno dodajanje in vgrajen sistem prijav.</p>
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 mb-4 text-xs font-bold uppercase tracking-wider text-white bg-white/20 backdrop-blur-md rounded-full ring-1 ring-white/30">
+                <i class="bi bi-building text-[10px]"></i> Organizatorjem
+              </span>
+              <h2 class="text-white text-2xl md:text-3xl mb-3" style="background: linear-gradient(135deg, #fff, #fbcfe8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Imaš dogodek?</h2>
+              <p class="text-white/90 mb-5 text-base">Brezplačna registracija, enostavno dodajanje in vgrajen sistem prijav. Pridruži se 340+ organizatorjem.</p>
+
+              <div class="flex flex-col gap-2 mb-5">
+                <div class="flex items-center gap-2 text-white/95 text-sm">
+                  <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center"><i class="bi bi-check-lg text-xs"></i></span>
+                  Brez začetnih stroškov
+                </div>
+                <div class="flex items-center gap-2 text-white/95 text-sm">
+                  <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center"><i class="bi bi-check-lg text-xs"></i></span>
+                  Lokalno občinstvo v tvojem mestu
+                </div>
+                <div class="flex items-center gap-2 text-white/95 text-sm">
+                  <span class="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center"><i class="bi bi-check-lg text-xs"></i></span>
+                  Avtomatični opomniki obiskovalcem
+                </div>
+              </div>
+
               <div class="flex flex-wrap gap-2">
                 <a href="prijava.html#registracija" class="btn bg-white text-brand-700 hover:bg-brand-50 hover:text-brand-800 shadow-xl">
                   <i class="bi bi-rocket-takeoff"></i> Postani organizator
@@ -312,12 +530,12 @@
       <div class="row g-4">
         <div class="col-md-4">
           <h5><i class="bi bi-geo-alt-fill"></i> DogodkiVMojiBližini</h5>
-          <p>Slovenska platforma, ki povezuje organizatorje dogodkov z lokalno skupnostjo.</p>
+          <p class="text-white/70 mb-4">Slovenska platforma, ki povezuje organizatorje dogodkov z lokalno skupnostjo.</p>
           <div class="footer-social">
-            <a href="#"><i class="bi bi-facebook"></i></a>
-            <a href="#"><i class="bi bi-instagram"></i></a>
-            <a href="#"><i class="bi bi-tiktok"></i></a>
-            <a href="#"><i class="bi bi-youtube"></i></a>
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" aria-label="TikTok"><i class="bi bi-tiktok"></i></a>
+            <a href="#" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
           </div>
         </div>
         <div class="col-6 col-md-2">
@@ -334,21 +552,28 @@
         </div>
         <div class="col-md-4">
           <h5>Novičnik</h5>
-          <p>Tedenski izbor najboljših dogodkov v tvojem mestu.</p>
+          <p class="text-white/70 mb-3">Tedenski izbor najboljših dogodkov v tvojem mestu.</p>
           <form onsubmit="event.preventDefault();">
             <div class="input-group">
-              <input type="email" class="form-control" placeholder="tvoja@e-posta.si">
+              <input type="email" class="form-control" placeholder="tvoja@e-posta.si" style="background-color: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff;">
               <button class="btn btn-primary" type="submit">Naroči se</button>
             </div>
           </form>
+          <p class="text-white/50 text-xs mt-2 mb-0">
+            <i class="bi bi-shield-check"></i> Brez spama. Odjava kadarkoli.
+          </p>
         </div>
       </div>
-      <div class="footer-bottom d-flex justify-content-between flex-wrap">
-        <span>© 2026 DogodkiVMojiBližini.si</span>
-        <div>
-          <a href="#" style="display: inline; margin-right: 1rem;">Pogoji uporabe</a>
-          <a href="#" style="display: inline; margin-right: 1rem;">Zasebnost</a>
-          <a href="#" style="display: inline;">Piškotki</a>
+      <div class="footer-bottom flex flex-wrap justify-between items-center gap-3">
+        <span class="flex items-center gap-2">
+          <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Vsi sistemi delujejo</span>
+          <span class="text-white/30">•</span>
+          © 2026 DogodkiVMojiBližini.si
+        </span>
+        <div class="flex gap-4">
+          <a href="#" class="inline">Pogoji uporabe</a>
+          <a href="#" class="inline">Zasebnost</a>
+          <a href="#" class="inline">Piškotki</a>
         </div>
       </div>
     </div>

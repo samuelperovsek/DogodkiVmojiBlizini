@@ -300,15 +300,25 @@
             <div class="form-section">
               <h3>4. Slika dogodka</h3>
 
-              <label for="upload" class="upload-box d-block">
-                <i class="bi bi-cloud-arrow-up" style="font-size: 3rem; color: #6d28d9;"></i>
-                <h5 class="mt-2">Naložite glavno sliko dogodka</h5>
-                <p class="text-muted mb-1">Vleci in spusti datoteko ali klikni za izbiro.</p>
-                <small class="text-muted">JPG / PNG, največ 5 MB</small>
+              <label for="upload" class="upload-box block group">
+                <div class="inline-flex items-center justify-center w-16 h-16 mb-3 rounded-2xl bg-gradient-to-br from-brand-100 to-pink-100 text-brand-700 text-3xl shadow-md group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                  <i class="bi bi-cloud-arrow-up-fill"></i>
+                </div>
+                <h5 class="mt-2 mb-1">Naložite glavno sliko dogodka</h5>
+                <p class="text-muted mb-1 text-sm">Vleci in spusti datoteko ali klikni za izbiro.</p>
+                <div class="flex flex-wrap items-center justify-center gap-2 mt-3">
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-ink-500 bg-ink-100 px-2.5 py-1 rounded-full">
+                    <i class="bi bi-file-earmark-image"></i> JPG / PNG
+                  </span>
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-ink-500 bg-ink-100 px-2.5 py-1 rounded-full">
+                    <i class="bi bi-hdd"></i> do 5 MB
+                  </span>
+                  <span class="inline-flex items-center gap-1 text-xs font-semibold text-ink-500 bg-ink-100 px-2.5 py-1 rounded-full">
+                    <i class="bi bi-aspect-ratio"></i> 1200×800
+                  </span>
+                </div>
               </label>
               <input type="file" id="upload" class="d-none" accept="image/*">
-
-              <div class="form-text mt-2">Priporočena ločljivost 1200 × 800 px.</div>
             </div>
 
             <div class="form-section">
@@ -320,16 +330,16 @@
               </div>
             </div>
 
-            <div class="d-flex justify-content-between flex-wrap gap-2">
+            <div class="sticky bottom-4 z-10 flex justify-between flex-wrap gap-2 p-4 bg-white/90 backdrop-blur-md rounded-2xl border border-ink-200 shadow-xl">
               <button type="button" class="btn btn-outline-primary">
                 <i class="bi bi-floppy"></i> Shrani osnutek
               </button>
-              <div class="d-flex gap-2">
+              <div class="flex gap-2">
                 <button type="button" class="btn btn-outline-primary">
                   <i class="bi bi-eye"></i> Predogled
                 </button>
-                <button type="submit" class="btn btn-primary">
-                  Objavi dogodek
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-send-fill"></i> Objavi dogodek
                 </button>
               </div>
             </div>
