@@ -76,10 +76,34 @@ CREATE TABLE Priljubljeni_dogodki (
 );
 
 CREATE TABLE Priljubljeni_organizatorji (
-    ID_priljubljeni_organizatorji int(10) NOT NULL AUTO_INCREMENT, 
-    TK_navaden_uporabnik int(10) NOT NULL, 
-    TK_uporabnik_organizator int(10) NOT NULL, 
+    ID_priljubljeni_organizatorji int(10) NOT NULL AUTO_INCREMENT,
+    TK_navaden_uporabnik int(10) NOT NULL,
+    TK_uporabnik_organizator int(10) NOT NULL,
     PRIMARY KEY (ID_priljubljeni_organizatorji)
+);
+
+CREATE TABLE Organizator (
+    ID_organizator int(10) NOT NULL AUTO_INCREMENT,
+    naziv varchar(255) NOT NULL,
+    spletna_stran varchar(255),
+    PRIMARY KEY (ID_organizator)
+);
+
+CREATE TABLE Prosnja_organizator (
+    ID_prosnja int(10) NOT NULL AUTO_INCREMENT,
+    TK_uporabnik int(10) NOT NULL,
+    naziv_podjetja varchar(255) NOT NULL,
+    spletna_stran varchar(255),
+    opis TEXT,
+    razlog TEXT NOT NULL,
+    status varchar(20) NOT NULL DEFAULT 'cakajoca',
+    datum_prosnje timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    datum_obravnave timestamp NULL,
+    TK_odobril int(10) NULL,
+    opomba_admina TEXT,
+    PRIMARY KEY (ID_prosnja),
+    FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik(ID_uporabnik),
+    FOREIGN KEY (TK_odobril) REFERENCES Uporabnik(ID_uporabnik)
 );
 
 -- Tuji ključi
@@ -112,29 +136,41 @@ INSERT INTO Kraj (postna_stevilka, ime_kraja, TK_regija) VALUES
 INSERT INTO Kategorija (naziv) VALUES 
 ('Koncert'), ('Šport'), ('Delavnica'), ('Kultura'), ('Izobraževanje'), ('Zabava');
 
-INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga) VALUES 
+INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga) VALUES
 ('Janez', 'Novak', 'janez@email.si', 'geslo123', 'uporabnik'),
-('klemen', 'Admin', 'admin@dogodki.si', 'varnoGeslo!', 'admin'),
+('Samuel', 'Admin', 'admin@dogodki.si', 'varnoGeslo!', 'admin'),
 ('Maja', 'Kovač', 'maja.kovac@email.si', 'skritoGeslo1', 'uporabnik'),
-('Luka', 'Zupan', 'luka.zupan@email.si', 'superVarno!', 'uporabnik');
+('Luka', 'Zupan', 'luka.zupan@email.si', 'superVarno!', 'uporabnik'),
+('Ana', 'Bizjak', 'ana.bizjak@kinosiska.si', 'organVarno!', 'organizator');
 
-INSERT INTO Dogodek (TK_uporabnik_organizator, Naslov, opis, TK_kraj, ulica, datum_zacetka, datum_konca, telefon, email, status, TK_kategorija) VALUES 
-(2, 'Koncert pod zvezdami', 'Nepozaben večer slovenske popevke na prostem.', 1000, 'Prešernov trg 1', '2026-06-15 20:00:00', '2026-06-15 23:00:00', '040 741 242', 'tajnistvo@kdradlje.si', 'promoviran', 1),
-(2, 'Lokalni maraton', 'Tek po Pokljuki za vse generacije.', 6000, 'Pristaniška ulica 2', '2026-07-10 09:00:00', '2026-07-10 13:00:00', '056667788', 'maraton@koper.si', 'aktiven', 2),
-(2, 'Indie Rock Večer', 'Nastop treh neuveljavljenih slovenskih indie skupin.', 1000, 'Trg prekomorskih brigad 3', '2026-08-20 20:00:00', '2026-08-20 23:59:00', '01 500 30 00', 'info@kinosiska.si', 'aktiven', 1),
-(2, 'Teden programiranja', 'Sklop delavnic za začetnike v Pythonu in JavaScriptu.', 2000, 'Gosposvetska cesta 83', '2026-09-01 16:00:00', '2026-09-05 20:00:00', '031 222 333', 'info@sou.si', 'v_pripravi', 3),
-(2, 'Lutkovna predstava za otroke', 'Tradicionalna slovenska pravljica v obliki lutkovne predstave za najmlajše.', 4000, 'Glavni trg 2', '2026-10-15 10:00:00', '2026-10-15 11:30:00', '040 741 242', 'tajnistvo@kdradlje.si', 'aktiven', 4);
+INSERT INTO Dogodek (TK_uporabnik_organizator, Naslov, opis, TK_kraj, ulica, datum_zacetka, datum_konca, telefon, email, slika, st_sedezov, st_prostih_sedezov, cena, status, TK_kategorija) VALUES
+(2, 'Koncert pod zvezdami', 'Nepozaben večer slovenske popevke na prostem.', 1000, 'Prešernov trg 1', '2026-06-15 20:00:00', '2026-06-15 23:00:00', '040 741 242', 'tajnistvo@kdradlje.si', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80', 1500, 1262, 22.00, 'promoviran', 1),
+(2, 'Lokalni maraton', 'Tek po Pokljuki za vse generacije.', 6000, 'Pristaniška ulica 2', '2026-07-10 09:00:00', '2026-07-10 13:00:00', '056667788', 'maraton@koper.si', 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80', 500, 312, 45.00, 'aktiven', 2),
+(5, 'Indie Rock Večer', 'Nastop treh neuveljavljenih slovenskih indie skupin.', 1000, 'Trg prekomorskih brigad 3', '2026-08-20 20:00:00', '2026-08-20 23:59:00', '01 500 30 00', 'info@kinosiska.si', 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80', 300, 145, 15.00, 'aktiven', 1),
+(2, 'Teden programiranja', 'Sklop delavnic za začetnike v Pythonu in JavaScriptu.', 2000, 'Gosposvetska cesta 83', '2026-09-01 16:00:00', '2026-09-05 20:00:00', '031 222 333', 'info@sou.si', 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&q=80', 80, 12, 68.00, 'v_pripravi', 3),
+(5, 'Lutkovna predstava za otroke', 'Tradicionalna slovenska pravljica v obliki lutkovne predstave za najmlajše.', 4000, 'Glavni trg 2', '2026-10-15 10:00:00', '2026-10-15 11:30:00', '040 741 242', 'lutke@kinosiska.si', 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=800&q=80', 120, 80, 0.00, 'aktiven', 4);
 
-INSERT INTO Prijava (TK_uporabnik, TK_dogodek, opomnik_poslan) VALUES 
+INSERT INTO Prijava (TK_uporabnik, TK_dogodek, opomnik_poslan) VALUES
 (1, 1, 0), (3, 3, 0), (4, 4, 1), (1, 4, 0);
 
-INSERT INTO Priljubljeni_dogodki (TK_uporabnik, TK_dogodek) VALUES 
+INSERT INTO Priljubljeni_dogodki (TK_uporabnik, TK_dogodek) VALUES
 (1, 2), (3, 4), (4, 3), (4, 5);
 
-INSERT INTO Ocena_komentar (ocena, komentar, TK_uporabnik, TK_dogodek) VALUES 
+INSERT INTO Ocena_komentar (ocena, komentar, TK_uporabnik, TK_dogodek) VALUES
 (5, 'Odličen koncert, komaj čakam naslednjega!', 1, 1),
 (4, 'Zelo poučno, vendar je bilo premalo časa za vsa vprašanja.', 4, 4),
 (5, 'Odličen izbor glasbenih skupin!', 3, 3);
 
-INSERT INTO Priljubljeni_organizatorji (TK_navaden_uporabnik, TK_uporabnik_organizator) VALUES 
-(1, 2), (3, 2), (4, 2);
+INSERT INTO Priljubljeni_organizatorji (TK_navaden_uporabnik, TK_uporabnik_organizator) VALUES
+(1, 5), (3, 5), (4, 5);
+
+INSERT INTO Organizator (naziv, spletna_stran) VALUES
+('Kino Šiška', 'https://www.kinosiska.si'),
+('Narodni dom Maribor', 'https://www.nd-mb.si'),
+('Cankarjev dom', 'https://www.cd-cc.si');
+
+INSERT INTO Prosnja_organizator (TK_uporabnik, naziv_podjetja, spletna_stran, opis, razlog, status, datum_obravnave, TK_odobril, opomba_admina) VALUES
+(5, 'Kino Šiška', 'https://www.kinosiska.si', 'Kulturno-glasbeni center v Ljubljani.', 'Že vrsto let prirejamo koncerte in želimo dogodke objavljati na vaši platformi za lokalno publiko.', 'odobrena', '2026-04-10 14:32:00', 2, 'Pozdravljena Ana, vse zapisano se ujema z javnimi viri. Veselimo se sodelovanja.'),
+(1, 'Glasbeni klub Bunker', 'https://bunker.example.si', 'Mali klub za alternativno glasbo.', 'Organiziram lokalne koncerte in želim, da nas najdejo novi obiskovalci.', 'cakajoca', NULL, NULL, NULL),
+(3, 'Maja Workshops', NULL, 'Samostojna podjetnica za umetniške delavnice.', 'Vodim mesečne delavnice keramike in želim pridobivati prijave preko vaše platforme namesto Facebooka.', 'cakajoca', NULL, NULL, NULL),
+(4, 'Nočna družba Zupan', NULL, NULL, 'Hocem objavljati zabave v lokalu, ki še nima dovoljenja občine.', 'zavrnjena', '2026-04-22 09:15:00', 2, 'Prošnjo zavrnjeno: manjkajo podatki o podjetju in lokal nima ustreznih dovoljenj. Po pridobitvi dovoljenja lahko oddaš novo prošnjo.');

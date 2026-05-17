@@ -7,7 +7,11 @@
   "scripts": {
     "start": "node server.js",
     "predev": "lsof -ti:3001 | xargs kill -9 2>/dev/null; exit 0",
-    "dev": "node --watch server.js"
+    "dev": "node --watch server.js",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:logs": "docker compose logs -f db",
+    "db:reset": "docker compose down -v 2>/dev/null; docker rm -f mysql_dogodki 2>/dev/null; docker compose up -d && echo '⏳ Cakam, da MySQL postane pripravljen...' && sleep 6 && echo '✓ Baza resetirana iz init.sql'"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",

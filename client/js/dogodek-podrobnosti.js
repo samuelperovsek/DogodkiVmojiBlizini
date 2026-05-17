@@ -147,7 +147,7 @@ async function naloziPodrobnostiDogodka() {
                   <i class="bi bi-shield-check text-success"></i> Ob rezervaciji prejmete opomnik na e-naslov.
                 </small>
               </div>
-            </</aside>
+            </aside>
           </div>
         </div>
       </section>
