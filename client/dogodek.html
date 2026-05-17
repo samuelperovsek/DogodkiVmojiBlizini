@@ -110,9 +110,26 @@
 
         <div class="col-lg-8">
 
-          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80" alt="Festival Lent" class="img-fluid rounded mb-4">
+          <div class="relative mb-4 overflow-hidden rounded-2xl shadow-2xl group">
+            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1200&q=80" alt="Festival Lent" class="img-fluid w-full h-[420px] object-cover transition-transform duration-700 group-hover:scale-105">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
+            <div class="absolute bottom-4 left-4 right-4 flex items-end justify-between text-white">
+              <div class="flex items-center gap-2 backdrop-blur-md bg-black/30 rounded-full px-3 py-1.5 ring-1 ring-white/20">
+                <i class="bi bi-camera-fill text-sm"></i>
+                <span class="text-xs font-medium">Foto: Narodni dom Maribor</span>
+              </div>
+              <div class="flex gap-2">
+                <button class="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md hover:bg-white/25 ring-1 ring-white/20 transition-all flex items-center justify-center" aria-label="Deli">
+                  <i class="bi bi-share"></i>
+                </button>
+                <button class="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md hover:bg-white/25 ring-1 ring-white/20 transition-all flex items-center justify-center" aria-label="Priljubljeno">
+                  <i class="bi bi-heart"></i>
+                </button>
+              </div>
+            </div>
+          </div>
 
-          <h2>O dogodku</h2>
+          <h2>O <span class="gradient-text">dogodku</span></h2>
           <p class="lead text-muted">
             Otvoritveni koncert največjega slovenskega poletnega festivala v srcu Maribora.
           </p>
@@ -127,13 +144,45 @@
             festivalskega večera pa je za vse obiskovalce brezplačen.
           </p>
 
-          <h3 class="mt-4">Kaj pričakovati</h3>
-          <ul>
-            <li>Vrhunska zasedba — Simfonični orkester RTV Slovenija</li>
-            <li>Lokalna kulinarika — štajerska vina in jedi</li>
-            <li>Profesionalni posnetki — prenos v živo na TV SLO 1</li>
-            <li>Prizorišče je dostopno z vozičkom</li>
-          </ul>
+          <h3 class="mt-4">Kaj <span class="gradient-text">pričakovati</span></h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4">
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-md transition-all">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-brand-100 to-pink-100 text-brand-700 flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-music-note-list"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-sm text-ink-900">Vrhunska zasedba</div>
+                <div class="text-xs text-ink-500">Simfonični orkester RTV SLO</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-md transition-all">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-100 to-orange-100 text-amber-700 flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-cup-hot-fill"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-sm text-ink-900">Lokalna kulinarika</div>
+                <div class="text-xs text-ink-500">Štajerska vina in jedi</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-md transition-all">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-100 to-blue-100 text-cyan-700 flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-broadcast"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-sm text-ink-900">Prenos v živo</div>
+                <div class="text-xs text-ink-500">TV SLO 1 in spletni stream</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-ink-200 hover:border-brand-300 hover:shadow-md transition-all">
+              <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-100 to-green-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                <i class="bi bi-universal-access"></i>
+              </div>
+              <div>
+                <div class="font-semibold text-sm text-ink-900">Dostopno</div>
+                <div class="text-xs text-ink-500">Prizorišče primerno za vozičke</div>
+              </div>
+            </div>
+          </div>
 
           <h3 class="mt-4">Organizator</h3>
           <div class="card p-3 mb-4">
@@ -204,36 +253,77 @@
         </div>
 
         <aside class="col-lg-4">
-          <div class="card p-4" style="position: sticky; top: 90px;">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <div>
-                <small class="text-muted">Cena</small>
-                <h2 class="event-price mb-0">22 €</h2>
+          <div class="relative overflow-hidden rounded-2xl bg-white border border-ink-200 shadow-xl p-5 sticky top-[90px]">
+            <div class="absolute -top-16 -right-16 w-40 h-40 bg-brand-100/60 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-pink-100/60 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="relative">
+              <div class="flex justify-between items-center mb-3">
+                <div>
+                  <small class="text-muted uppercase tracking-wider text-xs font-bold">Cena</small>
+                  <h2 class="event-price mb-0">22 €</h2>
+                  <small class="text-ink-500">/ vstopnica</small>
+                </div>
+                <button class="w-11 h-11 rounded-xl border-2 border-ink-200 hover:border-accent-500 hover:text-accent-600 transition-all flex items-center justify-center text-lg" aria-label="Priljubljeno">
+                  <i class="bi bi-heart"></i>
+                </button>
               </div>
-              <button class="btn btn-outline-primary"><i class="bi bi-heart"></i></button>
+
+              <div class="flex items-center justify-between mb-3 p-2 bg-emerald-50 rounded-lg border border-emerald-100">
+                <div class="flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span class="text-xs font-semibold text-emerald-700">Še 1.262 mest na voljo</span>
+                </div>
+                <strong class="text-xs text-emerald-700">84%</strong>
+              </div>
+              <div class="progress mb-4" style="height: 6px;">
+                <div class="progress-bar" style="width: 16%; background: linear-gradient(90deg, #10b981, #34d399);"></div>
+              </div>
+
+              <div class="space-y-2.5 mb-4">
+                <div class="flex items-center gap-3 text-sm">
+                  <div class="w-9 h-9 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-calendar-event"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-ink-900">Pet, 28. junij 2026</div>
+                    <div class="text-xs text-ink-500">Začetek ob 20:00 (vrata 19:00)</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                  <div class="w-9 h-9 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-geo-alt-fill"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-ink-900">Lent, Maribor</div>
+                    <div class="text-xs text-ink-500">Glavni oder ob Dravi</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                  <div class="w-9 h-9 rounded-lg bg-brand-50 text-brand-700 flex items-center justify-center flex-shrink-0">
+                    <i class="bi bi-telephone-fill"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-ink-900">+386 2 229 40 50</div>
+                    <div class="text-xs text-ink-500">Pon–Pet 9:00–17:00</div>
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-lg w-100 mb-2 animate-glow-pulse">
+                <i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico
+              </button>
+              <button class="btn btn-outline-primary w-100">
+                <i class="bi bi-share"></i> Deli
+              </button>
+
+              <div class="mt-4 p-3 bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
+                <div class="flex items-start gap-2 text-xs text-emerald-800">
+                  <i class="bi bi-shield-check text-base flex-shrink-0 mt-0.5"></i>
+                  <span><strong>Zaščita kupca.</strong> Ob rezervaciji prejmete opomnik 24 ur in 1 uro pred dogodkom.</span>
+                </div>
+              </div>
             </div>
-
-            <hr>
-
-            <p class="mb-2"><i class="bi bi-calendar-event text-primary"></i> <strong>Pet, 28. junij 2026</strong></p>
-            <p class="mb-2"><i class="bi bi-clock text-primary"></i> Začetek ob 20:00 (vrata 19:00)</p>
-            <p class="mb-2"><i class="bi bi-geo-alt text-primary"></i> Lent, Maribor</p>
-            <p class="mb-2"><i class="bi bi-people text-primary"></i> <span class="text-success">238 / 1.500 mest</span></p>
-            <p class="mb-3"><i class="bi bi-telephone text-primary"></i> +386 2 229 40 50</p>
-
-            <button class="btn btn-primary btn-lg w-100 mb-2">
-              <i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico
-            </button>
-            <button class="btn btn-outline-primary w-100">
-              <i class="bi bi-share"></i> Deli
-            </button>
-
-            <hr>
-
-            <small class="text-muted">
-              <i class="bi bi-shield-check text-success"></i>
-              Ob rezervaciji prejmete opomnik 24 ur in 1 uro pred dogodkom.
-            </small>
           </div>
         </aside>
       </div>

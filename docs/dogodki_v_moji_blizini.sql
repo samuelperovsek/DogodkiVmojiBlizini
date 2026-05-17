@@ -80,10 +80,25 @@ CREATE TABLE Priljubljeni_dogodki (
 );
 
 CREATE TABLE Priljubljeni_organizatorji (
-    ID_priljubljeni_organizatorji int(10) NOT NULL AUTO_INCREMENT, 
-    TK_uporabnik int(10) NOT NULL, 
-    TK_organizator int(10) NOT NULL, 
+    ID_priljubljeni_organizatorji int(10) NOT NULL AUTO_INCREMENT,
+    TK_uporabnik int(10) NOT NULL,
+    TK_organizator int(10) NOT NULL,
     PRIMARY KEY (ID_priljubljeni_organizatorji)
+);
+
+CREATE TABLE Prosnja_organizator (
+    ID_prosnja int(10) NOT NULL AUTO_INCREMENT,
+    TK_uporabnik int(10) NOT NULL,
+    naziv_podjetja varchar(255) NOT NULL,
+    spletna_stran varchar(255),
+    opis TEXT,
+    razlog TEXT NOT NULL,
+    status varchar(20) NOT NULL DEFAULT 'cakajoca',
+    datum_prosnje timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    datum_obravnave timestamp NULL,
+    TK_odobril int(10) NULL,
+    opomba_admina TEXT,
+    PRIMARY KEY (ID_prosnja)
 );
 
 ALTER TABLE Kraj ADD CONSTRAINT FKKraj_Regija FOREIGN KEY (TK_regija) REFERENCES Regija (ID_regija);
@@ -98,6 +113,8 @@ ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Uporabnik FOREI
 ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Org FOREIGN KEY (TK_organizator) REFERENCES Organizator (ID_organizator);
 ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
 ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek);
+ALTER TABLE Prosnja_organizator ADD CONSTRAINT FKProsnja_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
+ALTER TABLE Prosnja_organizator ADD CONSTRAINT FKProsnja_Admin FOREIGN KEY (TK_odobril) REFERENCES Uporabnik (ID_uporabnik);
 
 --inserti
 

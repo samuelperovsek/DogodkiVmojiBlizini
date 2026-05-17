@@ -76,12 +76,37 @@
 
     <main class="admin-content">
 
-      <div id="pregled" class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+      <div id="pregled" class="flex justify-between items-center mb-5 flex-wrap gap-3">
         <div>
-          <h2>Pozdravljen, <span data-user-name>admin</span></h2>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-brand-700 bg-gradient-to-r from-brand-100 to-pink-100 rounded-full ring-1 ring-brand-200/60">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Aktivna seja
+            </span>
+          </div>
+          <h2 class="mb-1">Pozdravljen, <span class="gradient-text" data-user-name>admin</span> 👋</h2>
           <p class="text-muted mb-0">Nadzorna plošča za upravljanje platforme.</p>
         </div>
+        <div class="flex items-center gap-2">
+          <div class="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-white border border-ink-200 text-sm">
+            <i class="bi bi-clock text-brand-700"></i>
+            <span class="text-ink-700 font-medium" id="adminTime">—</span>
+          </div>
+          <button class="btn btn-outline-primary"><i class="bi bi-bell"></i> Obvestila</button>
+        </div>
       </div>
+
+      <script>
+        (function(){
+          const el = document.getElementById('adminTime');
+          if (!el) return;
+          const tick = () => {
+            const d = new Date();
+            el.textContent = d.toLocaleString('sl-SI', { weekday: 'short', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+          };
+          tick();
+          setInterval(tick, 30000);
+        })();
+      </script>
 
       <section id="prosnje-section" class="stat-card mb-4">
         <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -131,34 +156,50 @@
       <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
           <div class="stat-card">
-            <div class="stat-icon"><i class="bi bi-calendar-event"></i></div>
-            <h2>2.412</h2>
-            <p class="text-muted mb-0">Aktivni dogodki</p>
-            <small class="text-success"><i class="bi bi-arrow-up"></i> 12,3 % v tem tednu</small>
+            <div class="flex items-start justify-between mb-2">
+              <div class="stat-icon" style="margin: 0;"><i class="bi bi-calendar-event"></i></div>
+              <span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                <i class="bi bi-arrow-up text-[10px]"></i> 12,3%
+              </span>
+            </div>
+            <h2 class="gradient-text">2.412</h2>
+            <p class="text-muted mb-0 text-sm">Aktivni dogodki</p>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card">
-            <div class="stat-icon" style="background-color: #10b981;"><i class="bi bi-people"></i></div>
-            <h2>12.847</h2>
-            <p class="text-muted mb-0">Uporabniki</p>
-            <small class="text-success"><i class="bi bi-arrow-up"></i> 248 ta teden</small>
+            <div class="flex items-start justify-between mb-2">
+              <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #10b981, #34d399);"><i class="bi bi-people"></i></div>
+              <span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
+                <i class="bi bi-arrow-up text-[10px]"></i> 248
+              </span>
+            </div>
+            <h2 style="background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">12.847</h2>
+            <p class="text-muted mb-0 text-sm">Uporabniki</p>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card">
-            <div class="stat-icon" style="background-color: #f59e0b;"><i class="bi bi-hourglass-split"></i></div>
-            <h2>12</h2>
-            <p class="text-muted mb-0">Čaka na odobritev</p>
-            <small class="text-danger"><i class="bi bi-arrow-down"></i> 3 manj kot včeraj</small>
+            <div class="flex items-start justify-between mb-2">
+              <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #f59e0b, #fbbf24);"><i class="bi bi-hourglass-split"></i></div>
+              <span class="text-xs font-bold px-2 py-1 rounded-full bg-rose-100 text-rose-700 flex items-center gap-1">
+                <i class="bi bi-arrow-down text-[10px]"></i> 3
+              </span>
+            </div>
+            <h2 style="background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">12</h2>
+            <p class="text-muted mb-0 text-sm">Čaka na odobritev</p>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card">
-            <div class="stat-icon" style="background-color: #db2777;"><i class="bi bi-flag-fill"></i></div>
-            <h2>5</h2>
-            <p class="text-muted mb-0">Prijave neprimernega</p>
-            <small class="text-danger"><i class="bi bi-arrow-up"></i> 2 novi danes</small>
+            <div class="flex items-start justify-between mb-2">
+              <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #db2777, #f472b6);"><i class="bi bi-flag-fill"></i></div>
+              <span class="text-xs font-bold px-2 py-1 rounded-full bg-rose-100 text-rose-700 flex items-center gap-1">
+                <i class="bi bi-arrow-up text-[10px]"></i> 2
+              </span>
+            </div>
+            <h2 style="background: linear-gradient(135deg, #db2777, #f472b6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">5</h2>
+            <p class="text-muted mb-0 text-sm">Prijave neprimernega</p>
           </div>
         </div>
       </div>
