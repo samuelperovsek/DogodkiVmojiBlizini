@@ -77,8 +77,8 @@ CREATE TABLE Priljubljeni_dogodki (
 
 CREATE TABLE Priljubljeni_organizatorji (
     ID_priljubljeni_organizatorji int(10) NOT NULL AUTO_INCREMENT,
-    TK_navaden_uporabnik int(10) NOT NULL,
-    TK_uporabnik_organizator int(10) NOT NULL,
+    TK_uporabnik int(10) NOT NULL,
+    TK_organizator int(10) NOT NULL,
     PRIMARY KEY (ID_priljubljeni_organizatorji)
 );
 
@@ -121,8 +121,8 @@ ALTER TABLE Ocena_komentar ADD CONSTRAINT FKOcena_Dogodek FOREIGN KEY (TK_dogode
 ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
 ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek);
 
-ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_NavadenUporabnik FOREIGN KEY (TK_navaden_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
-ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_UporabnikOrg FOREIGN KEY (TK_uporabnik_organizator) REFERENCES Uporabnik (ID_uporabnik);
+ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
+ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Organizator FOREIGN KEY (TK_organizator) REFERENCES Organizator (ID_organizator);
 
 
 -- INSERTI 
@@ -161,13 +161,13 @@ INSERT INTO Ocena_komentar (ocena, komentar, TK_uporabnik, TK_dogodek) VALUES
 (4, 'Zelo poučno, vendar je bilo premalo časa za vsa vprašanja.', 4, 4),
 (5, 'Odličen izbor glasbenih skupin!', 3, 3);
 
-INSERT INTO Priljubljeni_organizatorji (TK_navaden_uporabnik, TK_uporabnik_organizator) VALUES
-(1, 5), (3, 5), (4, 5);
-
 INSERT INTO Organizator (naziv, spletna_stran) VALUES
 ('Kino Šiška', 'https://www.kinosiska.si'),
 ('Narodni dom Maribor', 'https://www.nd-mb.si'),
 ('Cankarjev dom', 'https://www.cd-cc.si');
+
+INSERT INTO Priljubljeni_organizatorji (TK_uporabnik, TK_organizator) VALUES
+(1, 1), (3, 1), (3, 2), (4, 3);
 
 INSERT INTO Prosnja_organizator (TK_uporabnik, naziv_podjetja, spletna_stran, opis, razlog, status, datum_obravnave, TK_odobril, opomba_admina) VALUES
 (5, 'Kino Šiška', 'https://www.kinosiska.si', 'Kulturno-glasbeni center v Ljubljani.', 'Že vrsto let prirejamo koncerte in želimo dogodke objavljati na vaši platformi za lokalno publiko.', 'odobrena', '2026-04-10 14:32:00', 2, 'Pozdravljena Ana, vse zapisano se ujema z javnimi viri. Veselimo se sodelovanja.'),
