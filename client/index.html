@@ -5,45 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DogodkiVMojiBližini.si — Odkrijte dogodke v vaši okolici</title>
 
-  <script>
-    (() => {
-      const raw = sessionStorage.getItem('uporabnik') || localStorage.getItem('uporabnik');
-      const u = JSON.parse(raw || 'null');
-      if (u && u.vloga === 'admin') location.replace('admin.html');
-    })();
-  </script>
+  <script src="js/guard-redirect-admin.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      corePlugins: { preflight: false, container: false },
-      theme: {
-        extend: {
-          colors: {
-            brand:  { 50:'#f5f3ff', 100:'#ede9fe', 200:'#ddd6fe', 500:'#8b5cf6', 600:'#7c3aed', 700:'#6d28d9', 800:'#5b21b6', 900:'#4c1d95' },
-            accent: { 500:'#ec4899', 600:'#db2777', 700:'#be185d' },
-            ink:    { 50:'#f8fafc', 100:'#f1f5f9', 200:'#e2e8f0', 500:'#64748b', 700:'#334155', 900:'#0f172a' },
-          },
-          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-          boxShadow: {
-            glow:    '0 10px 40px -10px rgba(109,40,217,0.4)',
-            'glow-pink': '0 10px 40px -10px rgba(236,72,153,0.4)',
-          },
-          animation: {
-            'fade-in': 'fadeIn 0.5s ease-out',
-            'slide-up': 'slideUp 0.5s ease-out',
-          },
-          keyframes: {
-            fadeIn: { '0%': { opacity: 0 }, '100%': { opacity: 1 } },
-            slideUp: { '0%': { opacity: 0, transform: 'translateY(20px)' }, '100%': { opacity: 1, transform: 'translateY(0)' } },
-          },
-        },
-      },
-    }
-  </script>
+  <script src="js/tailwind-config.js"></script>
 
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -101,7 +69,7 @@
             </span>
             Tedensko <strong class="font-bold">248 novih</strong> dogodkov
           </span>
-          <h1>Odkrijte dogodke <br class="hidden md:block">v vaši <span class="relative inline-block">okolici<svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M2,10 Q60,2 100,6 T198,4" stroke="#fbcfe8" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/></svg></span></h1>
+          <h1>Odkrijte dogodke <br class="hidden md:block">v vaši okolici<svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M2,10 Q60,2 100,6 T198,4" stroke="#fbcfe8" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/></svg></span></h1>
           <p class="lead">
             Od koncertov in delavnic do športnih dogodkov in sejmov — vse dogajanje v Sloveniji
             na enem mestu, prilagojeno vašim interesom.
@@ -160,14 +128,14 @@
 
         <div class="col-lg-5 d-none d-lg-block text-center relative">
           <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-500/50 rounded-full blur-3xl animate-float pointer-events-none"></div>
-          <div class="absolute -bottom-10 -right-10 w-48 h-48 bg-violet-400/50 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: -2s;"></div>
+          <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-violet-400/50 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: -2s;"></div>
 
-          <div class="absolute -top-4 -left-6 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -1s;">
+          <div class="absolute -bottom-4 -left-6 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -1s;">
             <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 text-white flex items-center justify-center shadow-md">
               <i class="bi bi-ticket-perforated text-lg"></i>
             </div>
-            <div class="text-left">
-              <div class="text-xs text-ink-500 font-medium">Pravkar rezervirano</div>
+            <div class="relative text-left">
+              <div class="text-xs -right-12 text-ink-500 font-medium">Pravkar rezervirano</div>
               <div class="text-sm font-bold text-ink-900">Festival Lent</div>
             </div>
           </div>
@@ -181,8 +149,9 @@
               <div class="text-sm font-bold text-ink-900">4.8 / 5.0</div>
             </div>
           </div>
-
-          <img class="hero-img relative rotate-1 hover:rotate-0 transition-transform duration-700" src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80" alt="Koncert">
+          <div class="container">
+            <div class="w-40 h-40"></div>
+          </div>
         </div>
       </div>
     </div>
