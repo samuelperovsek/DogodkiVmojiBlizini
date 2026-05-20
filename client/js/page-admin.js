@@ -39,7 +39,6 @@ const counter = document.getElementById('userCount');
 const prosnjeCount = document.getElementById('prosnjeCount');
 const sidebarBadge = document.getElementById('sidebarProsnjeBadge');
 
-// --- SEGMENT 1: UPORABNIKI ---
 
 function vlogaBadge(vloga) {
   const map = {
@@ -112,7 +111,6 @@ async function spremeniVlogo(e) {
   }
 }
 
-// --- SEGMENT 2: PROŠNJE ZA ORGANIZATORJE ---
 
 function statusBadge(status) {
   const map = { cakajoca: 'status-pending', odobrena: 'status-approved', zavrnjena: 'status-rejected' };
@@ -235,7 +233,6 @@ async function naloziProsnje() {
   }
 }
 
-// --- SEGMENT 3: DOGODKI ---
 
 async function naloziDogodke() {
   if (!dogodkiTbody) return;
@@ -378,7 +375,6 @@ if (dogodkiTbody) {
   });
 }
 
-// --- GLAVNI ZAGON VSEH FUNKCIJ (Sinhronizirano in zaporedno) ---
 (async function inicializirajAdminPanel() {
   try {
     const { uporabniki } = await apiFetch('/admin/uporabniki');

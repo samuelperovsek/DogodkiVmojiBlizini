@@ -78,7 +78,6 @@ function renderPriljubljeni(priljubljeni) {
   }).join('');
 }
 
-// OSVEŽENA IN POSODOBLJENA FUNKCIJA ZA PRIKAZ ORGANIZATORJEV
 function renderOrganizatorji(organizatorji) {
   document.getElementById('organizatorjiCount').textContent = organizatorji.length;
   const el = document.getElementById('organizatorjiList');
@@ -87,9 +86,7 @@ function renderOrganizatorji(organizatorji) {
     return;
   }
 
-  // Ustvarimo enak čudovit stil kot v dogodek-podrobnosti.html
   el.innerHTML = `<div class="d-flex flex-column gap-3">` + organizatorji.map(o => {
-    // Generiranje inicialk iz naziva organizacije ali podjetja
     const inic = o.naziv ? o.naziv.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() : 'ORG';
     
     return `
@@ -115,11 +112,9 @@ function renderOrganizatorji(organizatorji) {
     `;
   }).join('') + `</div>`;
 
-  // Aktiviramo Event Listenere na gumbih za odstranjevanje
   dodajDogodkeZaOdstranjevanjeOrganizatorjev();
 }
 
-// Pomožna funkcija za takojšen preklop spremljanja iz profila
 function dodajDogodkeZaOdstranjevanjeOrganizatorjev() {
   document.querySelectorAll('.gumb-odstrani-org').forEach(gumb => {
     gumb.addEventListener('click', async (e) => {
@@ -129,7 +124,6 @@ function dodajDogodkeZaOdstranjevanjeOrganizatorjev() {
       if (confirm('Ali res želite prenehati slediti temu organizatorju?')) {
         try {
           await apiFetch(`/organizatorji/${orgId}/toggle-spremljaj`, { method: 'POST' });
-          // Ko uspešno odstranimo, osvežimo celotne podatke profila, da posodobimo grafe in sezname
           osveziPodatkeProfila();
         } catch (err) {
           console.error('Napaka pri odstranjevanju:', err);
@@ -457,7 +451,6 @@ shraniBtn.addEventListener('click', async () => {
   }
 });
 
-// GLAVNA FUNKCIJA ZA NALAGANJE PODATKOV IZ BACKENDA
 async function osveziPodatkeProfila() {
   try {
     const [{ uporabnik }, dashboard] = await Promise.all([
@@ -470,7 +463,7 @@ async function osveziPodatkeProfila() {
     renderPrijave(dashboard.prijave);
     renderPriljubljeni(dashboard.priljubljeni);
     renderOcene(dashboard.ocene);
-    renderOrganizatorji(dashboard.organizatorji); // Tukaj se pokliče najina nova logika
+    renderOrganizatorji(dashboard.organizatorji);
     renderOrganizatorBox(uporabnik);
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
@@ -482,9 +475,7 @@ async function osveziPodatkeProfila() {
   }
 }
 
-// Inicializacijski klic ob prvem nalaganju strani
 const lokalniUporabnik = Auth.getUporabnik();
 if (lokalniUporabnik) { trenutniUporabnik = lokalniUporabnik; napolniProfil(lokalniUporabnik); }
 
-// Pokličemo skupno funkcijo za nalaganje
 osveziPodatkeProfila();

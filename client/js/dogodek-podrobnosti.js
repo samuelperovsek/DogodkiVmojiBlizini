@@ -281,7 +281,6 @@ async function naloziPodrobnostiDogodka() {
       gumbSpremljaj.style.display = 'none';
     }
 
-    // --- LOGIKA ZA PRODUKTNI MODAL OCENJEVANJA ---
     const gumbNapisiOceno = document.getElementById('gumb-odpri-oceno');
     const bsModal = new bootstrap.Modal(document.getElementById('modalOcena'));
 
@@ -294,34 +293,28 @@ async function naloziPodrobnostiDogodka() {
       });
     }
 
-    // Nastavitev interaktivnih dogodkov za zvezdice (Hover + Click)
     const zvezdiceZaKlik = document.querySelectorAll('.tekst-vnos-zvezda');
     zvezdiceZaKlik.forEach(zvezda => {
-      // 1. KLIK: Trajno zaklene izbire
       zvezda.addEventListener('click', (e) => {
         izbranaOcena = parseInt(e.target.getAttribute('data-vrednost'));
         posodobiIzgledVnosaZvezdic(izbranaOcena);
       });
 
-      // 2. HOVER (Mouseover): Začasno osvetli zvezdice in jih rahlo poveča
       zvezda.addEventListener('mouseover', (e) => {
         const zacasnaOcena = parseInt(e.target.getAttribute('data-vrednost'));
         posodobiIzgledVnosaZvezdic(zacasnaOcena);
         e.target.style.transform = 'scale(1.15)';
       });
 
-      // Ko se miška umakne iz posamezne zvezdice, jo vrne v normalno velikost
       zvezda.addEventListener('mouseout', (e) => {
         e.target.style.transform = 'scale(1)';
       });
     });
 
-    // 3. MOUSELEAVE (Celotni kontejner): Ko gre miška stran iz območja, vrnemo na zaklenjeno vrednost
     document.querySelector('.vnos-zvezdic').addEventListener('mouseleave', () => {
       posodobiIzgledVnosaZvezdic(izbranaOcena);
     });
 
-    // Oddaja obrazca na strežnik
     const obrazec = document.getElementById('obrazec-ocena');
     obrazec.addEventListener('submit', async (e) => {
       e.preventDefault();
