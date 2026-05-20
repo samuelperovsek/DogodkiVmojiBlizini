@@ -4,6 +4,10 @@ import cors from 'cors';
 import authRoutes from './routes/auth.js';
 import adminRoutes from './routes/admin.js';
 import dogodkiRoutes from './routes/dogodki.js';
+import dodajDogodekRoutes from './routes/dodaj_dogodek.js';
+import adminDogodkiRoutes from './routes/admin_dogodki.js';
+import organizatorjiRuter from './routes/organizatorji.js';
+import oceneRouter from './routes/ocene.js';
 
 const app = express();
 
@@ -22,6 +26,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(express.static('public'));
 
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
@@ -35,7 +40,10 @@ app.get('/api/zdravje', (req, res) => {
 app.use('/api', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', dogodkiRoutes);
-
+app.use('/api', dodajDogodekRoutes);
+app.use('/api', adminDogodkiRoutes);
+app.use('/api/organizatorji', organizatorjiRuter);
+app.use('/api', oceneRouter);
 app.use('/api', (req, res) => {
   res.status(404).json({ napaka: 'Endpoint ne obstaja.' });
 });

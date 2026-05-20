@@ -31,12 +31,15 @@ document.querySelectorAll('[data-logout]').forEach(btn => {
   setInterval(tick, 30000);
 })();
 
-const tbody = document.getElementById('usersTbody');
-const counter = document.getElementById('userCount');
+const usersTbody = document.getElementById('usersTbody');
+const dogodkiTbody = document.getElementById('admin-dogodki-tbody');
+const prosnjeList = document.getElementById('prosnjeList');
 
-function pokaziSporocilo(tip, besedilo) {
-  pokaziToast(tip, besedilo);
-}
+const counter = document.getElementById('userCount');
+const prosnjeCount = document.getElementById('prosnjeCount');
+const sidebarBadge = document.getElementById('sidebarProsnjeBadge');
+
+// --- SEGMENT 1: UPORABNIKI ---
 
 function vlogaBadge(vloga) {
   const map = {
@@ -48,8 +51,9 @@ function vlogaBadge(vloga) {
 }
 
 function renderUporabniki(seznam) {
+  if (!usersTbody) return;
   counter.textContent = `${seznam.length} uporabnikov`;
-  tbody.innerHTML = seznam.map(u => {
+  usersTbody.innerHTML = seznam.map(u => {
     const datum = new Date(u.datum_registracije).toLocaleDateString('sl-SI');
     const inicialke = ((u.ime?.[0] || '') + (u.priimek?.[0] || '')).toUpperCase();
     const jaz = u.id === trenutni?.id;
@@ -79,7 +83,7 @@ function renderUporabniki(seznam) {
     `;
   }).join('');
 
-  tbody.querySelectorAll('[data-spremeni-vlogo]').forEach(sel => {
+  usersTbody.querySelectorAll('[data-spremeni-vlogo]').forEach(sel => {
     sel.addEventListener('change', spremeniVlogo);
   });
 }
@@ -99,29 +103,16 @@ async function spremeniVlogo(e) {
     });
     tr.querySelector('td:nth-child(4)').innerHTML = vlogaBadge(novaVloga);
     sel.dataset.prev = novaVloga;
-    pokaziSporocilo('success', `Vloga uspešno spremenjena v "${novaVloga}".`);
+    pokaziToast('success', `Vloga uspešno spremenjena v "${novaVloga}".`);
   } catch (err) {
     sel.value = stara;
-    pokaziSporocilo('danger', err instanceof ApiError ? err.message : 'Napaka pri komunikaciji.');
+    pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri komunikaciji.');
   } finally {
     sel.disabled = false;
   }
 }
 
-try {
-  const { uporabniki } = await apiFetch('/admin/uporabniki');
-  renderUporabniki(uporabniki);
-} catch (err) {
-  tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Napaka pri nalaganju: ${err.message}</td></tr>`;
-}
-
-const prosnjeList = document.getElementById('prosnjeList');
-const prosnjeCount = document.getElementById('prosnjeCount');
-const sidebarBadge = document.getElementById('sidebarProsnjeBadge');
-
-function pokaziProsnjeSporocilo(tip, besedilo) {
-  pokaziToast(tip, besedilo);
-}
+// --- SEGMENT 2: PROŠNJE ZA ORGANIZATORJE ---
 
 function statusBadge(status) {
   const map = { cakajoca: 'status-pending', odobrena: 'status-approved', zavrnjena: 'status-rejected' };
@@ -129,6 +120,7 @@ function statusBadge(status) {
 }
 
 function renderProsnje(prosnje) {
+  if (!prosnjeList) return;
   const cakajoce = prosnje.filter(p => p.status === 'cakajoca');
   prosnjeCount.textContent = `${cakajoce.length} čaka`;
   if (cakajoce.length) {
@@ -224,12 +216,12 @@ async function obravnavajProsnjo(e) {
       method: 'PATCH',
       body: JSON.stringify({ status, opomba_admina: opomba }),
     });
-    pokaziProsnjeSporocilo('success', odgovor.sporocilo);
+    pokaziToast('success', odgovor.sporocilo);
     await naloziProsnje();
     const { uporabniki: posodobljeni } = await apiFetch('/admin/uporabniki');
     renderUporabniki(posodobljeni);
   } catch (err) {
-    pokaziProsnjeSporocilo('danger', err instanceof ApiError ? err.message : 'Napaka pri obravnavi.');
+    pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri obravnavi.');
     vsi.forEach(b => b.disabled = false);
   }
 }
@@ -239,8 +231,176 @@ async function naloziProsnje() {
     const { prosnje } = await apiFetch('/admin/prosnje');
     renderProsnje(prosnje);
   } catch (err) {
-    prosnjeList.innerHTML = `<div class="text-center text-danger py-3">Napaka pri nalaganju: ${err.message}</div>`;
+    if (prosnjeList) prosnjeList.innerHTML = `<div class="text-center text-danger py-3">Napaka pri nalaganju: ${err.message}</div>`;
   }
 }
 
-await naloziProsnje();
+// --- SEGMENT 3: DOGODKI ---
+
+async function naloziDogodke() {
+  if (!dogodkiTbody) return;
+  const token = Auth.getToken();
+
+  try {
+    const odgovor = await fetch('http://localhost:3001/api/admin/dogodki', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!odgovor.ok) throw new Error('Napaka pri pridobivanju podatkov.');
+
+    const dogodki = await odgovor.json();
+    dogodkiTbody.innerHTML = '';
+
+    dogodki.forEach(dogodek => {
+      const tr = document.createElement('tr');
+
+      const organizator = dogodek.org_podjetje || 
+                          (dogodek.org_ime ? `${dogodek.org_ime} ${dogodek.org_priimek}` : 'Neznan organizator');
+
+      const datum = new Date(dogodek.datum_zacetka).toLocaleDateString('sl-SI');
+      
+      const katNaziv = dogodek.kategorija_naziv || dogodek.podkategorija || 'Brez kategorije';
+      const krajIme = dogodek.kraj_ime || 'Neznana lokacija';
+
+      let statusBadgeHtml = '';
+      let gumbiAkcij = '';
+
+      if (dogodek.status === 'v_pregledu') {
+        statusBadgeHtml = `<span class="status-badge status-pending">Čaka</span>`;
+        gumbiAkcij = `
+          <button class="btn btn-sm btn-success akcija-odobri" data-id="${dogodek.ID_dogodek}" title="Odobri"><i class="bi bi-check-lg"></i></button>
+          <button class="btn btn-sm btn-warning akcija-promoviraj" data-id="${dogodek.ID_dogodek}" title="Promoviraj"><i class="bi bi-star-fill"></i></button>
+          <button class="btn btn-sm btn-danger akcija-zavrni" data-id="${dogodek.ID_dogodek}" title="Zavrni"><i class="bi bi-x-lg"></i></button>
+        `;
+      } else if (dogodek.status === 'odobreno') {
+        statusBadgeHtml = `<span class="status-badge status-approved">Odobreno</span>`;
+        gumbiAkcij = `
+          <button class="btn btn-sm btn-outline-primary akcija-uredi" data-id="${dogodek.ID_dogodek}" title="Uredi"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>
+        `;
+      } else if (dogodek.status === 'promoviran') {
+        statusBadgeHtml = `<span class="status-badge status-promoted"><i class="bi bi-star-fill"></i> Promoviran</span>`;
+        gumbiAkcij = `
+          <button class="btn btn-sm btn-outline-primary akcija-uredi" data-id="${dogodek.ID_dogodek}" title="Uredi"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>
+        `;
+      } else if (dogodek.status === 'zavrnjeno') {
+        statusBadgeHtml = `<span class="status-badge status-rejected">Zavrnjeno</span>`;
+        gumbiAkcij = `
+          <button class="btn btn-sm btn-outline-primary akcija-preveri" data-id="${dogodek.ID_dogodek}" title="Preveri"><i class="bi bi-eye"></i></button>
+          <button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>
+        `;
+      }
+
+      tr.innerHTML = `
+        <td>
+          <strong>${dogodek.Naslov || 'Brez naslova'}</strong><br>
+          <small class="text-muted">${katNaziv} • ${krajIme}</small>
+        </td>
+        <td>${organizator}</td>
+        <td><small>${datum}</small></td>
+        <td>${statusBadgeHtml}</td>
+        <td>${gumbiAkcij}</td>
+      `;
+
+      dogodkiTbody.appendChild(tr);
+    });
+
+    dogodkiTbody.replaceWith(dogodkiTbody.cloneNode(true));
+    const svezTbody = document.getElementById('admin-dogodki-tbody');
+    
+    svezTbody.addEventListener('click', async (e) => {
+      const gumb = e.target.closest('button');
+      if (!gumb) return;
+
+      const idDogodka = gumb.dataset.id;
+      
+      if (gumb.classList.contains('akcija-odobri')) {
+        await posodobiStatusDogodka(idDogodka, 'odobreno');
+      } else if (gumb.classList.contains('akcija-zavrni')) {
+        await posodobiStatusDogodka(idDogodka, 'zavrnjeno');
+      } else if (gumb.classList.contains('akcija-promoviraj')) {
+        await posodobiStatusDogodka(idDogodka, 'promoviran');
+      } 
+      else if (gumb.classList.contains('akcija-brisi')) {
+        const potrjeno = await potrdiAkcijo({
+          naslov: 'Izbriši dogodek',
+          sporocilo: 'Ali ste prepričani, da želite trajno izbrisati ta dogodek? Tega dejanja ni mogoče razveljaviti.',
+          gumbPotrdi: 'Izbriši',
+          tipGumba: 'btn-danger'
+        });
+
+        if (potrjeno) {
+          await izbrisiDogodek(idDogodka);
+        }
+      }
+    });
+
+  } catch (err) {
+    if (dogodkiTbody) dogodkiTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Napaka: ${err.message}</td></tr>`;
+  }
+}
+
+async function posodobiStatusDogodka(id, novStatus) {
+  const token = Auth.getToken();
+  try {
+    const odgovor = await fetch(`http://localhost:3001/api/admin/dogodki/${id}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ status: novStatus })
+    });
+
+    if (odgovor.ok) {
+      await naloziDogodke();
+      pokaziToast('success', `Status dogodka uspešno spremenjen v: ${novStatus}`);
+    } else {
+      alert('Napaka pri posodabljanju statusa.');
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+
+// --- GLAVNI ZAGON VSEH FUNKCIJ (Sinhronizirano in zaporedno) ---
+(async function inicializirajAdminPanel() {
+  try {
+    const { uporabniki } = await apiFetch('/admin/uporabniki');
+    renderUporabniki(uporabniki);
+  } catch (err) {
+    if (usersTbody) usersTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Napaka: ${err.message}</td></tr>`;
+  }
+
+  await naloziProsnje();
+
+  await naloziDogodke();
+})();
+
+async function izbrisiDogodek(id) {
+  const token = Auth.getToken();
+  try {
+    const odgovor = await fetch(`http://localhost:3001/api/admin/dogodki/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (odgovor.ok) {
+      await naloziDogodke();
+      pokaziToast('success', 'Dogodek uspešno izbrisan.');
+    } else {
+      const napaka = await odgovor.json();
+      pokaziToast('danger', napaka.napaka || 'Napaka pri brisanju.');
+    }
+  } catch (err) {
+    console.error(err);
+    pokaziToast('danger', 'Napaka pri komunikaciji s strežnikom.');
+  }
+}

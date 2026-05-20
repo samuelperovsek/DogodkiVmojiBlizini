@@ -1,4 +1,132 @@
-(() => {
+import { Auth, ApiError } from './auth.js'; 
+
+document.addEventListener('DOMContentLoaded', async () => {
   const zac = document.querySelector('[data-zacetni-datum]');
-  if (zac) zac.min = new Date().toISOString().split('T')[0];
-})();
+  if (zac) {
+    zac.min = new Date().toISOString().split('T')[0];
+  }
+
+  const surovUporabnik = localStorage.getItem('uporabnik'); 
+  const token = Auth.getToken();
+
+  if (surovUporabnik && token) {
+    try {
+      const uporabnik = JSON.parse(surovUporabnik);
+
+      const elEmail = document.getElementById('kontakt_email');
+      if (elEmail) {
+        elEmail.value = uporabnik.email || '';
+      }
+
+      const odgovor = await fetch(`http://localhost:3001/api/organizator-podatki?id=${uporabnik.id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (odgovor.ok) {
+        const organizator = await odgovor.json();
+
+        const elTelefon = document.getElementById('kontakt_telefon');
+        const elSpletna = document.getElementById('spletna_stran');
+
+        if (elTelefon) elTelefon.value = organizator.telefon || '';
+        if (elSpletna) elSpletna.value = organizator.spletna_stran || '';
+      }
+    } catch (err) {
+      console.error('Napaka pri samodejnem izpolnjevanju forme:', err);
+    }
+  }
+
+  // 2. SUBMIT FORME
+  const forma = document.getElementById('formaDogodek');
+
+  if (forma) {
+    forma.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+
+      formData.append('naslov', document.getElementById('naslov')?.value || '');
+      formData.append('kategorija', document.getElementById('kategorija')?.value || '');
+      formData.append('podkategorija', document.getElementById('podkategorija')?.value || '');
+      formData.append('kratek_opis', document.getElementById('kratek_opis')?.value || '');
+      formData.append('opis', document.getElementById('podroben_opis')?.value || '');
+      
+      formData.append('lokacija_naslov', document.getElementById('lokacija_naslov')?.value || '');
+      formData.append('lokacija_mesto', document.getElementById('lokacija_mesto')?.value || '');
+      formData.append('lokacija_prizorisce', document.getElementById('lokacija_prizorisce')?.value || '');
+      
+      formData.append('datum_zacetka', document.querySelector('[data-zacetni-datum]')?.value || '');
+      formData.append('ura_zacetka', document.querySelector('[data-zacetna-ura]')?.value || '');
+      formData.append('datum_konca', document.querySelector('[data-koncni-datum]')?.value || '');
+      formData.append('ura_konca', document.querySelector('[data-koncna-ura]')?.value || '');
+      
+      formData.append('vecdnevno', document.getElementById('vecdnevno')?.checked || false);
+      
+      formData.append('tip_cene', document.getElementById('tip_cene')?.value || '');
+      formData.append('cena', document.getElementById('cena')?.value || '0');
+      formData.append('stevilo_mest', document.getElementById('stevilo_mest')?.value || '');
+      
+      formData.append('prijave_omogocene', document.getElementById('prijave')?.checked || false);
+      formData.append('opomnik_omogocen', document.getElementById('opomnik')?.checked || false);
+      
+      formData.append('kontakt_email', document.getElementById('kontakt_email')?.value || '');
+      formData.append('kontakt_telefon', document.getElementById('kontakt_telefon')?.value || '');
+      formData.append('spletna_stran', document.getElementById('spletna_stran')?.value || '');
+
+      if (surovUporabnik) {
+        const uporabnik = JSON.parse(surovUporabnik);
+        formData.append('id_organizatorja', uporabnik.id); 
+      }
+
+      const slikaInput = document.getElementById('upload');
+      if (slikaInput && slikaInput.files.length > 0) {
+        formData.append('slika', slikaInput.files[0]);
+      }
+
+      const gumbSubmit = forma.querySelector('button[type="submit"]');
+      const originalnaVsebina = gumbSubmit.innerHTML;
+      gumbSubmit.disabled = true;
+      gumbSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Pošiljam...';
+
+      try {
+        const token = Auth.getToken();
+
+        const odgovor = await fetch('http://localhost:3001/api/dogodki', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        const rezultat = await odgovor.json();
+
+        if (!odgovor.ok) {
+          throw new ApiError(rezultat.napaka || 'Napaka pri shranjevanju.', odgovor.status);
+        }
+
+        if (window.pokaziToast) {
+          window.pokaziToast('success', 'Dogodek in slika sta bila uspešno naložena!', 'Uspešno oddano');
+        } else {
+          alert('Dogodek uspešno ustvarjen!');
+        }
+        
+        forma.reset();
+
+      } catch (err) {
+        console.error('Napaka pri pošiljanju:', err);
+        if (window.pokaziToast) {
+          window.pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri shranjevanju.', 'Napaka');
+        } else {
+          alert(`Napaka: ${err.message}`);
+        }
+      } finally {
+        gumbSubmit.disabled = false;
+        gumbSubmit.innerHTML = originalnaVsebina;
+      }
+    });
+  }
+});
