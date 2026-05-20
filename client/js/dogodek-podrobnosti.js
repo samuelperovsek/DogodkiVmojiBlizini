@@ -86,9 +86,11 @@ async function naloziPodrobnostiDogodka() {
 
     const statusPrevod = {
       'v_pregledu': 'Čaka na potrditev',
-      'odobreno': 'Aktiven',
+      'v_pripravi': 'V pripravi',
+      'aktiven': 'Aktiven',
       'promoviran': 'Izpostavljen',
-      'zavrnjeno': 'Preklican'
+      'zakljucen': 'Zaključen',
+      'odpovedan': 'Odpovedan'
     };
     const lepStatus = statusPrevod[dogodek.status] || dogodek.status || 'Aktiven';
 

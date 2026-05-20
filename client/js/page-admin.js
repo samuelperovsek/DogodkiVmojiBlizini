@@ -268,6 +268,8 @@ async function naloziDogodke() {
       let statusBadgeHtml = '';
       let gumbiAkcij = '';
 
+      const brisiGumb = `<button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>`;
+
       if (dogodek.status === 'v_pregledu') {
         statusBadgeHtml = `<span class="status-badge status-pending">Čaka</span>`;
         gumbiAkcij = `
@@ -275,24 +277,30 @@ async function naloziDogodke() {
           <button class="btn btn-sm btn-warning akcija-promoviraj" data-id="${dogodek.ID_dogodek}" title="Promoviraj"><i class="bi bi-star-fill"></i></button>
           <button class="btn btn-sm btn-danger akcija-zavrni" data-id="${dogodek.ID_dogodek}" title="Zavrni"><i class="bi bi-x-lg"></i></button>
         `;
-      } else if (dogodek.status === 'odobreno') {
-        statusBadgeHtml = `<span class="status-badge status-approved">Odobreno</span>`;
+      } else if (dogodek.status === 'aktiven') {
+        statusBadgeHtml = `<span class="status-badge status-approved">Aktiven</span>`;
         gumbiAkcij = `
-          <button class="btn btn-sm btn-outline-primary akcija-uredi" data-id="${dogodek.ID_dogodek}" title="Uredi"><i class="bi bi-pencil"></i></button>
-          <button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>
+          <button class="btn btn-sm btn-warning akcija-promoviraj" data-id="${dogodek.ID_dogodek}" title="Promoviraj"><i class="bi bi-star-fill"></i></button>
+          ${brisiGumb}
         `;
       } else if (dogodek.status === 'promoviran') {
         statusBadgeHtml = `<span class="status-badge status-promoted"><i class="bi bi-star-fill"></i> Promoviran</span>`;
         gumbiAkcij = `
-          <button class="btn btn-sm btn-outline-primary akcija-uredi" data-id="${dogodek.ID_dogodek}" title="Uredi"><i class="bi bi-pencil"></i></button>
-          <button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>
+          <button class="btn btn-sm btn-outline-secondary akcija-odstrani-promocijo" data-id="${dogodek.ID_dogodek}" title="Odstrani promocijo"><i class="bi bi-star"></i></button>
+          ${brisiGumb}
         `;
-      } else if (dogodek.status === 'zavrnjeno') {
-        statusBadgeHtml = `<span class="status-badge status-rejected">Zavrnjeno</span>`;
-        gumbiAkcij = `
-          <button class="btn btn-sm btn-outline-primary akcija-preveri" data-id="${dogodek.ID_dogodek}" title="Preveri"><i class="bi bi-eye"></i></button>
-          <button class="btn btn-sm btn-outline-danger akcija-brisi" data-id="${dogodek.ID_dogodek}" title="Briši"><i class="bi bi-trash"></i></button>
-        `;
+      } else if (dogodek.status === 'v_pripravi') {
+        statusBadgeHtml = `<span class="status-badge">V pripravi</span>`;
+        gumbiAkcij = brisiGumb;
+      } else if (dogodek.status === 'zakljucen') {
+        statusBadgeHtml = `<span class="status-badge">Zaključen</span>`;
+        gumbiAkcij = brisiGumb;
+      } else if (dogodek.status === 'odpovedan') {
+        statusBadgeHtml = `<span class="status-badge status-rejected">Odpovedan</span>`;
+        gumbiAkcij = brisiGumb;
+      } else {
+        statusBadgeHtml = `<span class="status-badge">${dogodek.status || '—'}</span>`;
+        gumbiAkcij = brisiGumb;
       }
 
       tr.innerHTML = `
@@ -307,36 +315,6 @@ async function naloziDogodke() {
       `;
 
       dogodkiTbody.appendChild(tr);
-    });
-
-    dogodkiTbody.replaceWith(dogodkiTbody.cloneNode(true));
-    const svezTbody = document.getElementById('admin-dogodki-tbody');
-    
-    svezTbody.addEventListener('click', async (e) => {
-      const gumb = e.target.closest('button');
-      if (!gumb) return;
-
-      const idDogodka = gumb.dataset.id;
-      
-      if (gumb.classList.contains('akcija-odobri')) {
-        await posodobiStatusDogodka(idDogodka, 'odobreno');
-      } else if (gumb.classList.contains('akcija-zavrni')) {
-        await posodobiStatusDogodka(idDogodka, 'zavrnjeno');
-      } else if (gumb.classList.contains('akcija-promoviraj')) {
-        await posodobiStatusDogodka(idDogodka, 'promoviran');
-      } 
-      else if (gumb.classList.contains('akcija-brisi')) {
-        const potrjeno = await potrdiAkcijo({
-          naslov: 'Izbriši dogodek',
-          sporocilo: 'Ali ste prepričani, da želite trajno izbrisati ta dogodek? Tega dejanja ni mogoče razveljaviti.',
-          gumbPotrdi: 'Izbriši',
-          tipGumba: 'btn-danger'
-        });
-
-        if (potrjeno) {
-          await izbrisiDogodek(idDogodka);
-        }
-      }
     });
 
   } catch (err) {
@@ -360,13 +338,45 @@ async function posodobiStatusDogodka(id, novStatus) {
       await naloziDogodke();
       pokaziToast('success', `Status dogodka uspešno spremenjen v: ${novStatus}`);
     } else {
-      alert('Napaka pri posodabljanju statusa.');
+      const napaka = await odgovor.json().catch(() => ({}));
+      pokaziToast('danger', napaka.napaka || 'Napaka pri posodabljanju statusa.');
     }
   } catch (err) {
     console.error(err);
+    pokaziToast('danger', 'Napaka pri komunikaciji s strežnikom.');
   }
 }
 
+
+if (dogodkiTbody) {
+  dogodkiTbody.addEventListener('click', async (e) => {
+    const gumb = e.target.closest('button');
+    if (!gumb) return;
+
+    const idDogodka = gumb.dataset.id;
+
+    if (gumb.classList.contains('akcija-odobri')) {
+      await posodobiStatusDogodka(idDogodka, 'aktiven');
+    } else if (gumb.classList.contains('akcija-zavrni')) {
+      await posodobiStatusDogodka(idDogodka, 'odpovedan');
+    } else if (gumb.classList.contains('akcija-promoviraj')) {
+      await posodobiStatusDogodka(idDogodka, 'promoviran');
+    } else if (gumb.classList.contains('akcija-odstrani-promocijo')) {
+      await posodobiStatusDogodka(idDogodka, 'aktiven');
+    } else if (gumb.classList.contains('akcija-brisi')) {
+      const potrjeno = await potrdiAkcijo({
+        naslov: 'Izbriši dogodek',
+        sporocilo: 'Ali ste prepričani, da želite trajno izbrisati ta dogodek? Tega dejanja ni mogoče razveljaviti.',
+        gumbPotrdi: 'Izbriši',
+        tipGumba: 'btn-danger'
+      });
+
+      if (potrjeno) {
+        await izbrisiDogodek(idDogodka);
+      }
+    }
+  });
+}
 
 // --- GLAVNI ZAGON VSEH FUNKCIJ (Sinhronizirano in zaporedno) ---
 (async function inicializirajAdminPanel() {
