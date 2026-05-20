@@ -31,8 +31,8 @@
       <a href="#pregled" class="active"><i class="bi bi-speedometer2"></i> Nadzorna plošča</a>
       <a href="#prosnje-section"><i class="bi bi-inbox"></i> Prošnje <span id="sidebarProsnjeBadge" class="badge bg-warning text-dark ms-1 d-none"></span></a>
       <a href="#uporabniki"><i class="bi bi-people"></i> Uporabniki in vloge</a>
-      <a href="#dogodki"><i class="bi bi-calendar-event"></i> Dogodki <span class="badge bg-danger ms-1">12</span></a>
-      <a href="#komentarji"><i class="bi bi-chat-square-text"></i> Komentarji <span class="badge bg-warning text-dark ms-1">5</span></a>
+      <a href="#dogodki"><i class="bi bi-calendar-event"></i> Dogodki <span class="badge bg-danger ms-1 d-none" data-stat="dogodki-v-pregledu" data-stat-hide-when-zero>0</span></a>
+      <a href="#komentarji"><i class="bi bi-chat-square-text"></i> Komentarji <span class="badge bg-warning text-dark ms-1 d-none" data-stat="ocene-skupaj" data-stat-hide-when-zero>0</span></a>
 
       <p class="text-uppercase small text-muted mb-1 mt-4 px-2">Sistem</p>
       <a href="#statistike"><i class="bi bi-bar-chart"></i> Statistike</a>
@@ -130,11 +130,8 @@
           <div class="stat-card">
             <div class="flex items-start justify-between mb-2">
               <div class="stat-icon" style="margin: 0;"><i class="bi bi-calendar-event"></i></div>
-              <span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
-                <i class="bi bi-arrow-up text-[10px]"></i> 12,3%
-              </span>
             </div>
-            <h2 class="gradient-text">2.412</h2>
+            <h2 class="gradient-text" data-stat="dogodki">0</h2>
             <p class="text-muted mb-0 text-sm">Aktivni dogodki</p>
           </div>
         </div>
@@ -142,11 +139,8 @@
           <div class="stat-card">
             <div class="flex items-start justify-between mb-2">
               <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #10b981, #34d399);"><i class="bi bi-people"></i></div>
-              <span class="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-1">
-                <i class="bi bi-arrow-up text-[10px]"></i> 248
-              </span>
             </div>
-            <h2 style="background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">12.847</h2>
+            <h2 data-stat="uporabniki" style="background: linear-gradient(135deg, #10b981, #34d399); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">0</h2>
             <p class="text-muted mb-0 text-sm">Uporabniki</p>
           </div>
         </div>
@@ -154,24 +148,18 @@
           <div class="stat-card">
             <div class="flex items-start justify-between mb-2">
               <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #f59e0b, #fbbf24);"><i class="bi bi-hourglass-split"></i></div>
-              <span class="text-xs font-bold px-2 py-1 rounded-full bg-rose-100 text-rose-700 flex items-center gap-1">
-                <i class="bi bi-arrow-down text-[10px]"></i> 3
-              </span>
             </div>
-            <h2 style="background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">12</h2>
+            <h2 data-stat="dogodki-v-pregledu" style="background: linear-gradient(135deg, #f59e0b, #fbbf24); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">0</h2>
             <p class="text-muted mb-0 text-sm">Čaka na odobritev</p>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card">
             <div class="flex items-start justify-between mb-2">
-              <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #db2777, #f472b6);"><i class="bi bi-flag-fill"></i></div>
-              <span class="text-xs font-bold px-2 py-1 rounded-full bg-rose-100 text-rose-700 flex items-center gap-1">
-                <i class="bi bi-arrow-up text-[10px]"></i> 2
-              </span>
+              <div class="stat-icon" style="margin: 0; background: linear-gradient(135deg, #db2777, #f472b6);"><i class="bi bi-chat-square-text-fill"></i></div>
             </div>
-            <h2 style="background: linear-gradient(135deg, #db2777, #f472b6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">5</h2>
-            <p class="text-muted mb-0 text-sm">Prijave neprimernega</p>
+            <h2 data-stat="ocene-skupaj" style="background: linear-gradient(135deg, #db2777, #f472b6); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">0</h2>
+            <p class="text-muted mb-0 text-sm">Ocene in komentarji</p>
           </div>
         </div>
       </div>
@@ -207,7 +195,7 @@
               </table>
             </div>
 
-            <a href="#" class="btn btn-outline-primary w-100 mt-3">Prikaži vseh 12 dogodkov</a>
+            <a href="#dogodki" class="btn btn-outline-primary w-100 mt-3">Prikaži vseh <span data-stat="dogodki-vse">0</span> dogodkov</a>
           </div>
 
           <div class="stat-card mt-4">
@@ -271,56 +259,7 @@
 
           <div class="stat-card mb-4">
             <h4 class="mb-3">Top kategorije</h4>
-
-            <div class="mb-2">
-              <div class="d-flex justify-content-between mb-1">
-                <span><i class="bi bi-trophy-fill text-success"></i> Šport</span>
-                <strong>524</strong>
-              </div>
-              <div class="progress" style="height: 6px;">
-                <div class="progress-bar" style="width: 100%; background-color: #10b981;"></div>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <div class="d-flex justify-content-between mb-1">
-                <span><i class="bi bi-music-note-beamed text-primary"></i> Koncerti</span>
-                <strong>412</strong>
-              </div>
-              <div class="progress" style="height: 6px;">
-                <div class="progress-bar" style="width: 78%; background-color: #6d28d9;"></div>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <div class="d-flex justify-content-between mb-1">
-                <span><i class="bi bi-tools text-info"></i> Delavnice</span>
-                <strong>298</strong>
-              </div>
-              <div class="progress" style="height: 6px;">
-                <div class="progress-bar" style="width: 56%; background-color: #06b6d4;"></div>
-              </div>
-            </div>
-
-            <div class="mb-2">
-              <div class="d-flex justify-content-between mb-1">
-                <span><i class="bi bi-shop text-warning"></i> Sejmi</span>
-                <strong>186</strong>
-              </div>
-              <div class="progress" style="height: 6px;">
-                <div class="progress-bar bg-warning" style="width: 35%;"></div>
-              </div>
-            </div>
-
-            <div>
-              <div class="d-flex justify-content-between mb-1">
-                <span><i class="bi bi-mortarboard-fill text-primary"></i> Izobraževanja</span>
-                <strong>163</strong>
-              </div>
-              <div class="progress" style="height: 6px;">
-                <div class="progress-bar" style="width: 31%; background-color: #3b82f6;"></div>
-              </div>
-            </div>
+            <div id="topKategorije"></div>
           </div>
 
           <div class="stat-card">
@@ -347,7 +286,7 @@
   </div>
 
   <script type="module" src="js/components.js"></script>
-
+  <script type="module" src="js/statistika.js"></script>
   <script type="module" src="js/page-admin.js"></script>
 </body>
 </html>

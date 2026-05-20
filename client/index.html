@@ -60,12 +60,12 @@
     <div class="container">
       <div class="row align-items-center">
         <div class="col-lg-7 animate-slide-up">
-          <span class="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full bg-white/15 backdrop-blur-md text-white text-sm font-medium ring-1 ring-white/25 shadow-lg">
+          <span data-stat-badge="tedensko" class="inline-flex items-center gap-2 px-4 py-1.5 mb-6 rounded-full bg-white/15 backdrop-blur-md text-white text-sm font-medium ring-1 ring-white/25 shadow-lg">
             <span class="relative flex h-2 w-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-400"></span>
             </span>
-            Tedensko <strong class="font-bold">248 novih</strong> dogodkov
+            Ta teden <strong class="font-bold"><span data-stat="novi-teden">0</span> <span data-stat-label="novi-teden">novih dogodkov</span></strong>
           </span>
           <h1>Odkrijte dogodke <br class="hidden md:block">v vaši okolici</h1>
           <p class="lead">
@@ -106,19 +106,19 @@
 
           <div class="hero-stats">
             <div class="hero-stat">
-              <div class="num">2.400+</div>
+              <div class="num" data-stat="dogodki">0</div>
               <div class="label">Dogodkov</div>
             </div>
             <div class="hero-stat">
-              <div class="num">340+</div>
+              <div class="num" data-stat="organizatorji">0</div>
               <div class="label">Organizatorjev</div>
             </div>
             <div class="hero-stat">
-              <div class="num">12.000+</div>
+              <div class="num" data-stat="uporabniki">0</div>
               <div class="label">Uporabnikov</div>
             </div>
             <div class="hero-stat">
-              <div class="num">67</div>
+              <div class="num" data-stat="kraji">0</div>
               <div class="label">Krajev</div>
             </div>
           </div>
@@ -162,7 +162,7 @@
 
         <div class="col-lg-3 reveal">
           <span class="inline-flex items-center gap-1.5 px-3 py-1 mb-3 text-xs font-bold uppercase tracking-wider text-brand-700 bg-gradient-to-r from-brand-100 to-pink-100 rounded-full ring-1 ring-brand-200/50">
-            <i class="bi bi-grid-fill text-[10px]"></i> 8 kategorij
+            <i class="bi bi-grid-fill text-[10px]"></i> <span data-stat="kategorij-stevilo">0</span> kategorij
           </span>
           <h2 class="mb-2">Brskaj po <span class="gradient-text">kategorijah</span></h2>
           <p class="text-muted mb-3">Vse vrste dogajanja, na enem mestu — od koncertov do delavnic.</p>
@@ -173,64 +173,7 @@
         </div>
 
         <div class="col-lg-9 reveal">
-          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            <a href="dogodki.html?cat=koncerti" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-music-note-beamed"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Koncerti</div>
-                <div class="text-xs text-ink-500">412 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=sejmi" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-shop"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Sejmi</div>
-                <div class="text-xs text-ink-500">186 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=delavnice" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-tools"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Delavnice</div>
-                <div class="text-xs text-ink-500">298 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=sport" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-trophy-fill"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Šport</div>
-                <div class="text-xs text-ink-500">524 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=zabave" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-stars"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Zabave</div>
-                <div class="text-xs text-ink-500">221 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=izobrazevanja" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-mortarboard-fill"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Izobraževanja</div>
-                <div class="text-xs text-ink-500">163 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=druzina" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-people-fill"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Družinski</div>
-                <div class="text-xs text-ink-500">147 dogodkov</div>
-              </div>
-            </a>
-            <a href="dogodki.html?cat=kultura" class="category-card-mini">
-              <div class="cat-icon-mini"><i class="bi bi-palette-fill"></i></div>
-              <div class="relative z-10">
-                <div class="font-semibold text-ink-900">Kultura</div>
-                <div class="text-xs text-ink-500">279 dogodkov</div>
-              </div>
-            </a>
-          </div>
+          <div id="kategorije-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3"></div>
         </div>
 
       </div>
@@ -397,5 +340,6 @@
   <script src="js/dropdown.js"></script>
   <script type="module" src="js/nav.js"></script>
   <script type="module" src="js/dogodki.js"></script>
+  <script type="module" src="js/statistika.js"></script>
 </body>
 </html>

@@ -9,6 +9,7 @@ import adminDogodkiRoutes from './routes/admin_dogodki.js';
 import organizatorjiRuter from './routes/organizatorji.js';
 import oceneRouter from './routes/ocene.js';
 import priljubljeniRouter from './routes/priljubljeni.js';
+import statistikaRouter from './routes/statistika.js';
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/admin', adminDogodkiRoutes);
 app.use('/api/organizatorji', organizatorjiRuter);
 app.use('/api', oceneRouter);
 app.use('/api', priljubljeniRouter);
+app.use('/api', statistikaRouter);
 app.use('/api', (req, res) => {
   res.status(404).json({ napaka: 'Endpoint ne obstaja.' });
 });
