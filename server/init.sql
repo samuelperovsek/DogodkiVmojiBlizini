@@ -1,11 +1,11 @@
 CREATE TABLE Uporabnik (
-    ID_uporabnik int(10) NOT NULL AUTO_INCREMENT, 
-    ime varchar(50) NOT NULL, 
-    priimek varchar(60) NOT NULL, 
-    email varchar(255) NOT NULL UNIQUE, 
-    geslo varchar(255) NOT NULL, 
-    vloga varchar(20) NOT NULL, 
-    datum_registracije timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, 
+    ID_uporabnik int(10) NOT NULL AUTO_INCREMENT,
+    ime varchar(50) NOT NULL,
+    priimek varchar(60) NOT NULL,
+    email varchar(255) NOT NULL UNIQUE,
+    geslo varchar(255) NOT NULL,
+    vloga ENUM('uporabnik', 'organizator', 'admin') NOT NULL DEFAULT 'uporabnik',
+    datum_registracije timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (ID_uporabnik)
 );
 
@@ -29,57 +29,64 @@ CREATE TABLE Kategorija (
 );
 
 CREATE TABLE Dogodek (
-    ID_dogodek int(10) NOT NULL AUTO_INCREMENT, 
+    ID_dogodek int(10) NOT NULL AUTO_INCREMENT,
     TK_uporabnik_organizator int(10) NOT NULL,
-    Naslov varchar(100) NOT NULL, 
+    Naslov varchar(100) NOT NULL,
     opis TEXT,
-    TK_kraj int(10) NOT NULL, 
-    ulica varchar(255) NOT NULL, 
-    datum_zacetka timestamp NOT NULL, 
-    datum_konca timestamp NOT NULL, 
+    TK_kraj int(10) NOT NULL,
+    ulica varchar(255) NOT NULL,
+    datum_zacetka timestamp NOT NULL,
+    datum_konca timestamp NOT NULL,
     telefon varchar(20),
-    email varchar(255), 
+    email varchar(255),
     slika varchar(255),
     st_sedezov int(10),
-    st_prostih_sedezov int(10), 
-    cena decimal(10,2), 
-    status varchar(30) NOT NULL, 
-    TK_kategorija int(10) NOT NULL, 
-    PRIMARY KEY (ID_dogodek)
+    st_prostih_sedezov int(10),
+    cena decimal(10,2),
+    status ENUM('v_pripravi', 'aktiven', 'promoviran', 'zakljucen', 'odpovedan') NOT NULL DEFAULT 'v_pripravi',
+    TK_kategorija int(10) NOT NULL,
+    PRIMARY KEY (ID_dogodek),
+    CHECK (datum_konca >= datum_zacetka),
+    CHECK (st_prostih_sedezov IS NULL OR st_sedezov IS NULL OR st_prostih_sedezov <= st_sedezov),
+    CHECK (cena IS NULL OR cena >= 0)
 );
 
 CREATE TABLE Prijava (
-    ID_prijava int(10) NOT NULL AUTO_INCREMENT, 
-    datum_prijave timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-    opomnik_poslan boolean NOT NULL DEFAULT 0, 
-    TK_uporabnik int(10) NOT NULL, 
-    TK_dogodek int(10) NOT NULL, 
-    PRIMARY KEY (ID_prijava)
+    ID_prijava int(10) NOT NULL AUTO_INCREMENT,
+    datum_prijave timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    opomnik_poslan boolean NOT NULL DEFAULT 0,
+    TK_uporabnik int(10) NOT NULL,
+    TK_dogodek int(10) NOT NULL,
+    PRIMARY KEY (ID_prijava),
+    UNIQUE KEY uniq_prijava_uporabnik_dogodek (TK_uporabnik, TK_dogodek)
 );
 
 CREATE TABLE Ocena_komentar (
-    ID_ocena int(10) NOT NULL AUTO_INCREMENT, 
-    ocena int(2) NOT NULL, 
-    komentar TEXT, 
-    datum_objave timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-    TK_uporabnik int(10) NOT NULL, 
-    TK_dogodek int(10) NOT NULL, 
-    PRIMARY KEY (ID_ocena)
+    ID_ocena int(10) NOT NULL AUTO_INCREMENT,
+    ocena int(2) NOT NULL CHECK (ocena BETWEEN 1 AND 5),
+    komentar TEXT,
+    datum_objave timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    TK_uporabnik int(10) NOT NULL,
+    TK_dogodek int(10) NOT NULL,
+    PRIMARY KEY (ID_ocena),
+    UNIQUE KEY uniq_ocena_uporabnik_dogodek (TK_uporabnik, TK_dogodek)
 );
 
 CREATE TABLE Priljubljeni_dogodki (
-    ID_priljubljeni_dogodki int(10) NOT NULL AUTO_INCREMENT, 
+    ID_priljubljeni_dogodki int(10) NOT NULL AUTO_INCREMENT,
     TK_uporabnik int(10) NOT NULL,
-    TK_dogodek int(10) NOT NULL, 
-    datum_shranjevanja timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-    PRIMARY KEY (ID_priljubljeni_dogodki)
+    TK_dogodek int(10) NOT NULL,
+    datum_shranjevanja timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID_priljubljeni_dogodki),
+    UNIQUE KEY uniq_priljubljeni_uporabnik_dogodek (TK_uporabnik, TK_dogodek)
 );
 
 CREATE TABLE Priljubljeni_organizatorji (
     ID_priljubljeni_organizatorji int(10) NOT NULL AUTO_INCREMENT,
     TK_uporabnik int(10) NOT NULL,
     TK_organizator int(10) NOT NULL,
-    PRIMARY KEY (ID_priljubljeni_organizatorji)
+    PRIMARY KEY (ID_priljubljeni_organizatorji),
+    UNIQUE KEY uniq_priljubljeni_uporabnik_organizator (TK_uporabnik, TK_organizator)
 );
 
 CREATE TABLE Organizator (
@@ -96,7 +103,7 @@ CREATE TABLE Prosnja_organizator (
     spletna_stran varchar(255),
     opis TEXT,
     razlog TEXT NOT NULL,
-    status varchar(20) NOT NULL DEFAULT 'cakajoca',
+    status ENUM('cakajoca', 'odobrena', 'zavrnjena') NOT NULL DEFAULT 'cakajoca',
     datum_prosnje timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     datum_obravnave timestamp NULL,
     TK_odobril int(10) NULL,
@@ -112,17 +119,25 @@ ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_Kraj FOREIGN KEY (TK_kraj) REFERENC
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_Kategorija FOREIGN KEY (TK_kategorija) REFERENCES Kategorija (ID_kategorija);
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_UporabnikOrg FOREIGN KEY (TK_uporabnik_organizator) REFERENCES Uporabnik (ID_uporabnik);
 
-ALTER TABLE Prijava ADD CONSTRAINT FKPrijava_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
-ALTER TABLE Prijava ADD CONSTRAINT FKPrijava_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek);
+ALTER TABLE Prijava ADD CONSTRAINT FKPrijava_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik) ON DELETE CASCADE;
+ALTER TABLE Prijava ADD CONSTRAINT FKPrijava_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek) ON DELETE CASCADE;
 
-ALTER TABLE Ocena_komentar ADD CONSTRAINT FKOcena_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
-ALTER TABLE Ocena_komentar ADD CONSTRAINT FKOcena_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek);
+ALTER TABLE Ocena_komentar ADD CONSTRAINT FKOcena_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik) ON DELETE CASCADE;
+ALTER TABLE Ocena_komentar ADD CONSTRAINT FKOcena_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek) ON DELETE CASCADE;
 
-ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
-ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek);
+ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik) ON DELETE CASCADE;
+ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Dogodek FOREIGN KEY (TK_dogodek) REFERENCES Dogodek (ID_dogodek) ON DELETE CASCADE;
 
-ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik);
-ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Organizator FOREIGN KEY (TK_organizator) REFERENCES Organizator (ID_organizator);
+ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik) ON DELETE CASCADE;
+ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Organizator FOREIGN KEY (TK_organizator) REFERENCES Organizator (ID_organizator) ON DELETE CASCADE;
+
+-- Indeksi za pogoste poizvedbe
+CREATE INDEX idx_dogodek_status_datum ON Dogodek (status, datum_zacetka);
+CREATE INDEX idx_dogodek_kategorija    ON Dogodek (TK_kategorija);
+CREATE INDEX idx_dogodek_kraj          ON Dogodek (TK_kraj);
+CREATE INDEX idx_ocena_dogodek         ON Ocena_komentar (TK_dogodek);
+CREATE INDEX idx_prijava_dogodek       ON Prijava (TK_dogodek);
+CREATE INDEX idx_prosnja_status        ON Prosnja_organizator (status, datum_prosnje);
 
 
 -- INSERTI 
