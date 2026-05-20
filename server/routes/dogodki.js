@@ -3,6 +3,7 @@ import pool from '../db.js';
 
 const router = express.Router();
 
+
 router.get('/dogodki/najboljsi', async (req, res) => {
   try {
     const [dogodki] = await pool.query(`
@@ -12,7 +13,8 @@ router.get('/dogodki/najboljsi', async (req, res) => {
       FROM Dogodek d
       LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
       LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
-      WHERE d.status = 'aktiven' 
+      WHERE d.status != 'zavrnjeno'              
+        AND d.datum_zacetka >= NOW()             
         AND MONTH(d.datum_zacetka) = MONTH(CURRENT_DATE())
         AND YEAR(d.datum_zacetka) = YEAR(CURRENT_DATE())
       ORDER BY d.datum_zacetka ASC
@@ -42,7 +44,8 @@ router.get('/dogodki', async (req, res) => {
       FROM Dogodek d
       LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
       LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
-      WHERE d.status = 'aktiven' 
+      WHERE d.status != 'zavrnjeno'              -- Izloči zavrnjene
+        AND d.datum_zacetka >= NOW()             -- Skrije pretekle dogodke
       ORDER BY d.datum_zacetka ASC
     `);
 

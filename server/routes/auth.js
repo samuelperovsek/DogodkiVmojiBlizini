@@ -305,9 +305,9 @@ router.get('/me/dashboard', zahtevajPrijavo, async (req, res) => {
     );
 
     const [organizatorji] = await pool.query(
-      `SELECT o.ID_organizator AS id, o.naziv, o.spletna_stran
+      `SELECT u.ID_uporabnik AS id, CONCAT(u.ime, ' ', u.priimek) AS naziv, u.email AS spletna_stran
        FROM Priljubljeni_organizatorji po
-       JOIN Organizator o ON po.TK_organizator = o.ID_organizator
+       JOIN Uporabnik u ON po.TK_organizator = u.ID_uporabnik
        WHERE po.TK_uporabnik = ?`,
       [userId]
     );

@@ -117,48 +117,48 @@
         </aside>
 
         <div class="col-lg-9">
-          <form onsubmit="event.preventDefault(); window.pokaziToast && window.pokaziToast('success', 'Dogodek je poslan v pregled uredništvu.', 'Uspešno oddano');">
+          <form id="formaDogodek" window.pokaziToast && window.pokaziToast('success', 'Dogodek je poslan v pregled uredništvu.', 'Uspešno oddano');">
 
             <div class="form-section">
               <h3>1. Osnovne informacije</h3>
 
               <div class="mb-3">
                 <label class="form-label">Naslov dogodka *</label>
-                <input type="text" class="form-control" placeholder="npr. Akustična noč v Križankah" required>
+                <input type="text" id="naslov" class="form-control" placeholder="npr. Akustična noč v Križankah" required>
                 <div class="form-text">Privlačen naslov bo pritegnil več obiskovalcev.</div>
               </div>
 
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">Kategorija *</label>
-                  <select class="form-select" required>
+                  <select id="kategorija" class="form-select" required>
                     <option value="">Izberite kategorijo...</option>
-                    <option>Koncerti</option>
-                    <option>Sejmi</option>
-                    <option>Delavnice</option>
-                    <option>Šport</option>
-                    <option>Zabave</option>
-                    <option>Izobraževanja</option>
-                    <option>Kultura</option>
-                    <option>Družinski</option>
-                    <option>Drugo</option>
+                    <option value="1">Koncerti</option>
+                    <option value="7">Sejmi</option>
+                    <option value="3">Delavnice</option>
+                    <option value="2">Šport</option>
+                    <option value="6">Zabave</option>
+                    <option value="5">Izobraževanja</option>
+                    <option value="4">Kultura</option>
+                    <option value="8">Družinski</option>
+                    <option value="9">Drugo</option>
                   </select>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Podkategorija (neobvezno)</label>
-                  <input type="text" class="form-control" placeholder="npr. Jazz, Indie...">
+                  <input type="text" class="form-control" id="podkategorija" placeholder="npr. Jazz, Indie...">
                 </div>
               </div>
 
               <div class="mt-3">
                 <label class="form-label">Kratek opis *</label>
-                <textarea class="form-control" rows="2" maxlength="160" placeholder="Privlačen stavek ali dva..." required></textarea>
+                <textarea class="form-control" id="kratek_opis" rows="2" maxlength="160" placeholder="Privlačen stavek ali dva..." required></textarea>
                 <div class="form-text">Največ 160 znakov.</div>
               </div>
 
               <div class="mt-3">
                 <label class="form-label">Podroben opis *</label>
-                <textarea class="form-control" rows="6" placeholder="Opišite, kaj obiskovalce čaka..." required></textarea>
+                <textarea class="form-control" id="podroben_opis" rows="6" placeholder="Opišite, kaj obiskovalce čaka..." required></textarea>
               </div>
             </div>
 
@@ -168,35 +168,35 @@
               <div class="row g-3">
                 <div class="col-md-8">
                   <label class="form-label">Naslov prizorišča *</label>
-                  <input type="text" class="form-control" placeholder="npr. Trg francoske revolucije 1" required>
+                  <input type="text" class="form-control" id="lokacija_naslov" placeholder="npr. Trg francoske revolucije 1" required>
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Mesto *</label>
-                  <select class="form-select" required>
+                  <select class="form-select" id="lokacija_mesto" required>
                     <option value="">Izberi...</option>
-                    <option>Ljubljana</option>
-                    <option>Maribor</option>
-                    <option>Celje</option>
-                    <option>Kranj</option>
-                    <option>Koper</option>
-                    <option>Drugo</option>
+                    <option value="1000">Ljubljana</option>
+                    <option value="2000">Maribor</option>
+                    <option value="3000">Celje</option>
+                    <option value="4000">Kranj</option>
+                    <option value="6000">Koper</option>
+                    <option value="5000">Drugo</option>
                   </select>
                 </div>
               </div>
 
               <div class="mt-3">
                 <label class="form-label">Ime prizorišča (neobvezno)</label>
-                <input type="text" class="form-control" placeholder="npr. Križanke, Cankarjev dom...">
+                <input type="text" class="form-control" id="lokacija_prizorisce" placeholder="npr. Križanke, Cankarjev dom...">
               </div>
 
               <div class="row g-3 mt-1">
                 <div class="col-md-3">
                   <label class="form-label">Datum *</label>
-                  <input type="date" class="form-control" required data-zacetni-datum>
+                  <input type="date" class="form-control" id="datum" required data-zacetni-datum>
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Začetek *</label>
-                  <input type="time" class="form-control" required data-zacetna-ura>
+                  <input type="time" class="form-control" id="zacetek" required data-zacetna-ura>
                 </div>
                 <div class="col-md-3">
                   <label class="form-label">Datum konca</label>
@@ -220,7 +220,7 @@
               <div class="row g-3">
                 <div class="col-md-4">
                   <label class="form-label">Tip cene *</label>
-                  <select class="form-select">
+                  <select class="form-select" id="tip_cene" required>
                     <option>Plačljivo</option>
                     <option>Brezplačno</option>
                     <option>Prostovoljni prispevek</option>
@@ -228,11 +228,11 @@
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Cena (EUR)</label>
-                  <input type="number" class="form-control" placeholder="0,00" min="0" step="0.5">
+                  <input type="number" class="form-control" id="cena" placeholder="0,00" min="0" step="0.5">
                 </div>
                 <div class="col-md-4">
                   <label class="form-label">Število mest</label>
-                  <input type="number" class="form-control" placeholder="npr. 200" min="1">
+                  <input type="number" class="form-control" id="stevilo_mest" placeholder="npr. 200" min="1">
                 </div>
               </div>
 
@@ -251,15 +251,15 @@
               <div class="row g-3">
                 <div class="col-md-6">
                   <label class="form-label">E-pošta *</label>
-                  <input type="email" class="form-control" placeholder="organizator@email.si" required>
+                  <input type="email" class="form-control" id="kontakt_email" placeholder="organizator@email.si" required>
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Telefon</label>
-                  <input type="tel" class="form-control" placeholder="+386 ...">
+                  <input type="tel" class="form-control" id="kontakt_telefon" placeholder="+386 ...">
                 </div>
                 <div class="col-md-12">
                   <label class="form-label">Spletna stran (neobvezno)</label>
-                  <input type="url" class="form-control" placeholder="https://...">
+                  <input type="url" class="form-control" id="spletna_stran" placeholder="https://...">
                 </div>
               </div>
             </div>
@@ -360,6 +360,6 @@
   <script type="module" src="js/components.js"></script>
   <script src="js/dropdown.js"></script>
   <script type="module" src="js/nav.js"></script>
-  <script src="js/page-dodaj-dogodek.js"></script>
+  <script type="module" src="js/page-dodaj-dogodek.js"></script>
 </body>
 </html>

@@ -78,6 +78,7 @@ function renderPriljubljeni(priljubljeni) {
   }).join('');
 }
 
+// OSVEŽENA IN POSODOBLJENA FUNKCIJA ZA PRIKAZ ORGANIZATORJEV
 function renderOrganizatorji(organizatorji) {
   document.getElementById('organizatorjiCount').textContent = organizatorji.length;
   const el = document.getElementById('organizatorjiList');
@@ -85,19 +86,58 @@ function renderOrganizatorji(organizatorji) {
     el.innerHTML = '<div class="text-center text-muted py-3" style="font-size:0.9rem;">Ne slediš nobenemu organizatorju.</div>';
     return;
   }
-  el.innerHTML = organizatorji.map(o => {
-    const inic = o.naziv.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase();
+
+  // Ustvarimo enak čudovit stil kot v dogodek-podrobnosti.html
+  el.innerHTML = `<div class="d-flex flex-column gap-3">` + organizatorji.map(o => {
+    // Generiranje inicialk iz naziva organizacije ali podjetja
+    const inic = o.naziv ? o.naziv.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() : 'ORG';
+    
     return `
-      <div class="d-flex align-items-center gap-2 mb-2">
-        <div class="profile-avatar flex-shrink-0" style="width: 40px; height: 40px; font-size: 0.8rem;">${inic}</div>
-        <div class="flex-grow-1" style="min-width: 0;">
-          <strong style="font-size:0.92rem;">${o.naziv}</strong>
-          ${o.spletna_stran ? `<small class="d-block text-muted" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"><a href="${o.spletna_stran}" target="_blank">${o.spletna_stran.replace(/^https?:\/\//, '')}</a></small>` : ''}
+      <div class="card p-3 shadow-sm border-0 position-relative organizator-kartica" data-id="${o.id || o.ID_uporabnik}">
+        <div class="d-flex align-items-center gap-3">
+          <div class="profile-avatar flex-shrink-0" style="width: 45px; height: 45px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; background-color: #0d6efd; color: white; border-radius: 50%; font-weight: bold;">
+            ${inic}
+          </div>
+          
+          <div class="flex-grow-1 min-w-0">
+            <h6 class="mb-1 text-truncate" style="font-size:0.92rem;" title="${o.naziv}">${o.naziv}</h6>
+            <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+              <i class="bi bi-patch-check-fill text-primary"></i> Preverjen
+              ${o.spletna_stran ? `<br><i class="bi bi-link-45deg"></i> <a href="${o.spletna_stran}" target="_blank" class="text-muted text-decoration-none text-truncate d-inline-block style="max-width:130px;">${o.spletna_stran.replace(/^https?:\/\/(www\.)?/, '')}</a>` : ''}
+            </p>
+          </div>
+
+          <button class="btn btn-sm btn-link text-danger p-0 gumb-odstrani-org" style="font-size: 1.1rem;" title="Prenehaj slediti">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
         </div>
-        <i class="bi bi-patch-check-fill text-primary flex-shrink-0"></i>
       </div>
     `;
-  }).join('');
+  }).join('') + `</div>`;
+
+  // Aktiviramo Event Listenere na gumbih za odstranjevanje
+  dodajDogodkeZaOdstranjevanjeOrganizatorjev();
+}
+
+// Pomožna funkcija za takojšen preklop spremljanja iz profila
+function dodajDogodkeZaOdstranjevanjeOrganizatorjev() {
+  document.querySelectorAll('.gumb-odstrani-org').forEach(gumb => {
+    gumb.addEventListener('click', async (e) => {
+      const kartica = e.target.closest('.organizator-kartica');
+      const orgId = kartica.getAttribute('data-id');
+
+      if (confirm('Ali res želite prenehati slediti temu organizatorju?')) {
+        try {
+          await apiFetch(`/organizatorji/${orgId}/toggle-spremljaj`, { method: 'POST' });
+          // Ko uspešno odstranimo, osvežimo celotne podatke profila, da posodobimo grafe in sezname
+          osveziPodatkeProfila();
+        } catch (err) {
+          console.error('Napaka pri odstranjevanju:', err);
+          alert('Napaka pri poskusu prenehanja sledenja.');
+        }
+      }
+    });
+  });
 }
 
 function renderOcene(ocene) {
@@ -417,27 +457,34 @@ shraniBtn.addEventListener('click', async () => {
   }
 });
 
+// GLAVNA FUNKCIJA ZA NALAGANJE PODATKOV IZ BACKENDA
+async function osveziPodatkeProfila() {
+  try {
+    const [{ uporabnik }, dashboard] = await Promise.all([
+      apiFetch('/me'),
+      apiFetch('/me/dashboard'),
+    ]);
+    trenutniUporabnik = uporabnik;
+    napolniProfil(uporabnik);
+    nastaviStatistike(dashboard.statistike);
+    renderPrijave(dashboard.prijave);
+    renderPriljubljeni(dashboard.priljubljeni);
+    renderOcene(dashboard.ocene);
+    renderOrganizatorji(dashboard.organizatorji); // Tukaj se pokliče najina nova logika
+    renderOrganizatorBox(uporabnik);
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) {
+      Auth.odjavi();
+      window.location.href = 'prijava.html';
+    } else {
+      console.error('Napaka pri nalaganju dashboarda:', err);
+    }
+  }
+}
+
+// Inicializacijski klic ob prvem nalaganju strani
 const lokalniUporabnik = Auth.getUporabnik();
 if (lokalniUporabnik) { trenutniUporabnik = lokalniUporabnik; napolniProfil(lokalniUporabnik); }
 
-try {
-  const [{ uporabnik }, dashboard] = await Promise.all([
-    apiFetch('/me'),
-    apiFetch('/me/dashboard'),
-  ]);
-  trenutniUporabnik = uporabnik;
-  napolniProfil(uporabnik);
-  nastaviStatistike(dashboard.statistike);
-  renderPrijave(dashboard.prijave);
-  renderPriljubljeni(dashboard.priljubljeni);
-  renderOcene(dashboard.ocene);
-  renderOrganizatorji(dashboard.organizatorji);
-  renderOrganizatorBox(uporabnik);
-} catch (err) {
-  if (err instanceof ApiError && err.status === 401) {
-    Auth.odjavi();
-    window.location.href = 'prijava.html';
-  } else {
-    console.error('Napaka pri nalaganju dashboarda:', err);
-  }
-}
+// Pokličemo skupno funkcijo za nalaganje
+osveziPodatkeProfila();
