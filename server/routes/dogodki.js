@@ -13,9 +13,9 @@ router.get('/dogodki/najboljsi', async (req, res) => {
       FROM Dogodek d
       LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
       LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
-      WHERE d.status IN ('aktiven', 'promoviran')
+      WHERE d.status = 'promoviran'
         AND d.datum_zacetka BETWEEN NOW() AND NOW() + INTERVAL 30 DAY
-      ORDER BY (d.status = 'promoviran') DESC, d.datum_zacetka ASC
+      ORDER BY d.datum_zacetka ASC
       LIMIT 6
     `);
     res.json(dogodki);
