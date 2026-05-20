@@ -29,9 +29,18 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const DOVOLJENI_MIME = ['image/jpeg', 'image/png', 'image/webp'];
+
+const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 } 
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (DOVOLJENI_MIME.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Dovoljene so samo slike (JPEG, PNG, WebP).'));
+    }
+  }
 });
 
 router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('slika'), async (req, res) => {
@@ -40,7 +49,7 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
     
     let potDoSlike = null;
     if (req.file) {
-      potDoSlike = `/public/uploads/dogodkov/${req.file.filename}`;
+      potDoSlike = `/uploads/dogodkov/${req.file.filename}`;
     }
 
     const datumZacetka = `${p.datum_zacetka} ${p.ura_zacetka}:00`;
@@ -50,8 +59,8 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
       : null;
 
     const vrednosti = [
-      parseInt(p.id_organizatorja),                    
-      p.naslov, 
+      req.uporabnik.id,
+      p.naslov,
       p.kratek_opis, 
       p.opis || null, 
       Number.isNaN(parseInt(p.lokacija_mesto)) ? 1000 : parseInt(p.lokacija_mesto),      
@@ -99,21 +108,16 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
   }
 });
 
-router.get('/organizator-podatki', zahtevajPrijavo, async (req, res) => {
+router.get('/organizator-podatki', zahtevajPrijavo, zahtevajOrganizatorja, async (req, res) => {
   try {
-    const idUporabnika = req.query.id; 
-
-    if (!idUporabnika) {
-      return res.status(400).json({ napaka: 'ID uporabnika manjka.' });
-    }
-
     const [rows] = await pool.query(
-      'SELECT email, naziv_podjetja, spletna_stran, telefon FROM Uporabnik WHERE ID_uporabnik = ? AND vloga = "organizator"',
-      [idUporabnika]
+      `SELECT email, naziv_podjetja, spletna_stran, telefon
+       FROM Uporabnik WHERE ID_uporabnik = ?`,
+      [req.uporabnik.id]
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ napaka: 'Organizator s tem ID-jem ne obstaja.' });
+      return res.status(404).json({ napaka: 'Uporabnik ne obstaja.' });
     }
 
     res.json(rows[0]);

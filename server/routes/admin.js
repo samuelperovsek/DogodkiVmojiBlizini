@@ -130,20 +130,18 @@ router.patch(
       );
 
       if (status === 'odobrena') {
-        const [orgRez] = await conn.query(
-          `INSERT INTO Organizator (naziv, spletna_stran) VALUES (?, ?)`,
-          [prosnja.naziv_podjetja, prosnja.spletna_stran]
-        );
-
         await conn.query(
-          `UPDATE Uporabnik SET vloga = 'organizator' WHERE ID_uporabnik = ?`,
-          [prosnja.TK_uporabnik]
+          `UPDATE Uporabnik
+             SET vloga = 'organizator',
+                 naziv_podjetja = ?,
+                 spletna_stran = ?
+           WHERE ID_uporabnik = ?`,
+          [prosnja.naziv_podjetja, prosnja.spletna_stran, prosnja.TK_uporabnik]
         );
 
         await conn.commit();
         return res.json({
           sporocilo: 'Prošnja odobrena. Uporabnik je zdaj organizator.',
-          organizator_id: orgRez.insertId,
         });
       }
 

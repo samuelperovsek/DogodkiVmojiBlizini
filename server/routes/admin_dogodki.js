@@ -1,17 +1,18 @@
 import express from 'express';
+import { body, param, validationResult } from 'express-validator';
 import pool from '../db.js';
-import { zahtevajPrijavo } from '../middleware/auth.js';
+import { zahtevajPrijavo, zahtevajAdmina } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/admin/dogodki', zahtevajPrijavo, async (req, res) => {
-  try {
-    if (req.uporabnik.vloga !== 'admin') {
-      return res.status(403).json({ napaka: 'Dostop zavrnjen. Niste administrator.' });
-    }
+const DOVOLJENI_STATUSI = ['v_pregledu', 'v_pripravi', 'aktiven', 'promoviran', 'zakljucen', 'odpovedan'];
 
-    const sql = `
-      SELECT 
+router.use(zahtevajPrijavo, zahtevajAdmina);
+
+router.get('/dogodki', async (req, res) => {
+  try {
+    const [dogodki] = await pool.query(`
+      SELECT
         d.ID_dogodek, d.Naslov, d.kratek_opis, d.status, d.datum_zacetka, d.podkategorija,
         u.ime AS org_ime, u.priimek AS org_priimek, u.naziv_podjetja AS org_podjetje,
         k.naziv AS kategorija_naziv,
@@ -21,9 +22,7 @@ router.get('/admin/dogodki', zahtevajPrijavo, async (req, res) => {
       LEFT JOIN Kategorija k ON d.TK_kategorija = k.ID_kategorija
       LEFT JOIN Kraj kr ON d.TK_kraj = kr.postna_stevilka
       ORDER BY d.datum_zacetka ASC
-    `;
-
-    const [dogodki] = await pool.query(sql);
+    `);
     res.json(dogodki);
   } catch (err) {
     console.error('Napaka pri pridobivanju dogodkov:', err);
@@ -31,39 +30,64 @@ router.get('/admin/dogodki', zahtevajPrijavo, async (req, res) => {
   }
 });
 
-router.patch('/admin/dogodki/:id/status', zahtevajPrijavo, async (req, res) => {
-  try {
-    if (req.uporabnik.vloga !== 'admin') {
-      return res.status(403).json({ napaka: 'Dostop zavrnjen.' });
+router.patch(
+  '/dogodki/:id/status',
+  [
+    param('id').isInt({ min: 1 }),
+    body('status').isIn(DOVOLJENI_STATUSI).withMessage(`Status mora biti ena od: ${DOVOLJENI_STATUSI.join(', ')}`),
+  ],
+  async (req, res) => {
+    const napake = validationResult(req);
+    if (!napake.isEmpty()) {
+      return res.status(400).json({
+        napaka: 'Neveljavni podatki',
+        podrobnosti: napake.array().map(n => n.msg),
+      });
     }
 
-    const idDogodka = req.params.id;
-    const { status } = req.body;
+    try {
+      const [rezultat] = await pool.query(
+        'UPDATE Dogodek SET status = ? WHERE ID_dogodek = ?',
+        [req.body.status, req.params.id]
+      );
 
-    const [result] = await pool.query(
-      'UPDATE Dogodek SET status = ? WHERE ID_dogodek = ?',
-      [status, idDogodka]
-    );
+      if (rezultat.affectedRows === 0) {
+        return res.status(404).json({ napaka: 'Dogodek ne obstaja.' });
+      }
 
-    res.json({ sporocilo: `Status uspešno spremenjen v "${status}".` });
-  } catch (err) {
-    res.status(500).json({ napaka: 'Napaka na strežniku.' });
+      res.json({ sporocilo: `Status uspešno spremenjen v "${req.body.status}".` });
+    } catch (err) {
+      console.error('Napaka pri spreminjanju statusa:', err);
+      res.status(500).json({ napaka: 'Napaka na strežniku.' });
+    }
   }
-});
+);
 
-router.delete('/admin/dogodki/:id', zahtevajPrijavo, async (req, res) => {
-  try {
-    if (req.uporabnik.vloga !== 'admin') {
-      return res.status(403).json({ napaka: 'Dostop zavrnjen.' });
+router.delete(
+  '/dogodki/:id',
+  [param('id').isInt({ min: 1 })],
+  async (req, res) => {
+    const napake = validationResult(req);
+    if (!napake.isEmpty()) {
+      return res.status(400).json({ napaka: 'Neveljaven ID.' });
     }
 
-    const idDogodka = req.params.id;
-    await pool.query('DELETE FROM Dogodek WHERE ID_dogodek = ?', [idDogodka]);
+    try {
+      const [rezultat] = await pool.query(
+        'DELETE FROM Dogodek WHERE ID_dogodek = ?',
+        [req.params.id]
+      );
 
-    res.json({ sporocilo: 'Dogodek uspešno izbrisan.' });
-  } catch (err) {
-    res.status(500).json({ napaka: 'Napaka na strežniku.' });
+      if (rezultat.affectedRows === 0) {
+        return res.status(404).json({ napaka: 'Dogodek ne obstaja.' });
+      }
+
+      res.json({ sporocilo: 'Dogodek uspešno izbrisan.' });
+    } catch (err) {
+      console.error('Napaka pri brisanju dogodka:', err);
+      res.status(500).json({ napaka: 'Napaka na strežniku.' });
+    }
   }
-});
+);
 
 export default router;

@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/:id/spremlja', zahtevajPrijavo, async (req, res) => {
   try {
-    const uporabnikId = req.user?.id || req.uporabnik?.id || req.user?.ID_uporabnik; 
+    const uporabnikId = req.uporabnik.id;
     const organizatorId = req.params.id;
 
     const [rows] = await pool.query(
@@ -23,7 +23,7 @@ router.get('/:id/spremlja', zahtevajPrijavo, async (req, res) => {
 
 router.post('/:id/toggle-spremljaj', zahtevajPrijavo, async (req, res) => {
   try {
-    const uporabnikId = req.user?.id || req.uporabnik?.id || req.user?.ID_uporabnik;
+    const uporabnikId = req.uporabnik.id;
     const organizatorId = req.params.id;
 
     const [rows] = await pool.query(
@@ -52,7 +52,7 @@ router.post('/:id/toggle-spremljaj', zahtevajPrijavo, async (req, res) => {
 
 router.get('/povezani/sledim', zahtevajPrijavo, async (req, res) => {
   try {
-    const uporabnikId = req.user?.id || req.uporabnik?.id || req.user?.ID_uporabnik;
+    const uporabnikId = req.uporabnik.id;
 
     const [organizatorji] = await pool.query(`
       SELECT 

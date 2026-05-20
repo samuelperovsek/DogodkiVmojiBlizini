@@ -1,3 +1,5 @@
+SET NAMES utf8mb4;
+
 CREATE TABLE Uporabnik (
     ID_uporabnik int(10) NOT NULL AUTO_INCREMENT, 
     ime varchar(50) NOT NULL, 

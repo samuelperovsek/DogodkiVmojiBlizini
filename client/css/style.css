@@ -1437,6 +1437,18 @@ button.btn[disabled]::after, .btn:disabled::after { display: none; }
   box-shadow: 0 4px 12px rgba(236,72,153,0.4);
 }
 
+.event-fav.active {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent-500), var(--accent-700));
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(236,72,153,0.4);
+}
+
+.event-fav:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
 .filter-sidebar {
   background-color: #fff;
   border: 1px solid var(--ink-200);

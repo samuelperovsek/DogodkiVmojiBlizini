@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         elEmail.value = uporabnik.email || '';
       }
 
-      const odgovor = await fetch(`http://localhost:3001/api/organizator-podatki?id=${uporabnik.id}`, {
+      const odgovor = await fetch(`http://localhost:3001/api/organizator-podatki`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -75,11 +75,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       formData.append('kontakt_email', document.getElementById('kontakt_email')?.value || '');
       formData.append('kontakt_telefon', document.getElementById('kontakt_telefon')?.value || '');
       formData.append('spletna_stran', document.getElementById('spletna_stran')?.value || '');
-
-      if (surovUporabnik) {
-        const uporabnik = JSON.parse(surovUporabnik);
-        formData.append('id_organizatorja', uporabnik.id); 
-      }
 
       const slikaInput = document.getElementById('upload');
       if (slikaInput && slikaInput.files.length > 0) {

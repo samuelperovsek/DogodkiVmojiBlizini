@@ -1,14 +1,14 @@
 import { apiFetch } from './auth.js';
+import { inicializirajPriljubljene, osveziSrckeNaStrani } from './dogodki.js';
 
 const API_BASE_URL = 'http://localhost:3001';
 
 document.addEventListener('DOMContentLoaded', naloziPodrobnostiDogodka);
 
-// Spremenljivke za sledenje stanju ocen (straniščenje)
 let trenutnaStran = 1;
 const LIMIT_OCEN = 10;
 let dogodekIdGlobalno = null;
-let izbranaOcena = 0; // Sledenje izbranim zvezdicam v obrazcu
+let izbranaOcena = 0;
 
 function pridobiPotSlike(slikaIzBaze, privzetaSlika) {
   if (!slikaIzBaze) return privzetaSlika;
@@ -18,7 +18,6 @@ function pridobiPotSlike(slikaIzBaze, privzetaSlika) {
   return `${API_BASE_URL}/uploads/dogodkov/${slikaIzBaze}`;
 }
 
-// Pomožna funkcija za generiranje Bootstrap zvezdic na podlagi številke (1-5)
 function generirajZvezdice(ocena) {
   let zvezdiceHtml = '';
   for (let i = 1; i <= 5; i++) {
@@ -31,7 +30,6 @@ function generirajZvezdice(ocena) {
   return zvezdiceHtml;
 }
 
-// Pomožna funkcija za barvanje zvezdic ob kliku/hoverju v modalu (Profilni stil)
 function posodobiIzgledVnosaZvezdic(trenutnaOcena) {
   const zvezdice = document.querySelectorAll('.tekst-vnos-zvezda');
   zvezdice.forEach(zvezda => {
@@ -50,7 +48,7 @@ async function naloziPodrobnostiDogodka() {
   const kontejner = document.getElementById('podrobnosti-dogodka-kontejner');
   const urlParams = new URLSearchParams(window.location.search);
   const dogodekId = urlParams.get('id');
-  dogodekIdGlobalno = dogodekId; // Shranimo za kasnejše nalaganje ocen
+  dogodekIdGlobalno = dogodekId;
 
   if (!dogodekId) {
     kontejner.innerHTML = '<div class="container mt-5"><p class="alert alert-danger">Manjka ID dogodka.</p></div>';
@@ -182,7 +180,7 @@ async function naloziPodrobnostiDogodka() {
                     <small class="text-muted">Cena</small>
                     <h2 class="event-price mb-0 ${cenaRazred}">${cenaIzpis}</h2>
                   </div>
-                  <button class="btn btn-outline-primary"><i class="bi bi-heart"></i></button>
+                  <button class="event-fav" data-fav-id="${dogodek.ID_dogodek}" aria-label="Dodaj med priljubljene"><i class="bi bi-heart"></i></button>
                 </div>
 
                 <hr>
@@ -344,7 +342,7 @@ async function naloziPodrobnostiDogodka() {
 
         if (odgovor.uspeh) {
           bsModal.hide();
-          window.location.reload(); // Osvežitev strani za takojšnji prikaz podatkov
+          window.location.reload();
         }
       } catch (err) {
         console.error('Napaka pri shranjevanju ocene:', err);
@@ -352,10 +350,12 @@ async function naloziPodrobnostiDogodka() {
       }
     });
 
-    // --- ZAGON NALAGANJA PRVIH OCEN ---
     await naloziOcene();
 
     document.getElementById('gumb-nalozi-vec').addEventListener('click', naloziOcene);
+
+    await inicializirajPriljubljene();
+    osveziSrckeNaStrani();
 
   } catch (err) {
     console.error('Napaka pri nalaganju podrobnosti:', err);
@@ -381,7 +381,6 @@ async function naloziOcene() {
       } else {
         const zvezdiceHtml = generirajZvezdice(Math.round(stat.povprecje));
         
-        // Pomožni zapis za slovenske sklane
         const besedaOcena = stat.skupnoOcen === 1 ? 'ocena' : stat.skupnoOcen === 2 ? 'oceni' : stat.skupnoOcen < 5 ? 'ocene' : 'ocen';
 
         kontejnerStatistike.innerHTML = `
