@@ -103,21 +103,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           throw new ApiError(rezultat.napaka || 'Napaka pri shranjevanju.', odgovor.status);
         }
 
-        if (window.pokaziToast) {
-          window.pokaziToast('success', 'Dogodek in slika sta bila uspešno naložena!', 'Uspešno oddano');
-        } else {
-          alert('Dogodek uspešno ustvarjen!');
-        }
-        
+        window.pokaziToast('success', 'Dogodek in slika sta bila uspešno naložena!', 'Uspešno oddano');
         forma.reset();
 
       } catch (err) {
         console.error('Napaka pri pošiljanju:', err);
-        if (window.pokaziToast) {
-          window.pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri shranjevanju.', 'Napaka');
-        } else {
-          alert(`Napaka: ${err.message}`);
-        }
+        window.pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri shranjevanju.', 'Napaka');
       } finally {
         gumbSubmit.disabled = false;
         gumbSubmit.innerHTML = originalnaVsebina;

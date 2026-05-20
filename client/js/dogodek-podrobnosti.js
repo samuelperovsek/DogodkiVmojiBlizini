@@ -256,7 +256,7 @@ async function naloziPodrobnostiDogodka() {
         gumbSpremljaj.textContent = 'Spremljaš';
         gumbSpremljaj.className = 'btn btn-success';
       } else {
-        gumbSpremljaj.textContent = 'Spremlaj';
+        gumbSpremljaj.textContent = 'Spremljaj';
         gumbSpremljaj.className = 'btn btn-outline-primary';
       }
     }
@@ -274,7 +274,7 @@ async function naloziPodrobnostiDogodka() {
           const odgovor = await apiFetch(`/organizatorji/${organizatorId}/toggle-spremljaj`, { method: 'POST' });
           osveziIzgledGumba(odgovor.spremlja);
         } catch (err) {
-          alert('Za spremljanje organizatorjev morate biti prijavljeni!');
+          window.pokaziToast('warning', 'Za spremljanje organizatorjev se moraš prijaviti.', 'Prijava potrebna');
         }
       });
     } else {
@@ -320,7 +320,7 @@ async function naloziPodrobnostiDogodka() {
       e.preventDefault();
 
       if (izbranaOcena === 0) {
-        alert('Prosimo, izberite oceno z zvezdicami (1-5).');
+        window.pokaziToast('warning', 'Izberi oceno z zvezdicami (1-5).');
         return;
       }
 
@@ -341,7 +341,7 @@ async function naloziPodrobnostiDogodka() {
         }
       } catch (err) {
         console.error('Napaka pri shranjevanju ocene:', err);
-        alert('Za oddajo ocene morate biti prijavljeni!');
+        window.pokaziToast('warning', 'Za oddajo ocene se moraš prijaviti.', 'Prijava potrebna');
       }
     });
 

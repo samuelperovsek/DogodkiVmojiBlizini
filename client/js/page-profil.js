@@ -127,7 +127,7 @@ function dodajDogodkeZaOdstranjevanjeOrganizatorjev() {
           osveziPodatkeProfila();
         } catch (err) {
           console.error('Napaka pri odstranjevanju:', err);
-          alert('Napaka pri poskusu prenehanja sledenja.');
+          window.pokaziToast('danger', 'Napaka pri poskusu prenehanja sledenja.');
         }
       }
     });
