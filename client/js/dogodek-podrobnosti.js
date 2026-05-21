@@ -1,5 +1,6 @@
-import { apiFetch } from './auth.js';
+import { apiFetch, Auth, ApiError } from './auth.js';
 import { inicializirajPriljubljene, osveziSrckeNaStrani } from './dogodki.js';
+import { potrdiAkcijo } from './components.js';
 
 const API_BASE_URL = 'http://localhost:3001';
 
@@ -411,10 +412,19 @@ async function naloziOcene() {
       return;
     }
 
+    const trenutniUporabnikId = Auth.getUporabnik()?.id ?? null;
+
     ocene.forEach(o => {
       const datumO = new Date(o.datum_objave || o.datum).toLocaleDateString('sl-SI');
       const uporabnikIme = o.ime_uporabnika ? `${o.ime.trim()} ${o.priimek[0]}.` : (o.ime || 'Obiskovalec');
       const komentarTekst = o.komentar ? o.komentar.trim() : '<em class="text-muted">Uporabnik ni dodal komentarja.</em>';
+      const jeLastnik = trenutniUporabnikId !== null && o.uporabnik_id === trenutniUporabnikId;
+      const brisiGumb = jeLastnik
+        ? `<button class="btn btn-sm btn-link text-danger p-0 ms-2 gumb-brisi-svoj-komentar" data-id="${o.ID_ocena}" title="Izbriši svoj komentar" style="font-size: 0.95rem; line-height: 1;"><i class="bi bi-trash"></i></button>`
+        : '';
+      const lastnikOznaka = jeLastnik
+        ? '<span class="badge bg-light text-muted border ms-1" style="font-size: 0.65rem;">tvoj</span>'
+        : '';
 
       const ocenaCard = document.createElement('div');
       ocenaCard.className = 'card p-3 border-light shadow-sm mb-3';
@@ -423,14 +433,19 @@ async function naloziOcene() {
           <div class="d-flex align-items-center gap-2">
             <strong class="text-dark">${uporabnikIme}</strong>
             <span class="text-xs text-muted">• ${datumO}</span>
+            ${lastnikOznaka}
           </div>
-          <div class="text-sm">
+          <div class="text-sm d-flex align-items-center">
             ${generirajZvezdice(o.ocena)}
+            ${brisiGumb}
           </div>
         </div>
         <p class="mb-0 text-secondary" style="font-size: 0.95rem;">${komentarTekst}</p>
       `;
       kontejnerOcen.appendChild(ocenaCard);
+
+      const brisiBtn = ocenaCard.querySelector('.gumb-brisi-svoj-komentar');
+      if (brisiBtn) brisiBtn.addEventListener('click', izbrisiSvojKomentar);
     });
 
     if (!imaSeOcen || ocene.length < LIMIT_OCEN) {
@@ -444,5 +459,33 @@ async function naloziOcene() {
     if (trenutnaStran === 1) {
        kontejnerOcen.innerHTML = '<p class="text-danger text-center">Ni bilo mogoče naložiti komentarjev.</p>';
     }
+  }
+}
+
+async function izbrisiSvojKomentar(e) {
+  const btn = e.currentTarget;
+  const id = btn.dataset.id;
+
+  const potrjeno = await potrdiAkcijo({
+    naslov: 'Izbriši svoj komentar',
+    sporocilo: 'Komentar bo trajno izbrisan. Tega dejanja ni mogoče razveljaviti.',
+    gumbPotrdi: 'Izbriši',
+    tipGumba: 'btn-danger',
+  });
+  if (!potrjeno) return;
+
+  btn.disabled = true;
+  try {
+    await apiFetch(`/ocene/${id}`, { method: 'DELETE' });
+    window.pokaziToast?.('success', 'Komentar izbrisan.');
+    trenutnaStran = 1;
+    const seznam = document.getElementById('ocene-seznam-kontejner');
+    if (seznam) seznam.innerHTML = '';
+    const naloziVecKont = document.getElementById('nalozi-vec-kontejner');
+    if (naloziVecKont) naloziVecKont.style.display = '';
+    await naloziOcene();
+  } catch (err) {
+    window.pokaziToast?.('danger', err instanceof ApiError ? err.message : 'Napaka pri brisanju.');
+    btn.disabled = false;
   }
 }

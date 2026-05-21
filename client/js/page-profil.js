@@ -1,4 +1,5 @@
 import { apiFetch, Auth, ApiError } from './auth.js';
+import { potrdiAkcijo } from './components.js';
 
 if (!Auth.jePrijavljen()) {
   window.location.href = 'prijava.html';
@@ -146,8 +147,14 @@ function renderOcene(ocene) {
     const datum = new Date(o.datum_objave).toLocaleDateString('sl-SI');
     return `
       <div class="col-md-6">
-        <div class="card p-3 h-100">
-          <h5 class="mb-1" style="font-size:1rem;"><a href="dogodek.html?id=${o.dogodek_id}">${o.dogodek_naslov}</a></h5>
+        <div class="card p-3 h-100 position-relative">
+          <button class="btn btn-sm btn-link text-danger p-0 position-absolute gumb-brisi-oceno"
+                  data-id="${o.id}"
+                  style="top: 0.5rem; right: 0.6rem; font-size: 1.05rem; line-height: 1;"
+                  title="Izbriši komentar">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+          <h5 class="mb-1" style="font-size:1rem; padding-right: 1.5rem;"><a href="dogodek.html?id=${o.dogodek_id}">${o.dogodek_naslov}</a></h5>
           <div class="text-warning mb-2" style="font-size:0.9rem;">
             ${zvezde}
             <small class="text-muted ms-2">— ${datum}</small>
@@ -157,6 +164,33 @@ function renderOcene(ocene) {
       </div>
     `;
   }).join('') + '</div>';
+
+  el.querySelectorAll('.gumb-brisi-oceno').forEach(btn => {
+    btn.addEventListener('click', izbrisiSvojOcen);
+  });
+}
+
+async function izbrisiSvojOcen(e) {
+  const btn = e.currentTarget;
+  const id = btn.dataset.id;
+
+  const potrjeno = await potrdiAkcijo({
+    naslov: 'Izbriši komentar',
+    sporocilo: 'Komentar bo trajno izbrisan. Tega dejanja ni mogoče razveljaviti.',
+    gumbPotrdi: 'Izbriši',
+    tipGumba: 'btn-danger',
+  });
+  if (!potrjeno) return;
+
+  btn.disabled = true;
+  try {
+    await apiFetch(`/ocene/${id}`, { method: 'DELETE' });
+    window.pokaziToast?.('success', 'Komentar izbrisan.');
+    osveziPodatkeProfila();
+  } catch (err) {
+    window.pokaziToast?.('danger', err instanceof ApiError ? err.message : 'Napaka pri brisanju.');
+    btn.disabled = false;
+  }
 }
 
 function nastaviStatistike(s) {

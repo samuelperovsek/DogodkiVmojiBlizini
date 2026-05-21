@@ -12,7 +12,8 @@ router.get('/dogodki/:id/ocene', async (req, res) => {
 
   try {
     const [vrstice] = await pool.query(
-      `SELECT o.ID_ocena, o.ocena, o.komentar, o.datum_objave, u.ime, u.priimek
+      `SELECT o.ID_ocena, o.ocena, o.komentar, o.datum_objave,
+              u.ID_uporabnik AS uporabnik_id, u.ime, u.priimek
        FROM Ocena_komentar o
        JOIN Uporabnik u ON o.TK_uporabnik = u.ID_uporabnik
        WHERE o.TK_dogodek = ?
@@ -106,6 +107,35 @@ router.post('/dogodki/:id/ocene', zahtevajPrijavo, async (req, res) => {
       uspeh: false, 
       napaka: 'Prišlo je do napake na strežniku.' 
     });
+  }
+});
+
+router.delete('/ocene/:id', zahtevajPrijavo, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ uspeh: false, napaka: 'Neveljaven ID.' });
+  }
+
+  try {
+    const [vrstice] = await pool.query(
+      'SELECT TK_uporabnik FROM Ocena_komentar WHERE ID_ocena = ?',
+      [id]
+    );
+    if (vrstice.length === 0) {
+      return res.status(404).json({ uspeh: false, napaka: 'Komentar ne obstaja.' });
+    }
+
+    const lastnik = vrstice[0].TK_uporabnik === req.uporabnik.id;
+    const admin = req.uporabnik.vloga === 'admin';
+    if (!lastnik && !admin) {
+      return res.status(403).json({ uspeh: false, napaka: 'Lahko brišeš samo svoje komentarje.' });
+    }
+
+    await pool.query('DELETE FROM Ocena_komentar WHERE ID_ocena = ?', [id]);
+    res.json({ uspeh: true, sporocilo: 'Komentar izbrisan.' });
+  } catch (err) {
+    console.error('Napaka pri brisanju komentarja:', err);
+    res.status(500).json({ uspeh: false, napaka: 'Napaka strežnika.' });
   }
 });
 
