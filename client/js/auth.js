@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:3001/api';
+export const SERVER_URL = 'http://localhost:3001';
+const API_URL = `${SERVER_URL}/api`;
 
 export const Auth = {
   prijavi(token, uporabnik, zapomni = true) {
@@ -41,8 +42,10 @@ export const Auth = {
 const POTI_BREZ_REDIRECT = ['/me', '/prijava', '/registracija'];
 
 export async function apiFetch(pot, opcije = {}) {
+  const jeFormData = opcije.body instanceof FormData;
+
   const headers = {
-    'Content-Type': 'application/json',
+    ...(jeFormData ? {} : { 'Content-Type': 'application/json' }),
     ...opcije.headers,
   };
 

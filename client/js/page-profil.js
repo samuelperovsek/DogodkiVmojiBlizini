@@ -101,7 +101,7 @@ function renderOrganizatorji(organizatorji) {
             <h6 class="mb-1 text-truncate" style="font-size:0.92rem;" title="${o.naziv}">${o.naziv}</h6>
             <p class="mb-0 text-muted" style="font-size: 0.8rem;">
               <i class="bi bi-patch-check-fill text-primary"></i> Preverjen
-              ${o.spletna_stran ? `<br><i class="bi bi-link-45deg"></i> <a href="${o.spletna_stran}" target="_blank" class="text-muted text-decoration-none text-truncate d-inline-block style="max-width:130px;">${o.spletna_stran.replace(/^https?:\/\/(www\.)?/, '')}</a>` : ''}
+              ${o.spletna_stran ? `<br><i class="bi bi-link-45deg"></i> <a href="${o.spletna_stran}" target="_blank" class="text-muted text-decoration-none text-truncate d-inline-block" style="max-width:130px;">${o.spletna_stran.replace(/^https?:\/\/(www\.)?/, '')}</a>` : ''}
             </p>
           </div>
 
@@ -122,14 +122,20 @@ function dodajDogodkeZaOdstranjevanjeOrganizatorjev() {
       const kartica = e.target.closest('.organizator-kartica');
       const orgId = kartica.getAttribute('data-id');
 
-      if (confirm('Ali res želite prenehati slediti temu organizatorju?')) {
-        try {
-          await apiFetch(`/organizatorji/${orgId}/toggle-spremljaj`, { method: 'POST' });
-          osveziPodatkeProfila();
-        } catch (err) {
-          console.error('Napaka pri odstranjevanju:', err);
-          window.pokaziToast('danger', 'Napaka pri poskusu prenehanja sledenja.');
-        }
+      const potrjeno = await potrdiAkcijo({
+        naslov: 'Prenehaj slediti',
+        sporocilo: 'Ali res želiš prenehati slediti temu organizatorju? Njegovih dogodkov ne boš več videl med priporočenimi.',
+        gumbPotrdi: 'Prenehaj slediti',
+        tipGumba: 'btn-danger',
+      });
+      if (!potrjeno) return;
+
+      try {
+        await apiFetch(`/organizatorji/${orgId}/toggle-spremljaj`, { method: 'POST' });
+        osveziPodatkeProfila();
+      } catch (err) {
+        console.error('Napaka pri odstranjevanju:', err);
+        window.pokaziToast('danger', 'Napaka pri poskusu prenehanja sledenja.');
       }
     });
   });

@@ -1,8 +1,6 @@
-import { apiFetch, Auth, ApiError } from './auth.js';
+import { apiFetch, Auth, ApiError, SERVER_URL } from './auth.js';
 import { inicializirajPriljubljene, osveziSrckeNaStrani } from './dogodki.js';
 import { potrdiAkcijo } from './components.js';
-
-const API_BASE_URL = 'http://localhost:3001';
 
 document.addEventListener('DOMContentLoaded', naloziPodrobnostiDogodka);
 
@@ -13,10 +11,10 @@ let izbranaOcena = 0;
 
 function pridobiPotSlike(slikaIzBaze, privzetaSlika) {
   if (!slikaIzBaze) return privzetaSlika;
-  if (slikaIzBaze.startsWith('/public/')) return `${API_BASE_URL}${slikaIzBaze.replace('/public', '')}`;
+  if (slikaIzBaze.startsWith('/public/')) return `${SERVER_URL}${slikaIzBaze.replace('/public', '')}`;
   if (slikaIzBaze.startsWith('http://') || slikaIzBaze.startsWith('https://')) return slikaIzBaze;
-  if (slikaIzBaze.startsWith('/uploads/')) return `${API_BASE_URL}${slikaIzBaze}`;
-  return `${API_BASE_URL}/uploads/dogodkov/${slikaIzBaze}`;
+  if (slikaIzBaze.startsWith('/uploads/')) return `${SERVER_URL}${slikaIzBaze}`;
+  return `${SERVER_URL}/uploads/dogodkov/${slikaIzBaze}`;
 }
 
 function generirajZvezdice(ocena) {

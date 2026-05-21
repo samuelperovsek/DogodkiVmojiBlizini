@@ -1,6 +1,4 @@
-import { apiFetch, Auth } from './auth.js';
-
-const API_BASE_URL = 'http://localhost:3001';
+import { apiFetch, Auth, SERVER_URL } from './auth.js';
 
 const priljubljeniSet = new Set();
 let initPriljubljenihPromise = null;
@@ -46,7 +44,7 @@ function pridobiPotSlike(slikaIzBaze, privzetaSlika) {
   if (!slikaIzBaze) return privzetaSlika;
 
   if (slikaIzBaze.startsWith('/public/')) {
-    return `${API_BASE_URL}${slikaIzBaze.replace('/public', '')}`;
+    return `${SERVER_URL}${slikaIzBaze.replace('/public', '')}`;
   }
 
   if (slikaIzBaze.startsWith('http://') || slikaIzBaze.startsWith('https://')) {
@@ -54,10 +52,10 @@ function pridobiPotSlike(slikaIzBaze, privzetaSlika) {
   }
 
   if (slikaIzBaze.startsWith('/uploads/')) {
-    return `${API_BASE_URL}${slikaIzBaze}`;
+    return `${SERVER_URL}${slikaIzBaze}`;
   }
 
-  return `${API_BASE_URL}/uploads/dogodkov/${slikaIzBaze}`;
+  return `${SERVER_URL}/uploads/dogodkov/${slikaIzBaze}`;
 }
 
 function generirajStatusBadge(status) {

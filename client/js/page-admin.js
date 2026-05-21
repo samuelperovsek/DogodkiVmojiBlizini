@@ -238,19 +238,9 @@ async function naloziProsnje() {
 
 async function naloziDogodke() {
   if (!dogodkiTbody) return;
-  const token = Auth.getToken();
 
   try {
-    const odgovor = await fetch('http://localhost:3001/api/admin/dogodki', {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    if (!odgovor.ok) throw new Error('Napaka pri pridobivanju podatkov.');
-
-    const dogodki = await odgovor.json();
+    const dogodki = await apiFetch('/admin/dogodki');
     dogodkiTbody.innerHTML = '';
 
     dogodki.forEach(dogodek => {
@@ -322,27 +312,16 @@ async function naloziDogodke() {
 }
 
 async function posodobiStatusDogodka(id, novStatus) {
-  const token = Auth.getToken();
   try {
-    const odgovor = await fetch(`http://localhost:3001/api/admin/dogodki/${id}/status`, {
+    await apiFetch(`/admin/dogodki/${id}/status`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({ status: novStatus })
+      body: JSON.stringify({ status: novStatus }),
     });
-
-    if (odgovor.ok) {
-      await naloziDogodke();
-      pokaziToast('success', `Status dogodka uspešno spremenjen v: ${novStatus}`);
-    } else {
-      const napaka = await odgovor.json().catch(() => ({}));
-      pokaziToast('danger', napaka.napaka || 'Napaka pri posodabljanju statusa.');
-    }
+    await naloziDogodke();
+    pokaziToast('success', `Status dogodka uspešno spremenjen v: ${novStatus}`);
   } catch (err) {
     console.error(err);
-    pokaziToast('danger', 'Napaka pri komunikaciji s strežnikom.');
+    pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri komunikaciji s strežnikom.');
   }
 }
 
@@ -493,24 +472,12 @@ async function naloziOcene() {
 })();
 
 async function izbrisiDogodek(id) {
-  const token = Auth.getToken();
   try {
-    const odgovor = await fetch(`http://localhost:3001/api/admin/dogodki/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    if (odgovor.ok) {
-      await naloziDogodke();
-      pokaziToast('success', 'Dogodek uspešno izbrisan.');
-    } else {
-      const napaka = await odgovor.json();
-      pokaziToast('danger', napaka.napaka || 'Napaka pri brisanju.');
-    }
+    await apiFetch(`/admin/dogodki/${id}`, { method: 'DELETE' });
+    await naloziDogodke();
+    pokaziToast('success', 'Dogodek uspešno izbrisan.');
   } catch (err) {
     console.error(err);
-    pokaziToast('danger', 'Napaka pri komunikaciji s strežnikom.');
+    pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri komunikaciji s strežnikom.');
   }
 }

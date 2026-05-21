@@ -1,4 +1,4 @@
-import { Auth, ApiError } from './auth.js'; 
+import { Auth, apiFetch, ApiError } from './auth.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const zac = document.querySelector('[data-zacetni-datum]');
@@ -6,40 +6,29 @@ document.addEventListener('DOMContentLoaded', async () => {
     zac.min = new Date().toISOString().split('T')[0];
   }
 
-  const surovUporabnik = localStorage.getItem('uporabnik'); 
-  const token = Auth.getToken();
+  const uporabnik = Auth.getUporabnik();
 
-  if (surovUporabnik && token) {
+  if (uporabnik) {
     try {
-      const uporabnik = JSON.parse(surovUporabnik);
-
       const elEmail = document.getElementById('kontakt_email');
       if (elEmail) {
         elEmail.value = uporabnik.email || '';
       }
 
-      const odgovor = await fetch(`http://localhost:3001/api/organizator-podatki`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const organizator = await apiFetch('/organizator-podatki');
 
-      if (odgovor.ok) {
-        const organizator = await odgovor.json();
+      const elTelefon = document.getElementById('kontakt_telefon');
+      const elSpletna = document.getElementById('spletna_stran');
 
-        const elTelefon = document.getElementById('kontakt_telefon');
-        const elSpletna = document.getElementById('spletna_stran');
-
-        if (elTelefon) elTelefon.value = organizator.telefon || '';
-        if (elSpletna) elSpletna.value = organizator.spletna_stran || '';
-      }
+      if (elTelefon) elTelefon.value = organizator.telefon || '';
+      if (elSpletna) elSpletna.value = organizator.spletna_stran || '';
     } catch (err) {
-      console.error('Napaka pri samodejnem izpolnjevanju forme:', err);
+      if (!(err instanceof ApiError && err.status === 401)) {
+        console.error('Napaka pri samodejnem izpolnjevanju forme:', err);
+      }
     }
   }
 
-  // 2. SUBMIT FORME
   const forma = document.getElementById('formaDogodek');
 
   if (forma) {
@@ -53,25 +42,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       formData.append('podkategorija', document.getElementById('podkategorija')?.value || '');
       formData.append('kratek_opis', document.getElementById('kratek_opis')?.value || '');
       formData.append('opis', document.getElementById('podroben_opis')?.value || '');
-      
+
       formData.append('lokacija_naslov', document.getElementById('lokacija_naslov')?.value || '');
       formData.append('lokacija_mesto', document.getElementById('lokacija_mesto')?.value || '');
       formData.append('lokacija_prizorisce', document.getElementById('lokacija_prizorisce')?.value || '');
-      
+
       formData.append('datum_zacetka', document.querySelector('[data-zacetni-datum]')?.value || '');
       formData.append('ura_zacetka', document.querySelector('[data-zacetna-ura]')?.value || '');
       formData.append('datum_konca', document.querySelector('[data-koncni-datum]')?.value || '');
       formData.append('ura_konca', document.querySelector('[data-koncna-ura]')?.value || '');
-      
+
       formData.append('vecdnevno', document.getElementById('vecdnevno')?.checked || false);
-      
+
       formData.append('tip_cene', document.getElementById('tip_cene')?.value || '');
       formData.append('cena', document.getElementById('cena')?.value || '0');
       formData.append('stevilo_mest', document.getElementById('stevilo_mest')?.value || '');
-      
+
       formData.append('prijave_omogocene', document.getElementById('prijave')?.checked || false);
       formData.append('opomnik_omogocen', document.getElementById('opomnik')?.checked || false);
-      
+
       formData.append('kontakt_email', document.getElementById('kontakt_email')?.value || '');
       formData.append('kontakt_telefon', document.getElementById('kontakt_telefon')?.value || '');
       formData.append('spletna_stran', document.getElementById('spletna_stran')?.value || '');
@@ -87,25 +76,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       gumbSubmit.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Pošiljam...';
 
       try {
-        const token = Auth.getToken();
-
-        const odgovor = await fetch('http://localhost:3001/api/dogodki', {
+        await apiFetch('/dogodki', {
           method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          body: formData
+          body: formData,
         });
-
-        const rezultat = await odgovor.json();
-
-        if (!odgovor.ok) {
-          throw new ApiError(rezultat.napaka || 'Napaka pri shranjevanju.', odgovor.status);
-        }
 
         window.pokaziToast('success', 'Dogodek in slika sta bila uspešno naložena!', 'Uspešno oddano');
         forma.reset();
-
       } catch (err) {
         console.error('Napaka pri pošiljanju:', err);
         window.pokaziToast('danger', err instanceof ApiError ? err.message : 'Napaka pri shranjevanju.', 'Napaka');
