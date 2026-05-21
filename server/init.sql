@@ -155,8 +155,8 @@ INSERT INTO Regija (ime_regije) VALUES
 INSERT INTO Kraj (postna_stevilka, ime_kraja, TK_regija) VALUES 
 (1000, 'Ljubljana', 1), (6000, 'Koper', 2), (2000, 'Maribor', 3), (4000, 'Kranj', 4), (8000, 'Novo mesto', 5);
 
-INSERT INTO Kategorija (naziv) VALUES 
-('Koncerti'), ('Šport'), ('Delavnice'), ('Kultura'), ('Izobraževanja'), ('Zabave');
+INSERT INTO Kategorija (naziv) VALUES
+('Koncerti'), ('Šport'), ('Delavnice'), ('Kultura'), ('Izobraževanja'), ('Zabave'), ('Sejmi'), ('Družinski'), ('Drugo');
 
 INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga, naziv_podjetja, spletna_stran, telefon) VALUES
 ('Janez', 'Novak', 'janez@email.si', 'geslo123', 'uporabnik', NULL, NULL, NULL),
