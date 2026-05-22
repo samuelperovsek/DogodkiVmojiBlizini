@@ -1,4 +1,17 @@
+import { pobegniHtml } from '../components.js';
+
 export function generirajPodrobnostiHtml(dogodek, p) {
+  const naslov = pobegniHtml(dogodek.Naslov);
+  const kategorija = pobegniHtml(dogodek.kategorija || 'Dogodek');
+  const lokacija = pobegniHtml(p.polnaLokacija);
+  const kratekOpis = pobegniHtml(dogodek.kratek_opis || dogodek.Kratek_opis || 'Kratek povzetek dogodka ni na voljo.');
+  const dolgOpis = pobegniHtml(dogodek.opis || dogodek.dolg_opis || dogodek.Dolg_opis || 'Podrobnejši opis za ta dogodek trenutno ni na voljo.');
+  const orgIme = pobegniHtml(p.orgIme);
+  const orgIniciali = pobegniHtml(p.orgIniciali);
+  const email = pobegniHtml(dogodek.email || 'Ni na voljo');
+  const telefon = pobegniHtml(dogodek.telefon || 'Ni kontakta');
+  const lepStatus = pobegniHtml(p.lepStatus);
+
   return `
     <header class="page-header">
       <div class="container">
@@ -6,16 +19,16 @@ export function generirajPodrobnostiHtml(dogodek, p) {
           <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.html">Domov</a></li>
             <li class="breadcrumb-item"><a href="dogodki.html">Dogodki</a></li>
-            <li class="breadcrumb-item active" aria-current="page">${dogodek.Naslov}</li>
+            <li class="breadcrumb-item active" aria-current="page">${naslov}</li>
           </ol>
         </nav>
         <span class="inline-flex items-center gap-1 px-3 py-1 mb-2 rounded-full bg-yellow-400/90 text-yellow-900 text-xs font-bold uppercase tracking-wider">
-          <i class="bi bi-tag-fill"></i> ${dogodek.kategorija || 'Dogodek'}
+          <i class="bi bi-tag-fill"></i> ${kategorija}
         </span>
-        <h1>${dogodek.Naslov}</h1>
+        <h1>${naslov}</h1>
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-white/90">
           <span class="inline-flex items-center gap-2"><i class="bi bi-calendar-event"></i> ${p.dan}. ${p.mesecPolno} ${p.leto}, ${p.ura}</span>
-          <span class="inline-flex items-center gap-2"><i class="bi bi-geo-alt"></i> ${p.polnaLokacija}</span>
+          <span class="inline-flex items-center gap-2"><i class="bi bi-geo-alt"></i> ${lokacija}</span>
           <span class="inline-flex items-center gap-2"><i class="bi bi-star-fill text-yellow-300"></i> 4.8 <span class="text-white/70">(Priporočeno)</span></span>
         </div>
       </div>
@@ -25,21 +38,21 @@ export function generirajPodrobnostiHtml(dogodek, p) {
       <div class="container">
         <div class="row g-4">
           <div class="col-lg-8">
-            <img src="${p.slikaUrl}" alt="${dogodek.Naslov}" class="img-fluid rounded mb-4 w-100" style="max-height: 450px; object-fit: cover;">
+            <img src="${p.slikaUrl}" alt="${naslov}" class="img-fluid rounded mb-4 w-100" style="max-height: 450px; object-fit: cover;">
 
             <h2>O dogodku</h2>
             <div class="lead text-muted mb-4">
-              ${dogodek.kratek_opis || dogodek.Kratek_opis || 'Kratek povzetek dogodka ni na voljo.'}
+              ${kratekOpis}
             </div>
             <p style="white-space: pre-line;">
-              ${dogodek.opis || dogodek.dolg_opis || dogodek.Dolg_opis || 'Podrobnejši opis za ta dogodek trenutno ni na voljo.'}
+              ${dolgOpis}
             </p>
 
             <h3 class="mt-4">Kaj pričakovati</h3>
             <ul>
-              <li>Lokacija dogodka: <strong>${p.polnaLokacija}</strong></li>
+              <li>Lokacija dogodka: <strong>${lokacija}</strong></li>
               <li>Skupno število mest: <strong>${p.sedezevSkupaj}</strong></li>
-              <li>Trenutni status dogodka: <span class="badge bg-light text-dark border">${p.lepStatus}</span></li>
+              <li>Trenutni status dogodka: <span class="badge bg-light text-dark border">${lepStatus}</span></li>
               <li>Prizorišče je dostopno obiskovalcem</li>
             </ul>
 
@@ -47,18 +60,18 @@ export function generirajPodrobnostiHtml(dogodek, p) {
             <div class="card p-3 mb-4">
               <div class="d-flex align-items-center gap-3">
                 <div class="profile-avatar" style="width: 60px; height: 60px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; background-color: #0d6efd; color: white; border-radius: 50%;">
-                  ${p.orgIniciali}
+                  ${orgIniciali}
                 </div>
                 <div class="flex-grow-1">
-                  <h5 class="mb-1">${p.orgIme}</h5>
+                  <h5 class="mb-1">${orgIme}</h5>
                   <p class="mb-0 text-muted">
                     <i class="bi bi-patch-check-fill text-primary"></i> Preverjen organizator •
-                    Kontakt: ${dogodek.email || 'Ni na voljo'}
+                    Kontakt: ${email}
                   </p>
                 </div>
                 <button id="gumb-spremljaj"
                         class="btn btn-outline-primary"
-                        data-org-id="${dogodek.TK_uporabnik_organizator}">
+                        data-org-id="${Number(dogodek.TK_uporabnik_organizator) || ''}">
                   Spremljaj
                 </button>
               </div>
@@ -87,18 +100,18 @@ export function generirajPodrobnostiHtml(dogodek, p) {
                   <small class="text-muted">Cena</small>
                   <h2 class="event-price mb-0 ${p.cenaRazred}">${p.cenaIzpis}</h2>
                 </div>
-                <button class="event-fav" data-fav-id="${dogodek.ID_dogodek}" aria-label="Dodaj med priljubljene"><i class="bi bi-heart"></i></button>
+                <button class="event-fav" data-fav-id="${Number(dogodek.ID_dogodek)}" aria-label="Dodaj med priljubljene"><i class="bi bi-heart"></i></button>
               </div>
 
               <hr>
 
               <p class="mb-2"><i class="bi bi-calendar-event text-primary"></i> <strong>${p.danVTednu.toUpperCase()}, ${p.dan}. ${p.mesecKratica}. ${p.leto}</strong></p>
               <p class="mb-2"><i class="bi bi-clock text-primary"></i> Začetek ob ${p.ura}</p>
-              <p class="mb-2"><i class="bi bi-geo-alt text-primary"></i> ${p.polnaLokacija}</p>
-              <p class="mb-2"><i class="bi bi-people text-primary"></i> <span class="text-success">${p.sedezevProstih}</span></p>
-              <p class="mb-3"><i class="bi bi-telephone text-primary"></i> ${dogodek.telefon || 'Ni kontakta'}</p>
+              <p class="mb-2"><i class="bi bi-geo-alt text-primary"></i> ${lokacija}</p>
+              <p class="mb-2"><i class="bi bi-people text-primary"></i> <span class="text-success">${pobegniHtml(p.sedezevProstih)}</span></p>
+              <p class="mb-3"><i class="bi bi-telephone text-primary"></i> ${telefon}</p>
 
-              <button id="gumb-rezervacija" class="btn btn-primary btn-lg w-100 mb-2" data-id="${dogodek.ID_dogodek}">
+              <button id="gumb-rezervacija" class="btn btn-primary btn-lg w-100 mb-2" data-id="${Number(dogodek.ID_dogodek)}">
                 <i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico
               </button>
               <button class="btn btn-outline-primary w-100">

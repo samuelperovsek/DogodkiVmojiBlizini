@@ -1,4 +1,5 @@
 import { apiFetch } from '../auth.js';
+import { pobegniHtml } from '../components.js';
 
 const organizatorBox = document.getElementById('organizatorBox');
 const organizatorContent = document.getElementById('organizatorContent');
@@ -103,7 +104,7 @@ function renderProsnjaCakajoca(p) {
       <div class="flex-grow-1">
         <h3 class="text-white mb-1">Prošnja v obdelavi</h3>
         <p class="text-white/85 mb-0">
-          Tvojo prošnjo za <strong>${p.naziv_podjetja}</strong> obravnavamo. Oddana ${datum}.
+          Tvojo prošnjo za <strong>${pobegniHtml(p.naziv_podjetja)}</strong> obravnavamo. Oddana ${datum}.
         </p>
       </div>
     </div>
@@ -117,8 +118,8 @@ function renderProsnjaZavrnjena(p) {
       <i class="bi bi-x-circle" style="font-size: 2rem;"></i>
       <div class="flex-grow-1">
         <h3 class="text-white mb-1">Prošnja zavrnjena</h3>
-        <p class="text-white/85 mb-1">Prošnja za <strong>${p.naziv_podjetja}</strong> je bila zavrnjena (${datum}).</p>
-        ${p.opomba_admina ? `<p class="text-white/85 mb-0"><strong>Razlog:</strong> ${p.opomba_admina}</p>` : ''}
+        <p class="text-white/85 mb-1">Prošnja za <strong>${pobegniHtml(p.naziv_podjetja)}</strong> je bila zavrnjena (${datum}).</p>
+        ${p.opomba_admina ? `<p class="text-white/85 mb-0"><strong>Razlog:</strong> ${pobegniHtml(p.opomba_admina)}</p>` : ''}
       </div>
       <button id="novaProsnjaBtn" class="btn bg-white text-brand-700 hover:bg-brand-50">Oddaj novo prošnjo</button>
     </div>
@@ -150,8 +151,8 @@ async function oddajProsnjo(e) {
     const { prosnja } = await apiFetch('/me/prosnja-organizator');
     renderProsnjaCakajoca(prosnja);
   } catch (err) {
-    const podrobnosti = err.podrobnosti?.length ? `<ul class="mb-0 mt-1">${err.podrobnosti.map(p => `<li>${p}</li>`).join('')}</ul>` : '';
-    napaka.innerHTML = `<strong>${err.message}</strong>${podrobnosti}`;
+    const podrobnosti = err.podrobnosti?.length ? `<ul class="mb-0 mt-1">${err.podrobnosti.map(p => `<li>${pobegniHtml(p)}</li>`).join('')}</ul>` : '';
+    napaka.innerHTML = `<strong>${pobegniHtml(err.message)}</strong>${podrobnosti}`;
     napaka.classList.remove('d-none');
     gumb.disabled = false;
     gumb.innerHTML = '<i class="bi bi-send"></i> Pošlji prošnjo';

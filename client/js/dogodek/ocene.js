@@ -1,5 +1,5 @@
 import { apiFetch, Auth, ApiError } from '../auth.js';
-import { potrdiAkcijo } from '../components.js';
+import { potrdiAkcijo, pobegniHtml } from '../components.js';
 import { generirajZvezdice } from './utils.js';
 
 const LIMIT_OCEN = 10;
@@ -89,11 +89,11 @@ function renderStatistika(stat, kontejner) {
 
 function generirajOcenaKartico(o, trenutniUporabnikId) {
   const datumO = new Date(o.datum_objave || o.datum).toLocaleDateString('sl-SI');
-  const uporabnikIme = o.ime_uporabnika ? `${o.ime.trim()} ${o.priimek[0]}.` : (o.ime || 'Obiskovalec');
-  const komentarTekst = o.komentar ? o.komentar.trim() : '<em class="text-muted">Uporabnik ni dodal komentarja.</em>';
+  const uporabnikIme = pobegniHtml(o.ime_uporabnika ? `${o.ime.trim()} ${o.priimek[0]}.` : (o.ime || 'Obiskovalec'));
+  const komentarTekst = o.komentar ? pobegniHtml(o.komentar.trim()) : '<em class="text-muted">Uporabnik ni dodal komentarja.</em>';
   const jeLastnik = trenutniUporabnikId !== null && o.uporabnik_id === trenutniUporabnikId;
   const brisiGumb = jeLastnik
-    ? `<button class="btn btn-sm btn-link text-danger p-0 ms-2 gumb-brisi-svoj-komentar" data-id="${o.ID_ocena}" title="Izbriši svoj komentar" style="font-size: 0.95rem; line-height: 1;"><i class="bi bi-trash"></i></button>`
+    ? `<button class="btn btn-sm btn-link text-danger p-0 ms-2 gumb-brisi-svoj-komentar" data-id="${Number(o.ID_ocena)}" title="Izbriši svoj komentar" style="font-size: 0.95rem; line-height: 1;"><i class="bi bi-trash"></i></button>`
     : '';
   const lastnikOznaka = jeLastnik
     ? '<span class="badge bg-light text-muted border ms-1" style="font-size: 0.65rem;">tvoj</span>'

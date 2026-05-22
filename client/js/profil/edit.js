@@ -1,4 +1,5 @@
 import { apiFetch, Auth } from '../auth.js';
+import { pobegniHtml } from '../components.js';
 
 const modal = document.getElementById('urediModal');
 const podatkiForm = document.getElementById('podatkiForm');
@@ -8,8 +9,8 @@ const gesloAlert = document.getElementById('gesloAlert');
 const shraniBtn = document.getElementById('shraniBtn');
 
 function pokaziNapako(el, msg, podrobnosti = []) {
-  let html = `<strong>${msg}</strong>`;
-  if (podrobnosti.length) html += '<ul class="mb-0 mt-1">' + podrobnosti.map(p => `<li>${p}</li>`).join('') + '</ul>';
+  let html = `<strong>${pobegniHtml(msg)}</strong>`;
+  if (podrobnosti.length) html += '<ul class="mb-0 mt-1">' + podrobnosti.map(p => `<li>${pobegniHtml(p)}</li>`).join('') + '</ul>';
   el.className = 'alert alert-danger mb-3';
   el.innerHTML = html;
   el.classList.remove('d-none');

@@ -1,5 +1,5 @@
 import { apiFetch, ApiError } from '../auth.js';
-import { pokaziToast, potrdiAkcijo } from '../components.js';
+import { pokaziToast, potrdiAkcijo, pobegniHtml } from '../components.js';
 
 const dogodkiTbody = document.getElementById('admin-dogodki-tbody');
 
@@ -51,10 +51,10 @@ function renderVrstico(dogodek) {
   const tr = document.createElement('tr');
   tr.innerHTML = `
     <td>
-      <strong>${dogodek.Naslov || 'Brez naslova'}</strong><br>
-      <small class="text-muted">${katNaziv} • ${krajIme}</small>
+      <strong>${pobegniHtml(dogodek.Naslov || 'Brez naslova')}</strong><br>
+      <small class="text-muted">${pobegniHtml(katNaziv)} • ${pobegniHtml(krajIme)}</small>
     </td>
-    <td>${organizator}</td>
+    <td>${pobegniHtml(organizator)}</td>
     <td><small>${datum}</small></td>
     <td>${statusBadgeHtml}</td>
     <td>${gumbiAkcij}</td>

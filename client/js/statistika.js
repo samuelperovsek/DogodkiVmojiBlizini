@@ -1,4 +1,5 @@
 import { apiFetch } from './auth.js';
+import { pobegniHtml } from './components.js';
 
 const IKONE_KATEGORIJ = {
   'Koncerti':     { ikona: 'bi-music-note-beamed', slug: 'koncerti',      barva: '#6d28d9' },
@@ -45,10 +46,10 @@ function renderirajKategorije(kategorije) {
     const slug = mapping.slug || ustvariSlug(k.naziv);
     const stStr = formatStevila.format(k.stevilo);
     return `
-      <a href="dogodki.html?cat=${slug}" class="category-card-mini">
+      <a href="dogodki.html?cat=${encodeURIComponent(slug)}" class="category-card-mini">
         <div class="cat-icon-mini"><i class="bi ${ikona}"></i></div>
         <div class="relative z-10">
-          <div class="font-semibold text-ink-900">${k.naziv}</div>
+          <div class="font-semibold text-ink-900">${pobegniHtml(k.naziv)}</div>
           <div class="text-xs text-ink-500">${stStr} ${k.stevilo === 1 ? 'dogodek' : (k.stevilo === 2 ? 'dogodka' : (k.stevilo < 5 ? 'dogodki' : 'dogodkov'))}</div>
         </div>
       </a>
@@ -80,7 +81,7 @@ function renderirajTopKategorije(kategorije) {
     return `
       <div class="${razmik}">
         <div class="d-flex justify-content-between mb-1">
-          <span><i class="bi ${ikona}" style="color: ${barva};"></i> ${k.naziv}</span>
+          <span><i class="bi ${ikona}" style="color: ${barva};"></i> ${pobegniHtml(k.naziv)}</span>
           <strong>${formatStevila.format(k.stevilo)}</strong>
         </div>
         <div class="progress" style="height: 6px;">

@@ -1,5 +1,5 @@
 import { apiFetch, ApiError } from '../auth.js';
-import { pokaziToast, potrdiAkcijo } from '../components.js';
+import { pokaziToast, potrdiAkcijo, pobegniHtml, varnoUrl } from '../components.js';
 import { naloziUporabnike } from './uporabniki.js';
 
 const prosnjeList = document.getElementById('prosnjeList');
@@ -41,7 +41,7 @@ function renderProsnje(prosnje) {
     ` : `
       <div class="mt-2 text-muted" style="font-size: 0.85rem;">
         <i class="bi bi-clock"></i> Obravnavano ${p.datum_obravnave ? new Date(p.datum_obravnave).toLocaleString('sl-SI') : ''}
-        ${p.opomba_admina ? `<br><strong>Opomba:</strong> ${p.opomba_admina}` : ''}
+        ${p.opomba_admina ? `<br><strong>Opomba:</strong> ${pobegniHtml(p.opomba_admina)}` : ''}
       </div>
     `;
 
@@ -49,19 +49,19 @@ function renderProsnje(prosnje) {
       <div class="card p-3 mb-3" data-prosnja-row="${p.id}">
         <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-2">
           <div>
-            <h5 class="mb-1">${p.naziv_podjetja}</h5>
+            <h5 class="mb-1">${pobegniHtml(p.naziv_podjetja)}</h5>
             <small class="text-muted">
-              <i class="bi bi-person"></i> ${p.ime} ${p.priimek} (${p.email})
+              <i class="bi bi-person"></i> ${pobegniHtml(p.ime)} ${pobegniHtml(p.priimek)} (${pobegniHtml(p.email)})
               <span class="ms-2"><i class="bi bi-calendar"></i> ${datum}</span>
             </small>
           </div>
           ${statusBadge(p.status)}
         </div>
-        ${p.spletna_stran ? `<p class="mb-1"><i class="bi bi-globe text-primary"></i> <a href="${p.spletna_stran}" target="_blank">${p.spletna_stran}</a></p>` : ''}
-        ${p.opis ? `<p class="text-muted mb-2" style="font-size: 0.92rem;">${p.opis}</p>` : ''}
+        ${p.spletna_stran ? `<p class="mb-1"><i class="bi bi-globe text-primary"></i> <a href="${varnoUrl(p.spletna_stran)}" target="_blank" rel="noopener noreferrer">${pobegniHtml(p.spletna_stran)}</a></p>` : ''}
+        ${p.opis ? `<p class="text-muted mb-2" style="font-size: 0.92rem;">${pobegniHtml(p.opis)}</p>` : ''}
         <div class="p-3 rounded" style="background-color: var(--ink-50); border-left: 3px solid var(--brand-700);">
           <strong style="font-size: 0.85rem;">Razlog:</strong>
-          <p class="mb-0 mt-1" style="font-size: 0.92rem;">${p.razlog}</p>
+          <p class="mb-0 mt-1" style="font-size: 0.92rem;">${pobegniHtml(p.razlog)}</p>
         </div>
         ${akcije}
       </div>

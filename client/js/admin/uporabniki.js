@@ -1,5 +1,5 @@
 import { Auth, apiFetch, ApiError } from '../auth.js';
-import { pokaziToast } from '../components.js';
+import { pokaziToast, pobegniHtml } from '../components.js';
 
 const VLOGE = ['uporabnik', 'organizator', 'admin'];
 const trenutni = Auth.getUporabnik();
@@ -30,14 +30,14 @@ export function renderUporabniki(seznam) {
       <tr data-row-id="${u.id}">
         <td>
           <div class="d-flex align-items-center gap-2">
-            <div class="profile-avatar" style="width:36px;height:36px;font-size:0.85rem;">${inicialke}</div>
+            <div class="profile-avatar" style="width:36px;height:36px;font-size:0.85rem;">${pobegniHtml(inicialke)}</div>
             <div>
-              <strong>${u.ime} ${u.priimek}</strong>
+              <strong>${pobegniHtml(u.ime)} ${pobegniHtml(u.priimek)}</strong>
               ${jaz ? '<small class="text-muted d-block">vi</small>' : ''}
             </div>
           </div>
         </td>
-        <td><small>${u.email}</small></td>
+        <td><small>${pobegniHtml(u.email)}</small></td>
         <td><small>${datum}</small></td>
         <td>${vlogaBadge(u.vloga)}</td>
         <td class="text-end">

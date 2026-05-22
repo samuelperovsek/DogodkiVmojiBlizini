@@ -1,5 +1,5 @@
 import { apiFetch, ApiError } from '../auth.js';
-import { pokaziToast, potrdiAkcijo } from '../components.js';
+import { pokaziToast, potrdiAkcijo, pobegniHtml } from '../components.js';
 
 const oceneTbody = document.getElementById('oceneTbody');
 const oceneCounter = document.getElementById('oceneCount');
@@ -8,15 +8,6 @@ function zvezdiceHtml(ocena) {
   const polne = '<i class="bi bi-star-fill text-warning"></i>'.repeat(ocena);
   const prazne = '<i class="bi bi-star text-muted"></i>'.repeat(5 - ocena);
   return polne + prazne;
-}
-
-function pobegniHtml(s) {
-  return String(s ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 function renderOcene(ocene) {

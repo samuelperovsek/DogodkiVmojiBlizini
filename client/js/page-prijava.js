@@ -1,4 +1,5 @@
 import { apiFetch, Auth, ApiError } from './auth.js';
+import { pobegniHtml } from './components.js';
 
 if (window.location.hash === '#registracija') {
   document.querySelector('[data-bs-target="#register"]').click();
@@ -38,10 +39,10 @@ function nadaljujPoPrijavi(uporabnik) {
 
 function pokaziNapako(elId, sporocilo, podrobnosti = []) {
   const el = document.getElementById(elId);
-  let html = `<strong>${sporocilo}</strong>`;
+  let html = `<strong>${pobegniHtml(sporocilo)}</strong>`;
   if (podrobnosti.length) {
     html += '<ul class="mb-0 mt-1">' +
-      podrobnosti.map(p => `<li>${p}</li>`).join('') +
+      podrobnosti.map(p => `<li>${pobegniHtml(p)}</li>`).join('') +
       '</ul>';
   }
   el.innerHTML = html;

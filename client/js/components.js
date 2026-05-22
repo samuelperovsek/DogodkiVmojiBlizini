@@ -1,3 +1,33 @@
+/**
+ * Pobegni HTML posebne znake za varno vstavljanje v innerHTML.
+ * Preprečuje XSS, ko renderiraš user-controlled podatke (imena, opisi, komentarji).
+ *
+ * @example
+ *   element.innerHTML = `<h5>${pobegniHtml(uporabnik.ime)}</h5>`;
+ */
+export function pobegniHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/**
+ * Validira URL za uporabo v href atributu. Vrne '#' za vse, kar ni http(s):// ali relativna pot.
+ * Preprečuje XSS preko `<a href="javascript:alert(1)">`.
+ */
+export function varnoUrl(url) {
+  if (!url) return '#';
+  const s = String(url).trim();
+  if (/^https?:\/\//i.test(s) || s.startsWith('/') || s.startsWith('./')) return s;
+  return '#';
+}
+
+window.pobegniHtml = pobegniHtml;
+window.varnoUrl = varnoUrl;
+
 function pridobiToastContainer() {
   let el = document.querySelector('.toast-container');
   if (!el) {
@@ -15,6 +45,11 @@ const TOAST_ICONS = {
   info:    'bi-info-circle-fill',
 };
 
+/**
+ * Pokaži toast obvestilo. `sporocilo` in `naslov` sta vstavljena kot HTML — če vsebujeta
+ * user-controlled podatke (npr. naslov dogodka iz baze), uporabnik mora prej poklicati
+ * `pobegniHtml()` za preprečitev XSS.
+ */
 export function pokaziToast(tip, sporocilo, naslov = null, trajanje = 4000) {
   const container = pridobiToastContainer();
   const toast = document.createElement('div');
@@ -42,6 +77,11 @@ export function pokaziToast(tip, sporocilo, naslov = null, trajanje = 4000) {
 
 window.pokaziToast = pokaziToast;
 
+/**
+ * Promise-based confirm modal. `naslov`, `sporocilo` sta vstavljena kot HTML — če vsebujeta
+ * user-controlled podatke (npr. naslov dogodka iz baze), klicalec mora prej poklicati
+ * `pobegniHtml()` za preprečitev XSS.
+ */
 export function potrdiAkcijo({ naslov = 'Potrdi dejanje', sporocilo = '', vnos = null, gumbPotrdi = 'Potrdi', gumbPreklic = 'Prekliči', tipGumba = 'btn-primary' } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');

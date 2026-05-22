@@ -1,4 +1,5 @@
 import { apiFetch, Auth, SERVER_URL } from './auth.js';
+import { pobegniHtml } from './components.js';
 
 const priljubljeniSet = new Set();
 let initPriljubljenihPromise = null;
@@ -153,7 +154,7 @@ function generirajStatusBadge(status) {
 function srcekIkona(id) {
   const aktiven = priljubljeniSet.has(id);
   const klasa = aktiven ? 'bi bi-heart-fill' : 'bi bi-heart';
-  return `<button class="event-fav ${aktiven ? 'active' : ''}" data-fav-id="${id}" aria-label="${aktiven ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene'}"><i class="${klasa}"></i></button>`;
+  return `<button class="event-fav ${aktiven ? 'active' : ''}" data-fav-id="${Number(id)}" aria-label="${aktiven ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene'}"><i class="${klasa}"></i></button>`;
 }
 
 function generirajKartico(dogodek, stolpecRazred, privzetaSlika, useFreeBadge = false) {
@@ -181,25 +182,28 @@ function generirajKartico(dogodek, stolpecRazred, privzetaSlika, useFreeBadge = 
   const stolpec = document.createElement('div');
   stolpec.className = stolpecRazred;
 
+  const naslovVarno = pobegniHtml(dogodek.Naslov);
+  const polnaLokacijaVarno = pobegniHtml(polnaLokacija);
+
   stolpec.innerHTML = `
     <div class="event-card position-relative">
       ${generirajStatusBadge(dogodek.status)}
       <div class="event-card-img">
-        <img src="${slikaUrl}" alt="${dogodek.Naslov}">
+        <img src="${slikaUrl}" alt="${naslovVarno}">
         <div class="event-date">
           <span class="day">${dan}</span>
           <span class="month">${mesec}</span>
         </div>
-        <span class="event-cat-tag">${dogodek.kategorija || 'Dogodek'}</span>
+        <span class="event-cat-tag">${pobegniHtml(dogodek.kategorija || 'Dogodek')}</span>
       </div>
       <div class="event-card-body">
         <div class="event-meta">
-          <i class="bi bi-geo-alt"></i> <span title="${polnaLokacija}">${polnaLokacija}</span>
+          <i class="bi bi-geo-alt"></i> <span title="${polnaLokacijaVarno}">${polnaLokacijaVarno}</span>
           <span class="ms-2"><i class="bi bi-clock"></i> ${ura}</span>
           ${razdaljaTekst}
         </div>
-        <h5><a href="dogodek.html?id=${dogodek.ID_dogodek}">${dogodek.Naslov}</a></h5>
-        <p class="event-card-desc">${kratekOpis}</p>
+        <h5><a href="dogodek.html?id=${Number(dogodek.ID_dogodek)}">${naslovVarno}</a></h5>
+        <p class="event-card-desc">${pobegniHtml(kratekOpis)}</p>
         <div class="d-flex justify-content-between align-items-center mt-2">
           ${cenaHTML}
           ${srcekIkona(dogodek.ID_dogodek)}

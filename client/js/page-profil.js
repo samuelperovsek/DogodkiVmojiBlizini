@@ -7,7 +7,7 @@ import {
   renderOcene,
   nastaviStatistike,
 } from './profil/dashboard.js';
-import { initEditModal } from './profil/edit-modal.js';
+import { initEditModal } from './profil/edit.js';
 import { renderOrganizatorBox } from './profil/prosnja.js';
 
 if (!Auth.jePrijavljen()) {
