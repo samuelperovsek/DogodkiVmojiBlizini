@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.js';
+import profilRoutes from './routes/profil.js';
+import prosnjaRoutes from './routes/prosnja.js';
 import adminRoutes from './routes/admin.js';
 import dogodkiRoutes from './routes/dogodki.js';
 import dodajDogodekRoutes from './routes/dodaj_dogodek.js';
@@ -11,7 +13,7 @@ import organizatorjiRuter from './routes/organizatorji.js';
 import oceneRouter from './routes/ocene.js';
 import priljubljeniRouter from './routes/priljubljeni.js';
 import statistikaRouter from './routes/statistika.js';
-import './sevices/opomnikServices.js';
+import './services/opomnik.js';
 
 const app = express();
 
@@ -42,6 +44,8 @@ app.get('/api/zdravje', (req, res) => {
 });
 
 app.use('/api', authRoutes);
+app.use('/api', profilRoutes);
+app.use('/api', prosnjaRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api', dogodkiRoutes);
 app.use('/api', dodajDogodekRoutes);
