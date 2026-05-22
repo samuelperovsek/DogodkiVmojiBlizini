@@ -1,10 +1,3 @@
-/**
- * Pobegni HTML posebne znake za varno vstavljanje v innerHTML.
- * Preprečuje XSS, ko renderiraš user-controlled podatke (imena, opisi, komentarji).
- *
- * @example
- *   element.innerHTML = `<h5>${pobegniHtml(uporabnik.ime)}</h5>`;
- */
 export function pobegniHtml(s) {
   return String(s ?? '')
     .replace(/&/g, '&amp;')
@@ -14,10 +7,6 @@ export function pobegniHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
-/**
- * Validira URL za uporabo v href atributu. Vrne '#' za vse, kar ni http(s):// ali relativna pot.
- * Preprečuje XSS preko `<a href="javascript:alert(1)">`.
- */
 export function varnoUrl(url) {
   if (!url) return '#';
   const s = String(url).trim();
@@ -45,11 +34,6 @@ const TOAST_ICONS = {
   info:    'bi-info-circle-fill',
 };
 
-/**
- * Pokaži toast obvestilo. `sporocilo` in `naslov` sta vstavljena kot HTML — če vsebujeta
- * user-controlled podatke (npr. naslov dogodka iz baze), uporabnik mora prej poklicati
- * `pobegniHtml()` za preprečitev XSS.
- */
 export function pokaziToast(tip, sporocilo, naslov = null, trajanje = 4000) {
   const container = pridobiToastContainer();
   const toast = document.createElement('div');
@@ -77,32 +61,34 @@ export function pokaziToast(tip, sporocilo, naslov = null, trajanje = 4000) {
 
 window.pokaziToast = pokaziToast;
 
-/**
- * Promise-based confirm modal. `naslov`, `sporocilo` sta vstavljena kot HTML — če vsebujeta
- * user-controlled podatke (npr. naslov dogodka iz baze), klicalec mora prej poklicati
- * `pobegniHtml()` za preprečitev XSS.
- */
 export function potrdiAkcijo({ naslov = 'Potrdi dejanje', sporocilo = '', vnos = null, gumbPotrdi = 'Potrdi', gumbPreklic = 'Prekliči', tipGumba = 'btn-primary' } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay show';
+    
+    overlay.style.zIndex = '99999'; 
+
     overlay.innerHTML = `
-      <div class="modal-dialog" style="max-width: 480px;">
-        <div class="modal-header">
-          <h3>${naslov}</h3>
-          <button type="button" class="modal-close" data-close>&times;</button>
+      <div class="modal-dialog" style="max-width: 480px; position: relative; z-index: 100000; pointer-events: auto !important;">
+        
+        <div class="modal-content" style="pointer-events: auto !important;">
+          <div class="modal-header">
+            <h3>${naslov}</h3>
+            <button type="button" class="modal-close" data-close>&times;</button>
+          </div>
+          <div class="modal-body">
+            ${sporocilo ? `<p class="mb-3">${sporocilo}</p>` : ''}
+            ${vnos ? `
+              <label class="form-label">${vnos.label || 'Razlog'}</label>
+              <textarea class="form-control" rows="3" placeholder="${vnos.placeholder || ''}" data-confirm-input>${vnos.value || ''}</textarea>
+            ` : ''}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-primary" data-close>${gumbPreklic}</button>
+            <button type="button" class="btn ${tipGumba}" data-potrdi>${gumbPotrdi}</button>
+          </div>
         </div>
-        <div class="modal-body">
-          ${sporocilo ? `<p class="mb-3">${sporocilo}</p>` : ''}
-          ${vnos ? `
-            <label class="form-label">${vnos.label || 'Razlog'}</label>
-            <textarea class="form-control" rows="3" placeholder="${vnos.placeholder || ''}" data-confirm-input>${vnos.value || ''}</textarea>
-          ` : ''}
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-primary" data-close>${gumbPreklic}</button>
-          <button type="button" class="btn ${tipGumba}" data-potrdi>${gumbPotrdi}</button>
-        </div>
+        
       </div>
     `;
     document.body.appendChild(overlay);
