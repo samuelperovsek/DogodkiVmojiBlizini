@@ -192,7 +192,7 @@ async function naloziPodrobnostiDogodka() {
                 <p class="mb-2"><i class="bi bi-people text-primary"></i> <span class="text-success">${sedezevProstih}</span></p>
                 <p class="mb-3"><i class="bi bi-telephone text-primary"></i> ${dogodek.telefon || 'Ni kontakta'}</p>
 
-                <button class="btn btn-primary btn-lg w-100 mb-2" data-id="${dogodek.ID_dogodek}">
+                <button id="gumb-rezervacija" class="btn btn-primary btn-lg w-100 mb-2" data-id="${dogodek.ID_dogodek}">
                   <i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico
                 </button>
                 <button class="btn btn-outline-primary w-100">
@@ -351,6 +351,61 @@ async function naloziPodrobnostiDogodka() {
     await inicializirajPriljubljene();
     osveziSrckeNaStrani();
 
+    const gumbRezervacija = document.getElementById('gumb-rezervacija');
+    if (gumbRezervacija) {
+      gumbRezervacija.addEventListener('click', async () => {
+
+        // Preverimo prijavo pred odpiranjem modala
+        if (!Auth.getUporabnik()) {
+          window.pokaziToast?.('warning', 'Za rezervacijo vstopnice se moraš prijaviti.', 'Prijava potrebna');
+          return;
+        }
+
+        // Klic lepe vgrajene komponente
+        const potrjeno = await potrdiAkcijo({
+          naslov: 'Rezervacija vstopnice',
+          sporocilo: `Ali želite rezervirati vstopnico za dogodek "${dogodek.Naslov}"? 24 ur pred dogodkom boste na e-naslov prejeli obvestilo.`,
+          gumbPotrdi: 'Potrdi rezervacijo',
+          tipGumba: 'btn-primary',
+          gumbPreklic: 'Prekliči'
+        });
+
+        // NAJIN DIAGNOSTIČNI LOG - Poglej v konzolo (F12), kaj točno izpiše tukaj!
+        console.log("[Rezervacija] Komponenta potrdiAkcijo je vrnila vrednost:", potrjeno, "Tip:", typeof potrjeno);
+
+        // POPRAVEK POGOJA: Prekinemo SAMO, če je uporabnik zaprl okno (kliknil X, zunaj okna ali Prekliči), kar vrne null
+        if (potrjeno === null || potrjeno === undefined) {
+          console.log("[Rezervacija] Uporabnik je preklical akcijo.");
+          return;
+        }
+
+        // Če sva prišla sem, pomeni, da je uporabnik potrdil!
+        gumbRezervacija.disabled = true;
+        gumbRezervacija.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"></span> Rezerviram...`;
+
+        try {
+          console.log(`[Rezervacija] Pošiljam zahtevek na /dogodki/${dogodekIdGlobalno}/rezervacija`);
+          const odgovor = await apiFetch(`/dogodki/${dogodekIdGlobalno}/rezervacija`, {
+            method: 'POST'
+          });
+
+          if (odgovor.uspeh || odgovor.message === 'Rezervacija uspešna.') {
+            window.pokaziToast?.('success', 'Vstopnica uspešno rezervirana! Opomnik je vklopljen.', 'Uspelo!');
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            window.pokaziToast?.('warning', 'Strežnik je javil: ' + (odgovor.message || 'Neznana napaka'));
+            gumbRezervacija.disabled = false;
+            gumbRezervacija.innerHTML = `<i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico`;
+          }
+        } catch (err) {
+          console.error("[Rezervacija] Napaka pri izvajanju rezervacije:", err);
+          window.pokaziToast?.('danger', err instanceof ApiError ? err.message : 'Napaka pri komunikaciji s strežnikom.');
+          
+          gumbRezervacija.disabled = false;
+          gumbRezervacija.innerHTML = `<i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico`;
+        }
+      });
+    }
   } catch (err) {
     console.error('Napaka pri nalaganju podrobnosti:', err);
     kontejner.innerHTML = '<div class="container mt-5"><p class="alert alert-danger">Napaka pri nalaganju podatkov o dogodku.</p></div>';
@@ -369,7 +424,7 @@ async function naloziOcene() {
     const imaSeOcen = podaci.imaSe;
     const stat = podaci.statistika; 
 
-    if (trenutnaStran === 1 && stat) {
+  if (trenutnaStran === 1 && stat) {
       if (stat.skupnoOcen === 0) {
         kontejnerStatistike.innerHTML = ''; 
       } else {
@@ -470,7 +525,7 @@ async function izbrisiSvojKomentar(e) {
     gumbPotrdi: 'Izbriši',
     tipGumba: 'btn-danger',
   });
-  if (!potrjeno) return;
+  if (potrjeno !== true) return;
 
   btn.disabled = true;
   try {

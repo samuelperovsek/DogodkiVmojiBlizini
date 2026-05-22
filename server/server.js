@@ -11,6 +11,7 @@ import organizatorjiRuter from './routes/organizatorji.js';
 import oceneRouter from './routes/ocene.js';
 import priljubljeniRouter from './routes/priljubljeni.js';
 import statistikaRouter from './routes/statistika.js';
+import './sevices/opomnikServices.js';
 
 const app = express();
 

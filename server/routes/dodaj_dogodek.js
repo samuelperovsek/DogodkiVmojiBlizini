@@ -58,12 +58,42 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
       ? `${p.datum_konca} ${p.ura_konca}:00` 
       : null;
 
+    const postnaStevilka = Number.isNaN(parseInt(p.lokacija_mesto)) ? 1000 : parseInt(p.lokacija_mesto);
+
+    let lat = null;
+    let lng = null;
+
+    try {
+      const [krajRes] = await pool.query('SELECT ime_kraja FROM Kraj WHERE postna_stevilka = ?', [postnaStevilka]);
+      const krajIme = krajRes.length > 0 ? krajRes[0].ime_kraja : '';
+
+      if (p.lokacija_naslov && krajIme) {
+        const polnNaslov = `${p.lokacija_naslov}, ${krajIme}, Slovenia`;
+        
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(polnNaslov)}&limit=1`,
+          { headers: { 'User-Agent': 'DogodkiVMojiBliziniApp/1.0' } }
+        );
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+          lat = parseFloat(data[0].lat);
+          lng = parseFloat(data[0].lon);
+          console.log(`[GEO] Uspešno geokodirano: ${polnNaslov} -> Lat: ${lat}, Lng: ${lng}`);
+        } else {
+          console.warn(`[GEO] Ni mogoče najti koordinat za naslov: ${polnNaslov}`);
+        }
+      }
+    } catch (geoErr) {
+      console.error('Napaka pri pridobivanju lokacije (Nominatim API):', geoErr);
+    }
+
     const vrednosti = [
       req.uporabnik.id,
       p.naslov,
       p.kratek_opis, 
       p.opis || null, 
-      Number.isNaN(parseInt(p.lokacija_mesto)) ? 1000 : parseInt(p.lokacija_mesto),      
+      postnaStevilka,      
       p.lokacija_naslov,                
       p.lokacija_prizorisce || null, 
       datumZacetka, 
@@ -80,7 +110,9 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
       p.prijave_omogocene === 'true' ? 1 : 0, 
       p.opomnik_omogocen === 'true' ? 1 : 0, 
       Number.isNaN(parseInt(p.kategorija)) ? 1 : parseInt(p.kategorija),         
-      p.podkategorija || null
+      p.podkategorija || null,
+      lat, // Ddodano
+      lng  // Dodano
     ];
 
     const sql = `
@@ -88,8 +120,8 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
         TK_uporabnik_organizator, Naslov, kratek_opis, opis, TK_kraj, ulica, ime_prizorisca, 
         datum_zacetka, datum_konca, vecdnevno, telefon, email, spletna_stran, slika, 
         st_sedezov, st_prostih_sedezov, tip_cene, cena, prijave_preko_platforme, opomnik_24h, 
-        status, TK_kategorija, podkategorija
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'v_pregledu', ?, ?)
+        status, TK_kategorija, podkategorija, lat, lng
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'v_pregledu', ?, ?, ?, ?)
     `;
 
     await pool.query(sql, vrednosti); 

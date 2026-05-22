@@ -58,6 +58,8 @@ CREATE TABLE Dogodek (
     status ENUM('v_pregledu', 'v_pripravi', 'aktiven', 'promoviran', 'zakljucen', 'odpovedan') NOT NULL DEFAULT 'v_pregledu',
     TK_kategorija int(10) NOT NULL,
     podkategorija varchar(50),
+    lat decimal(10,8) DEFAULT NULL,
+    lng decimal(11,8) DEFAULT NULL,
     PRIMARY KEY (ID_dogodek),
     FOREIGN KEY (TK_uporabnik_organizator) REFERENCES Uporabnik(ID_uporabnik),
     FOREIGN KEY (TK_kategorija) REFERENCES Kategorija(ID_kategorija),
