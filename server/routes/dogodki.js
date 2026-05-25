@@ -156,6 +156,19 @@ router.get('/dogodki/:id', async (req, res) => {
   }
 });
 
+router.get('/dogodki/:id/prijava-status', zahtevajPrijavo, async (req, res) => {
+  try {
+    const [vrstice] = await pool.query(
+      'SELECT 1 FROM Prijava WHERE TK_uporabnik = ? AND TK_dogodek = ? LIMIT 1',
+      [req.uporabnik.id, req.params.id]
+    );
+    res.json({ prijavljen: vrstice.length > 0 });
+  } catch (err) {
+    console.error('Napaka pri preverjanju statusa prijave:', err);
+    res.status(500).json({ napaka: 'Napaka strežnika.' });
+  }
+});
+
 router.post('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
   const connection = await pool.getConnection();
   try {
@@ -217,6 +230,45 @@ router.post('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
     await connection.rollback();
     console.error('Napaka pri rezervaciji:', err);
     res.status(500).json({ message: 'Napaka strežnika pri izvajanju rezervacije.' });
+  } finally {
+    connection.release();
+  }
+});
+
+router.delete('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
+  const connection = await pool.getConnection();
+  try {
+    const dogodekId = req.params.id;
+    const uporabnikId = req.uporabnik.id;
+
+    await connection.beginTransaction();
+
+    const [vrstice] = await connection.query(
+      'SELECT ID_prijava FROM Prijava WHERE TK_uporabnik = ? AND TK_dogodek = ? FOR UPDATE',
+      [uporabnikId, dogodekId]
+    );
+
+    if (vrstice.length === 0) {
+      await connection.rollback();
+      return res.status(404).json({ message: 'Nisi prijavljen na ta dogodek.' });
+    }
+
+    await connection.query(
+      'DELETE FROM Prijava WHERE TK_uporabnik = ? AND TK_dogodek = ?',
+      [uporabnikId, dogodekId]
+    );
+
+    await connection.query(
+      'UPDATE Dogodek SET st_prostih_sedezov = st_prostih_sedezov + 1 WHERE ID_dogodek = ? AND st_prostih_sedezov IS NOT NULL',
+      [dogodekId]
+    );
+
+    await connection.commit();
+    res.json({ uspeh: true, message: 'Uspešno odjavljen z dogodka.' });
+  } catch (err) {
+    await connection.rollback();
+    console.error('Napaka pri odjavi z dogodka:', err);
+    res.status(500).json({ message: 'Napaka strežnika pri odjavi.' });
   } finally {
     connection.release();
   }

@@ -123,11 +123,46 @@ function pripraviOcenoForm(dogodekId) {
   });
 }
 
-function pripraviRezervacija(dogodek, dogodekId) {
-  const gumb = document.getElementById('gumb-rezervacija');
-  if (!gumb) return;
+async function pripraviRezervacija(dogodek, dogodekId) {
+  const izvorniGumb = document.getElementById('gumb-rezervacija');
+  if (!izvorniGumb) return;
 
-  gumb.addEventListener('click', async () => {
+  const kontejner = document.createElement('div');
+  kontejner.id = 'rezervacija-kontejner';
+  izvorniGumb.replaceWith(kontejner);
+
+  function renderRezerviraj() {
+    kontejner.innerHTML = `
+      <button id="btn-rezerviraj" class="btn btn-primary btn-lg w-100 mb-2">
+        <i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico
+      </button>
+    `;
+    document.getElementById('btn-rezerviraj').addEventListener('click', onRezerviraj);
+  }
+
+  function renderPrijavljen() {
+    kontejner.innerHTML = `
+      <div class="d-flex gap-2 mb-2">
+        <button class="btn btn-success btn-lg flex-grow-1" disabled>
+          <i class="bi bi-check-circle-fill"></i> Že prijavljen
+        </button>
+        <button id="btn-odjavi" class="btn btn-outline-danger btn-lg" title="Odjavi me z dogodka" aria-label="Odjavi me z dogodka">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    `;
+    document.getElementById('btn-odjavi').addEventListener('click', onOdjavi);
+  }
+
+  function renderLoading() {
+    kontejner.innerHTML = `
+      <button class="btn btn-primary btn-lg w-100 mb-2" disabled>
+        <span class="spinner-border spinner-border-sm" role="status"></span> Obdelujem...
+      </button>
+    `;
+  }
+
+  async function onRezerviraj() {
     if (!Auth.getUporabnik()) {
       window.pokaziToast?.('warning', 'Za rezervacijo vstopnice se moraš prijaviti.', 'Prijava potrebna');
       return;
@@ -142,24 +177,55 @@ function pripraviRezervacija(dogodek, dogodekId) {
     });
     if (potrjeno === null || potrjeno === undefined) return;
 
-    gumb.disabled = true;
-    gumb.innerHTML = `<span class="spinner-border spinner-border-sm" role="status"></span> Rezerviram...`;
-
+    renderLoading();
     try {
       const odgovor = await apiFetch(`/dogodki/${dogodekId}/rezervacija`, { method: 'POST' });
       if (odgovor.uspeh || odgovor.message === 'Rezervacija uspešna.') {
         window.pokaziToast?.('success', 'Vstopnica uspešno rezervirana! Opomnik je vklopljen.', 'Uspelo!');
-        setTimeout(() => window.location.reload(), 1500);
+        renderPrijavljen();
       } else {
         window.pokaziToast?.('warning', 'Strežnik je javil: ' + (odgovor.message || 'Neznana napaka'));
-        gumb.disabled = false;
-        gumb.innerHTML = `<i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico`;
+        renderRezerviraj();
       }
     } catch (err) {
-      console.error('[Rezervacija] Napaka pri izvajanju rezervacije:', err);
+      console.error('[Rezervacija] Napaka:', err);
       window.pokaziToast?.('danger', err instanceof ApiError ? err.message : 'Napaka pri komunikaciji s strežnikom.');
-      gumb.disabled = false;
-      gumb.innerHTML = `<i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico`;
+      renderRezerviraj();
     }
-  });
+  }
+
+  async function onOdjavi() {
+    const potrjeno = await potrdiAkcijo({
+      naslov: 'Odjava z dogodka',
+      sporocilo: `Ali se res želiš odjaviti z dogodka "${dogodek.Naslov}"? Tvoje mesto se sprosti za druge obiskovalce.`,
+      gumbPotrdi: 'Odjavi me',
+      tipGumba: 'btn-danger',
+      gumbPreklic: 'Prekliči',
+    });
+    if (!potrjeno) return;
+
+    renderLoading();
+    try {
+      await apiFetch(`/dogodki/${dogodekId}/rezervacija`, { method: 'DELETE' });
+      window.pokaziToast?.('success', 'Uspešno odjavljen z dogodka.');
+      renderRezerviraj();
+    } catch (err) {
+      console.error('[Odjava] Napaka:', err);
+      window.pokaziToast?.('danger', err instanceof ApiError ? err.message : 'Napaka pri odjavi.');
+      renderPrijavljen();
+    }
+  }
+
+  if (Auth.getUporabnik()) {
+    try {
+      const { prijavljen } = await apiFetch(`/dogodki/${dogodekId}/prijava-status`);
+      if (prijavljen) renderPrijavljen();
+      else renderRezerviraj();
+    } catch (err) {
+      console.warn('Ne morem prebrati statusa prijave:', err);
+      renderRezerviraj();
+    }
+  } else {
+    renderRezerviraj();
+  }
 }
