@@ -135,7 +135,7 @@ function pripraviRezervacija(dogodek, dogodekId) {
 
     const potrjeno = await potrdiAkcijo({
       naslov: 'Rezervacija vstopnice',
-      sporocilo: `Ali želite rezervirati vstopnico za dogodek "${pobegniHtml(dogodek.Naslov)}"? 24 ur pred dogodkom boste na e-naslov prejeli obvestilo.`,
+      sporocilo: `Ali želite rezervirati vstopnico za dogodek "${dogodek.Naslov}"? 24 ur pred dogodkom boste na e-naslov prejeli obvestilo.`,
       gumbPotrdi: 'Potrdi rezervacijo',
       tipGumba: 'btn-primary',
       gumbPreklic: 'Prekliči',

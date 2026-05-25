@@ -83,6 +83,6 @@ export async function naloziUporabnike() {
     const { uporabniki } = await apiFetch('/admin/uporabniki');
     renderUporabniki(uporabniki);
   } catch (err) {
-    if (usersTbody) usersTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Napaka: ${err.message}</td></tr>`;
+    if (usersTbody) usersTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-4">Napaka: ${pobegniHtml(err.message)}</td></tr>`;
   }
 }

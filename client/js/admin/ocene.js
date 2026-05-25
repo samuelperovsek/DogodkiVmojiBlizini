@@ -44,12 +44,12 @@ function renderOcene(ocene) {
             </div>
           </div>
         </td>
-        <td><a href="dogodek.html?id=${o.dogodek_id}">${naslovVarno}</a></td>
+        <td><a href="dogodek.html?id=${Number(o.dogodek_id)}">${naslovVarno}</a></td>
         <td><span style="white-space: nowrap;">${zvezdiceHtml(o.ocena)}</span></td>
         <td>${komentarCelica}</td>
         <td><small>${datum}</small></td>
         <td class="text-end">
-          <button class="btn btn-sm btn-outline-danger" data-akcija-ocena="brisi" data-id="${o.id}" title="Izbriši komentar">
+          <button class="btn btn-sm btn-outline-danger" data-akcija-ocena="brisi" data-id="${Number(o.id)}" title="Izbriši komentar">
             <i class="bi bi-trash"></i>
           </button>
         </td>
@@ -91,6 +91,6 @@ export async function naloziOcene() {
     const { ocene } = await apiFetch('/admin/ocene');
     renderOcene(ocene);
   } catch (err) {
-    oceneTbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Napaka: ${err.message}</td></tr>`;
+    oceneTbody.innerHTML = `<tr><td colspan="6" class="text-center text-danger py-4">Napaka: ${pobegniHtml(err.message)}</td></tr>`;
   }
 }

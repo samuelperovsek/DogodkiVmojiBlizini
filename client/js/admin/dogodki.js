@@ -70,7 +70,7 @@ export async function naloziDogodke() {
     dogodkiTbody.innerHTML = '';
     dogodki.forEach(d => dogodkiTbody.appendChild(renderVrstico(d)));
   } catch (err) {
-    if (dogodkiTbody) dogodkiTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Napaka: ${err.message}</td></tr>`;
+    if (dogodkiTbody) dogodkiTbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger">Napaka: ${pobegniHtml(err.message)}</td></tr>`;
   }
 }
 

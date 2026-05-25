@@ -1,7 +1,12 @@
 import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import authRoutes from './routes/auth.js';
+import pozabljenoGesloRoutes from './routes/pozabljeno_geslo.js';
 import profilRoutes from './routes/profil.js';
 import prosnjaRoutes from './routes/prosnja.js';
 import adminRoutes from './routes/admin.js';
@@ -17,10 +22,13 @@ import './services/opomnik.js';
 
 const app = express();
 
+const PORT = process.env.PORT || 3000;
 const dovoljeniOrigini = (process.env.FRONTEND_ORIGIN || '')
   .split(',')
   .map(s => s.trim())
   .filter(Boolean);
+
+dovoljeniOrigini.push(`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`);
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -33,6 +41,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '..', 'client')));
 
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
@@ -44,6 +53,7 @@ app.get('/api/zdravje', (req, res) => {
 });
 
 app.use('/api', authRoutes);
+app.use('/api', pozabljenoGesloRoutes);
 app.use('/api', profilRoutes);
 app.use('/api', prosnjaRoutes);
 app.use('/api/admin', adminRoutes);
@@ -64,7 +74,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ napaka: 'Notranja napaka strežnika.' });
 });
 
-const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`✓ Strežnik teče na http://localhost:${PORT}`);
   console.log(`  - Zdravje:      GET  http://localhost:${PORT}/api/zdravje`);

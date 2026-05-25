@@ -38,7 +38,7 @@ export function generirajPodrobnostiHtml(dogodek, p) {
       <div class="container">
         <div class="row g-4">
           <div class="col-lg-8">
-            <img src="${p.slikaUrl}" alt="${naslov}" class="img-fluid rounded mb-4 w-100" style="max-height: 450px; object-fit: cover;">
+            <img src="${pobegniHtml(p.slikaUrl)}" alt="${naslov}" class="img-fluid rounded mb-4 w-100" style="max-height: 450px; object-fit: cover;">
 
             <h2>O dogodku</h2>
             <div class="lead text-muted mb-4">

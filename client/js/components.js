@@ -38,11 +38,13 @@ export function pokaziToast(tip, sporocilo, naslov = null, trajanje = 4000) {
   const container = pridobiToastContainer();
   const toast = document.createElement('div');
   toast.className = `toast toast-${tip}`;
+  const naslovVarno = naslov ? pobegniHtml(naslov) : null;
+  const sporociloVarno = pobegniHtml(sporocilo);
   toast.innerHTML = `
     <i class="bi ${TOAST_ICONS[tip] || TOAST_ICONS.info} toast-icon"></i>
     <div class="toast-body">
-      ${naslov ? `<div class="toast-title">${naslov}</div>` : ''}
-      <div>${sporocilo}</div>
+      ${naslovVarno ? `<div class="toast-title">${naslovVarno}</div>` : ''}
+      <div>${sporociloVarno}</div>
     </div>
     <button type="button" class="toast-close" aria-label="Zapri">&times;</button>
   `;
@@ -61,34 +63,50 @@ export function pokaziToast(tip, sporocilo, naslov = null, trajanje = 4000) {
 
 window.pokaziToast = pokaziToast;
 
-export function potrdiAkcijo({ naslov = 'Potrdi dejanje', sporocilo = '', vnos = null, gumbPotrdi = 'Potrdi', gumbPreklic = 'Prekliči', tipGumba = 'btn-primary' } = {}) {
+export function potrdiAkcijo({
+  naslov = 'Potrdi dejanje',
+  sporocilo = '',
+  vnos = null,
+  gumbPotrdi = 'Potrdi',
+  gumbPreklic = 'Prekliči',
+  tipGumba = 'btn-primary',
+  dovoliHtml = false,
+} = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement('div');
     overlay.className = 'modal-overlay show';
-    
-    overlay.style.zIndex = '99999'; 
+
+    overlay.style.zIndex = '99999';
+
+    const naslovVarno = pobegniHtml(naslov);
+    const sporociloVarno = dovoliHtml ? sporocilo : pobegniHtml(sporocilo);
+    const gumbPotrdiVarno = pobegniHtml(gumbPotrdi);
+    const gumbPreklicVarno = pobegniHtml(gumbPreklic);
+    const vnosLabelVarno = vnos ? pobegniHtml(vnos.label || 'Razlog') : '';
+    const vnosPlaceholderVarno = vnos ? pobegniHtml(vnos.placeholder || '') : '';
+    const vnosValueVarno = vnos ? pobegniHtml(vnos.value || '') : '';
 
     overlay.innerHTML = `
       <div class="modal-dialog" style="max-width: 480px; position: relative; z-index: 100000; pointer-events: auto !important;">
-        
+
         <div class="modal-content" style="pointer-events: auto !important;">
           <div class="modal-header">
-            <h3>${naslov}</h3>
+            <h3>${naslovVarno}</h3>
             <button type="button" class="modal-close" data-close>&times;</button>
           </div>
           <div class="modal-body">
-            ${sporocilo ? `<p class="mb-3">${sporocilo}</p>` : ''}
+            ${sporocilo ? `<p class="mb-3">${sporociloVarno}</p>` : ''}
             ${vnos ? `
-              <label class="form-label">${vnos.label || 'Razlog'}</label>
-              <textarea class="form-control" rows="3" placeholder="${vnos.placeholder || ''}" data-confirm-input>${vnos.value || ''}</textarea>
+              <label class="form-label">${vnosLabelVarno}</label>
+              <textarea class="form-control" rows="3" placeholder="${vnosPlaceholderVarno}" data-confirm-input>${vnosValueVarno}</textarea>
             ` : ''}
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-outline-primary" data-close>${gumbPreklic}</button>
-            <button type="button" class="btn ${tipGumba}" data-potrdi>${gumbPotrdi}</button>
+            <button type="button" class="btn btn-outline-primary" data-close>${gumbPreklicVarno}</button>
+            <button type="button" class="btn ${tipGumba}" data-potrdi>${gumbPotrdiVarno}</button>
           </div>
         </div>
-        
+
       </div>
     `;
     document.body.appendChild(overlay);

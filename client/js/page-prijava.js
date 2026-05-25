@@ -1,5 +1,5 @@
 import { apiFetch, Auth, ApiError } from './auth.js';
-import { pobegniHtml } from './components.js';
+import { pobegniHtml, potrdiAkcijo, pokaziToast } from './components.js';
 
 if (window.location.hash === '#registracija') {
   document.querySelector('[data-bs-target="#register"]').click();
@@ -162,5 +162,34 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     }
     gumb.disabled = false;
     gumb.textContent = 'Ustvari račun';
+  }
+});
+
+document.getElementById('pozabljenoGesloLink')?.addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  const vneseniEmail = await potrdiAkcijo({
+    naslov: 'Pozabljeno geslo',
+    sporocilo: 'Vnesi e-poštni naslov, povezan s tvojim računom. Poslali ti bomo povezavo za ponastavitev gesla (velja 15 minut).',
+    vnos: { label: 'E-poštni naslov', placeholder: 'ime@email.si' },
+    gumbPotrdi: 'Pošlji povezavo',
+    tipGumba: 'btn-primary',
+  });
+
+  if (vneseniEmail === null) return;
+  const email = vneseniEmail.trim();
+  if (!email) {
+    pokaziToast('warning', 'Prosim, vnesi e-poštni naslov.');
+    return;
+  }
+
+  try {
+    const odgovor = await apiFetch('/pozabljeno-geslo', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+    pokaziToast('success', odgovor.sporocilo, 'Preveri e-pošto', 6000);
+  } catch (err) {
+    pokaziToast('danger', err instanceof ApiError ? err.message : 'Strežnik ni dosegljiv.');
   }
 });

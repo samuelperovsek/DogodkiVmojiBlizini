@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ponastavi geslo — DogodkiVMojiBližini.si</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/tailwind.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="relative" style="background: linear-gradient(135deg, #f5f3ff 0%, #fdf2f8 100%); min-height: 100vh;">
+
+  <div class="absolute top-20 -left-20 w-96 h-96 bg-brand-300/30 rounded-full blur-3xl pointer-events-none animate-float"></div>
+  <div class="absolute bottom-20 -right-20 w-[28rem] h-[28rem] bg-pink-300/30 rounded-full blur-3xl pointer-events-none animate-float" style="animation-delay: -3s;"></div>
+
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="bi bi-geo-alt-fill"></i>DogodkiVMojiBližini
+      </a>
+      <div class="ms-auto">
+        <a href="prijava.html" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-left"></i> Nazaj na prijavo
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="section-padding relative">
+    <div class="container">
+      <div class="auth-card">
+
+        <div class="text-center mb-5">
+          <div class="inline-flex items-center justify-center w-16 h-16 mb-3 rounded-2xl bg-gradient-to-br from-brand-700 to-accent-600 text-white text-2xl shadow-lg shadow-brand-500/40">
+            <i class="bi bi-key-fill"></i>
+          </div>
+          <h2 class="mb-1">Ponastavi <span class="gradient-text">geslo</span></h2>
+          <p class="text-muted mb-0" id="podnaslov">Preverjam veljavnost povezave...</p>
+        </div>
+
+        <div id="stanje-preverjanje" class="text-center py-4">
+          <div class="spinner-border text-brand-700" role="status"></div>
+        </div>
+
+        <div id="stanje-napaka" class="d-none">
+          <div class="alert alert-danger">
+            <i class="bi bi-x-circle-fill"></i>
+            <div>
+              <strong>Povezava ni veljavna.</strong>
+              <br><small>Povezava je morda potekla (velja 15 min) ali pa je že bila uporabljena. Zahtevaj novo povezavo na prijavni strani.</small>
+            </div>
+          </div>
+          <a href="prijava.html" class="btn btn-primary w-100">
+            <i class="bi bi-arrow-left"></i> Nazaj na prijavo
+          </a>
+        </div>
+
+        <form id="resetForm" class="d-none" novalidate>
+          <div id="resetError" class="alert alert-danger d-none" role="alert"></div>
+
+          <div class="mb-3">
+            <label class="form-label">Novo geslo</label>
+            <input type="password" name="novo_geslo" id="novoGesloInput" class="form-control" placeholder="Najmanj 8 znakov, velika črka in številka" required data-toggle-password>
+            <div class="password-strength" id="strengthBars">
+              <div class="password-strength-bar"></div>
+              <div class="password-strength-bar"></div>
+              <div class="password-strength-bar"></div>
+              <div class="password-strength-bar"></div>
+            </div>
+            <span class="field-hint" id="strengthLabel">Vsaj 8 znakov, ena velika črka in ena številka.</span>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Potrdi novo geslo</label>
+            <input type="password" name="potrdi_geslo" id="potrdiGesloInput" class="form-control" required data-toggle-password>
+            <span class="field-hint" id="potrdiHint"></span>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100" id="resetSubmit">
+            <i class="bi bi-check-circle"></i> Ponastavi geslo
+          </button>
+        </form>
+
+        <div id="stanje-uspeh" class="d-none">
+          <div class="alert alert-success">
+            <i class="bi bi-check-circle-fill"></i>
+            <div>
+              <strong>Geslo uspešno ponastavljeno.</strong>
+              <br><small>Zdaj se lahko prijaviš z novim geslom.</small>
+            </div>
+          </div>
+          <a href="prijava.html" class="btn btn-primary w-100">
+            <i class="bi bi-box-arrow-in-right"></i> Pojdi na prijavo
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src="js/components.js"></script>
+  <script type="module" src="js/page-reset-geslo.js"></script>
+</body>
+</html>

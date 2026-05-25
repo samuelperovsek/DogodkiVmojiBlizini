@@ -67,20 +67,17 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
         AND d.datum_zacetka >= NOW()
     `;
 
-    // Filter za tekstovno iskanje lokacije
     if (lokacija) {
       sql += ` AND (k.ime_kraja LIKE ? OR d.ulica LIKE ?)`;
       queryArgs.push(`%${lokacija}%`, `%${lokacija}%`);
     }
 
-    // Filter za kategorije
     if (kategorije) {
       const seznamKategorij = kategorije.split(',');
       sql += ` AND kat.naziv IN (${seznamKategorij.map(() => '?').join(',')})`;
       queryArgs.push(...seznamKategorij);
     }
 
-    // Filter za cene (Checkboxi)
     if (cene) {
       const seznamCen = cene.split(',');
       let cenaQueries = [];
@@ -102,7 +99,6 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
       }
     }
 
-    // Filter za časovne intervale
     if (datum) {
       if (datum === 'danes') {
         sql += ` AND DATE(d.datum_zacetka) = CURDATE()`;
@@ -160,8 +156,7 @@ router.get('/dogodki/:id', async (req, res) => {
   }
 });
 
-// POST: Rezervacija vstopnice za dogodek
-router.post('/dogodki/:id/rezervacija',zahtevajPrijavo, async (req, res) => {
+router.post('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
   const connection = await pool.getConnection();
   try {
     const dogodekId = req.params.id;

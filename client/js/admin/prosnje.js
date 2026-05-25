@@ -96,6 +96,7 @@ async function obravnavajProsnjo(e) {
       sporocilo: 'Uporabnik bo dobil vlogo <strong>organizator</strong> in bo lahko dodajal dogodke. Si prepričan?',
       gumbPotrdi: 'Odobri',
       tipGumba: 'btn-primary',
+      dovoliHtml: true,
     });
     if (!rezultat) return;
   }
@@ -122,6 +123,6 @@ export async function naloziProsnje() {
     const { prosnje } = await apiFetch('/admin/prosnje');
     renderProsnje(prosnje);
   } catch (err) {
-    if (prosnjeList) prosnjeList.innerHTML = `<div class="text-center text-danger py-3">Napaka pri nalaganju: ${err.message}</div>`;
+    if (prosnjeList) prosnjeList.innerHTML = `<div class="text-center text-danger py-3">Napaka pri nalaganju: ${pobegniHtml(err.message)}</div>`;
   }
 }

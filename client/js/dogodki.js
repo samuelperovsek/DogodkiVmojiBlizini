@@ -91,9 +91,8 @@ function pripraviFiltre() {
       clearTimeout(drsnikTimeout);
 
       drsnikTimeout = setTimeout(() => {
-        console.log(`[Drsnik] Avtomatsko osveževanje za razdaljo: ${trenutnaVrednost} km`);
         naloziVseDogodke();
-      }, 300); 
+      }, 300);
     });
   }
 
@@ -189,7 +188,7 @@ function generirajKartico(dogodek, stolpecRazred, privzetaSlika, useFreeBadge = 
     <div class="event-card position-relative">
       ${generirajStatusBadge(dogodek.status)}
       <div class="event-card-img">
-        <img src="${slikaUrl}" alt="${naslovVarno}">
+        <img src="${pobegniHtml(slikaUrl)}" alt="${naslovVarno}">
         <div class="event-date">
           <span class="day">${dan}</span>
           <span class="month">${mesec}</span>

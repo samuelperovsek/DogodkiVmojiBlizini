@@ -1,23 +1,11 @@
 import cron from 'node-cron';
-import nodemailer from 'nodemailer';
 import pool from '../db.js';
+import { transporter, FROM } from './email.js';
 
-// Nastavitev e-poštnega odjemalca (prilagodi svojim SMTP podatkom)
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || 'sandbox.smtp.mailtrap.io',
-  port: process.env.EMAIL_PORT || 2525,
-  auth: {
-    user: process.env.EMAIL_USER || '4bfffc2890c692',
-    pass: process.env.EMAIL_PASS || 'd7db6be14cd9a1',
-  },
-});
-
-// Cron job: Teče vsakih 15 minut
 cron.schedule('*/15 * * * *', async () => {
   console.log('[Cron] Preverjanje dogodkov za pošiljanje opomnikov...');
-  
+
   try {
-    // Poiščemo vse prijave, kjer opomnik še ni bil poslan,
     const [prijave] = await pool.query(`
       SELECT 
         p.ID_prijava, 
@@ -52,7 +40,7 @@ cron.schedule('*/15 * * * *', async () => {
       const lokacija = prijava.ulica ? `${prijava.ulica}, ${prijava.kraj}` : prijava.kraj;
 
       const mailOptions = {
-        from: '"Spletna platforma Dogodki" <info@dogodki.si>',
+        from: FROM,
         to: prijava.uporabnik_email,
         subject: `Opomnik: Jutri se začne dogodek ${prijava.dogodek_naslov}!`,
         html: `

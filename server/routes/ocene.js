@@ -95,7 +95,6 @@ router.post('/dogodki/:id/ocene', zahtevajPrijavo, async (req, res) => {
       [ocena, komentar ? komentar.trim() : null, uporabnikId, dogodekId]
     );
 
-    // 4. Uspešen odgovor
     res.status(201).json({
       uspeh: true,
       sporocilo: 'Ocena je bila uspešno shranjena.'
