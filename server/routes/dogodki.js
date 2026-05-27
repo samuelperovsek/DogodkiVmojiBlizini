@@ -3,8 +3,7 @@ import pool from '../db.js';
 
 const router = express.Router();
 
-import { zahtevajPrijavo} from '../middleware/auth.js';
-
+import { zahtevajPrijavo } from '../middleware/auth.js';
 
 router.get('/dogodki/najboljsi', async (req, res) => {
   try {
@@ -29,7 +28,12 @@ router.get('/dogodki/najboljsi', async (req, res) => {
 
 router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
   try {
-    const { lokacija, datum, cene, kategorije, userLat, userLng, maxRazdalja } = req.query;
+    const { lokacija, datum, cene, kategorije, userLat, userLng, maxRazdalja, sort, page, limit } = req.query;
+
+    // Paginacija nastavitve
+    const trenutnaStran = parseInt(page) || 1;
+    const poStrani = parseInt(limit) || 6;
+    const zamik = (trenutnaStran - 1) * poStrani;
 
     let queryArgs = [];
     let razdaljaStolpec = '';
@@ -47,34 +51,19 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
       razdaljaStolpec = `, NULL AS razdalja_km`;
     }
 
-    let sql = `
-      SELECT 
-        d.ID_dogodek, 
-        d.Naslov, 
-        d.opis, 
-        d.ulica, 
-        d.datum_zacetka, 
-        d.slika, 
-        d.cena, 
-        d.status,
-        k.ime_kraja AS kraj, 
-        kat.naziv AS kategorija
-        ${razdaljaStolpec}
-      FROM Dogodek d
-      LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
-      LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+    let whereSql = `
       WHERE d.status IN ('aktiven', 'promoviran')
         AND d.datum_zacetka >= NOW()
     `;
 
     if (lokacija) {
-      sql += ` AND (k.ime_kraja LIKE ? OR d.ulica LIKE ?)`;
+      whereSql += ` AND (k.ime_kraja LIKE ? OR d.ulica LIKE ?)`;
       queryArgs.push(`%${lokacija}%`, `%${lokacija}%`);
     }
 
     if (kategorije) {
       const seznamKategorij = kategorije.split(',');
-      sql += ` AND kat.naziv IN (${seznamKategorij.map(() => '?').join(',')})`;
+      whereSql += ` AND kat.naziv IN (${seznamKategorij.map(() => '?').join(',')})`;
       queryArgs.push(...seznamKategorij);
     }
 
@@ -95,31 +84,73 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
       });
 
       if (cenaQueries.length > 0) {
-        sql += ` AND (${cenaQueries.join(' OR ')})`;
+        whereSql += ` AND (${cenaQueries.join(' OR ')})`;
       }
     }
 
     if (datum) {
       if (datum === 'danes') {
-        sql += ` AND DATE(d.datum_zacetka) = CURDATE()`;
+        whereSql += ` AND DATE(d.datum_zacetka) = CURDATE()`;
       } else if (datum === 'jutri') {
-        sql += ` AND DATE(d.datum_zacetka) = DATE_ADD(CURDATE(), INTERVAL 1 DAY)`;
+        whereSql += ` AND DATE(d.datum_zacetka) = DATE_ADD(CURDATE(), INTERVAL 1 DAY)`;
       } else if (datum === 'ta_teden') {
-        sql += ` AND YEARWEEK(d.datum_zacetka, 1) = YEARWEEK(CURDATE(), 1)`;
+        whereSql += ` AND YEARWEEK(d.datum_zacetka, 1) = YEARWEEK(CURDATE(), 1)`;
       } else if (datum === 'vikend') {
-        sql += ` AND WEEKDAY(d.datum_zacetka) IN (4, 5, 6)`;
+        whereSql += ` AND WEEKDAY(d.datum_zacetka) IN (4, 5, 6)`;
       }
     }
 
+    let avtomatskiHavingSql = '';
     if (userLat && userLng && maxRazdalja) {
-      sql += ` HAVING razdalja_km <= ?`;
+      avtomatskiHavingSql = ` HAVING razdalja_km <= ?`;
       queryArgs.push(parseFloat(maxRazdalja));
     }
 
-    sql += ` ORDER BY d.datum_zacetka ASC`;
+    const sqlStevec = `
+      SELECT COUNT(*) AS skupno FROM (
+        SELECT d.ID_dogodek ${razdaljaStolpec}
+        FROM Dogodek d
+        LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
+        LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+        ${whereSql}
+        ${avtomatskiHavingSql}
+      ) AS najdeni_dogodki
+    `;
+    
+    const [rezultatStevca] = await pool.query(sqlStevec, queryArgs);
+    const skupnoStevilo = rezultatStevca[0]?.skupno || 0;
 
-    const [dogodki] = await pool.query(sql, queryArgs);
-    res.json(dogodki);
+    let sortirajSql = ' ORDER BY d.datum_zacetka ASC';
+    if (sort === 'cena') {
+      sortirajSql = ' ORDER BY d.cena ASC, d.datum_zacetka ASC';
+    } else if (sort === 'priljubljenost') {
+      sortirajSql = ' ORDER BY (SELECT COUNT(*) FROM Prijava p WHERE p.TK_dogodek = d.ID_dogodek) DESC, d.datum_zacetka ASC';
+    } else if (sort === 'oddaljenost' && userLat && userLng) {
+      sortirajSql = ' ORDER BY razdalja_km ASC, d.datum_zacetka ASC';
+    }
+
+    let sqlGlavni = `
+      SELECT 
+        d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+        k.ime_kraja AS kraj, kat.naziv AS kategorija
+        ${razdaljaStolpec}
+      FROM Dogodek d
+      LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
+      LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+      ${whereSql}
+      ${avtomatskiHavingSql}
+      ${sortirajSql}
+      LIMIT ? OFFSET ?
+    `;
+
+    queryArgs.push(poStrani, zamik);
+
+    const [dogodki] = await pool.query(sqlGlavni, queryArgs);
+
+    res.json({
+      skupnoStevilo: skupnoStevilo,
+      dogodki: dogodki
+    });
 
   } catch (err) {
     console.error('Napaka pri pridobivanju dogodkov z filtri:', err);

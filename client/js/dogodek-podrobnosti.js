@@ -26,6 +26,7 @@ async function naloziPodrobnostiDogodka() {
 
     pripraviSpremljajGumb();
     pripraviOcenoForm(dogodekId);
+    pripraviGumbDeli(dogodek);
     await inicializirajOcene(dogodekId);
 
     await inicializirajPriljubljene();
@@ -38,9 +39,50 @@ async function naloziPodrobnostiDogodka() {
   }
 }
 
+function pripraviGumbDeli(dogodek) {
+  const gumbDeli = document.getElementById('gumb-deli-dogodek');
+  if (!gumbDeli) return;
+
+  gumbDeli.addEventListener('click', async (e) => {
+    e.preventDefault();
+
+    const naslovDogodka = dogodek.Naslov || 'Zanimiv dogodek';
+    const urlDogodka = window.location.href;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: naslovDogodka,
+          text: `Poglej si ta dogodek: ${naslovDogodka}`,
+          url: urlDogodka
+        });
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Napaka pri deljenju:', err);
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(urlDogodka);
+        
+        if (window.pokaziToast) {
+          window.pokaziToast('success', 'Povezava do dogodka je skopirana v odložišče!', 'Povezava skopirana');
+        } else {
+          alert('Povezava do dogodka je skopirana v odložišče!');
+        }
+      } catch (err) {
+        console.error('Povezave ni bilo mogoče kopirati:', err);
+        window.pokaziToast?.('danger', 'Napaka pri kopiranju povezave.');
+      }
+    }
+  });
+}
+
 function pripraviSpremljajGumb() {
   const gumb = document.getElementById('gumb-spremljaj');
-  const organizatorId = gumb.getAttribute('data-org-id');
+  const organizatorId = gumb?.getAttribute('data-org-id');
+
+  if (!gumb) return;
 
   const osveziIzgled = (spremlja) => {
     gumb.textContent = spremlja ? 'Spremljaš' : 'Spremljaj';
@@ -68,7 +110,10 @@ function pripraviSpremljajGumb() {
 
 function pripraviOcenoForm(dogodekId) {
   const gumbNapisi = document.getElementById('gumb-odpri-oceno');
-  const bsModal = new bootstrap.Modal(document.getElementById('modalOcena'));
+  const modalElement = document.getElementById('modalOcena');
+  if (!modalElement) return;
+  
+  const bsModal = new bootstrap.Modal(modalElement);
 
   gumbNapisi?.addEventListener('click', () => {
     izbranaOcena = 0;

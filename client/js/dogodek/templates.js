@@ -29,7 +29,10 @@ export function generirajPodrobnostiHtml(dogodek, p) {
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 mt-2 text-white/90">
           <span class="inline-flex items-center gap-2"><i class="bi bi-calendar-event"></i> ${p.dan}. ${p.mesecPolno} ${p.leto}, ${p.ura}</span>
           <span class="inline-flex items-center gap-2"><i class="bi bi-geo-alt"></i> ${lokacija}</span>
-          <span class="inline-flex items-center gap-2"><i class="bi bi-star-fill text-yellow-300"></i> 4.8 <span class="text-white/70">(Priporočeno)</span></span>
+          <span class="inline-flex items-center gap-2" id="dinamicna-ocena-header">
+            <i class="bi bi-spinner spinner-border spinner-border-sm text-white/50"></i> 
+            <span class="text-white/70">Nalagam oceno...</span>
+          </span>
         </div>
       </div>
     </header>
@@ -114,7 +117,7 @@ export function generirajPodrobnostiHtml(dogodek, p) {
               <button id="gumb-rezervacija" class="btn btn-primary btn-lg w-100 mb-2" data-id="${Number(dogodek.ID_dogodek)}">
                 <i class="bi bi-ticket-perforated"></i> Rezerviraj vstopnico
               </button>
-              <button class="btn btn-outline-primary w-100">
+              <button id="gumb-deli-dogodek" class="btn btn-outline-primary w-100" data-naslov="${naslov}">
                 <i class="bi bi-share"></i> Deli
               </button>
 

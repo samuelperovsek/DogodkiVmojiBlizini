@@ -32,11 +32,16 @@ export async function naloziOcene() {
     const imaSeOcen = podaci.imaSe;
     const stat = podaci.statistika;
 
-    if (trenutnaStran === 1 && stat) renderStatistika(stat, kontejnerStatistike);
+    if (trenutnaStran === 1 && stat) {
+      renderStatistika(stat, kontejnerStatistike);
+      posodobiOcenoVHeaderju(stat);
+    }
 
     if (ocene.length === 0 && trenutnaStran === 1) {
       kontejnerOcen.innerHTML = '<p class="text-muted text-center my-3">Ta dogodek še nima ocen. Bodi prvi!</p>';
       document.getElementById('nalozi-vec-kontejner').style.display = 'none';
+      
+      posodobiOcenoVHeaderju({ povprecje: 0, skupnoOcen: 0 });
       return;
     }
 
@@ -53,6 +58,33 @@ export async function naloziOcene() {
     if (trenutnaStran === 1) {
       kontejnerOcen.innerHTML = '<p class="text-danger text-center">Ni bilo mogoče naložiti komentarjev.</p>';
     }
+  }
+}
+
+function posodobiOcenoVHeaderju(stat) {
+  const kontejner = document.getElementById('dinamicna-ocena-header');
+  if (!kontejner) return;
+
+  const povprecje = Number(stat?.povprecje || 0);
+  const skupnoOcen = Number(stat?.skupnoOcen || 0);
+
+  if (skupnoOcen > 0 && povprecje > 0) {
+    let znackaTekst = 'Priporočeno';
+    if (povprecje >= 4.7) znackaTekst = 'Izjemno';
+    else if (povprecje >= 4.3) znackaTekst = 'Odlično';
+    else if (povprecje >= 4.0) znackaTekst = 'Zelo dobro';
+    else if (povprecje < 3.5) znackaTekst = 'Dobro';
+
+    kontejner.innerHTML = `
+      <i class="bi bi-star-fill text-yellow-300"></i> 
+      ${povprecje.toFixed(1)} 
+      <span class="text-white/70">(${znackaTekst})</span>
+    `;
+  } else {
+    kontejner.innerHTML = `
+      <i class="bi bi-star text-white/50"></i> 
+      <span class="text-white/70">Še ni ocen</span>
+    `;
   }
 }
 
@@ -93,7 +125,7 @@ function generirajOcenaKartico(o, trenutniUporabnikId) {
   const komentarTekst = o.komentar ? pobegniHtml(o.komentar.trim()) : '<em class="text-muted">Uporabnik ni dodal komentarja.</em>';
   const jeLastnik = trenutniUporabnikId !== null && o.uporabnik_id === trenutniUporabnikId;
   const brisiGumb = jeLastnik
-    ? `<button class="btn btn-sm btn-link text-danger p-0 ms-2 gumb-brisi-svoj-komentar" data-id="${Number(o.ID_ocena)}" title="Izbriši svoj komentar" style="font-size: 0.95rem; line-height: 1;"><i class="bi bi-trash"></i></button>`
+    ? `<button class="btn btn-sm btn-link text-danger p-0 ms-2 gumb-brisi-svoj-komentar" data-id="${Number(o.ID_ocena)}" title="Izbrisati svoj komentar" style="font-size: 0.95rem; line-height: 1;"><i class="bi bi-trash"></i></button>`
     : '';
   const lastnikOznaka = jeLastnik
     ? '<span class="badge bg-light text-muted border ms-1" style="font-size: 0.65rem;">tvoj</span>'

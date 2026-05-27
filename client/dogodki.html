@@ -67,7 +67,7 @@
         <div class="hidden md:flex items-center gap-2">
           <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm text-white text-sm font-medium ring-1 ring-white/20">
             <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-            <strong>248</strong> aktivnih dogodkov
+            <strong id="glavni-stevec-aktivnih">0</strong> aktivnih dogodkov
           </span>
         </div>
       </div>
@@ -172,41 +172,11 @@
         </aside>
 
         <div class="col-lg-9">
-          <div class="flex justify-between items-center mb-4 flex-wrap gap-3 p-4 bg-white rounded-2xl border border-ink-200 shadow-sm">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-100 to-pink-100 flex items-center justify-center">
-                <i class="bi bi-calendar-week text-brand-700"></i>
-              </div>
-              <div>
-                <p class="mb-0 font-bold text-ink-900"><span class="gradient-text">248 dogodkov</span></p>
-                <p class="mb-0 text-xs text-ink-500">v okolici Ljubljane</p>
-              </div>
-            </div>
-            <div class="flex items-center gap-2">
-              <label class="text-sm font-medium text-ink-700 hidden sm:inline">Razvrsti:</label>
-              <select class="form-select d-inline-block w-auto">
-                <option>Po datumu</option>
-                <option>Po priljubljenosti</option>
-                <option>Po ceni</option>
-                <option>Po oddaljenosti</option>
-              </select>
-            </div>
-          </div>
+          <div id="zgornja-vrstica-dogodki-kontejner"></div>
 
-          <div class="row g-4 reveal" id="dogodki-kontejner">
+          <div class="row g-4 reveal" id="dogodki-kontejner"></div>
 
-          </div>
-
-          <nav class="mt-5">
-            <ul class="pagination justify-content-center">
-              <li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
-              <li class="page-item active"><a class="page-link" href="#">1</a></li>
-              <li class="page-item"><a class="page-link" href="#">2</a></li>
-              <li class="page-item"><a class="page-link" href="#">3</a></li>
-              <li class="page-item"><a class="page-link" href="#">4</a></li>
-              <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-            </ul>
-          </nav>
+          <nav class="mt-5" id="paginacija-kontejner"></nav>
         </div>
       </div>
     </div>

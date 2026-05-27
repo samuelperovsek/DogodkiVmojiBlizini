@@ -6,6 +6,10 @@ let initPriljubljenihPromise = null;
 
 let uporabnikLokacija = null;
 
+let trenutnoRazvrscanje = 'datum';
+let trenutnaStran = 1;
+const DOGODKOV_NA_STRAN = 6;
+
 export async function inicializirajPriljubljene() {
   if (initPriljubljenihPromise) return initPriljubljenihPromise;
   if (!Auth.jePrijavljen()) return Promise.resolve();
@@ -91,11 +95,11 @@ function pripraviFiltre() {
       clearTimeout(drsnikTimeout);
 
       drsnikTimeout = setTimeout(() => {
+        trenutnaStran = 1;
         naloziVseDogodke();
       }, 300);
     });
   }
-
 
   if (gumbUporabi) {
     gumbUporabi.addEventListener('click', async () => {
@@ -111,6 +115,7 @@ function pripraviFiltre() {
         gumbUporabi.disabled = false;
         gumbUporabi.innerHTML = `<i class="bi bi-check2-circle"></i> Uporabi filtre`;
       }
+      trenutnaStran = 1;
       naloziVseDogodke();
     });
   }
@@ -130,6 +135,8 @@ function pripraviFiltre() {
       
       document.querySelectorAll('.filter-cena, .filter-kategorija').forEach(el => el.checked = false);
       
+      trenutnoRazvrscanje = 'datum';
+      trenutnaStran = 1;
       naloziVseDogodke();
     });
   }
@@ -213,8 +220,75 @@ function generirajKartico(dogodek, stolpecRazred, privzetaSlika, useFreeBadge = 
   return stolpec;
 }
 
+function generirajZgornjoVrsticoHtml(steviloDogodkov, iskaniKraj, izbranoSortiranje) {
+  let besedaDogodek = 'dogodkov';
+  if (steviloDogodkov === 1) besedaDogodek = 'dogodek';
+  else if (steviloDogodkov === 2) besedaDogodek = 'dogodka';
+  else if (steviloDogodkov === 3 || steviloDogodkov === 4) besedaDogodek = 'dogodki';
+
+  const regijaTekst = iskaniKraj ? `v kraju ${pobegniHtml(iskaniKraj)}` : 'v tvoji okolici';
+
+  return `
+    <div class="flex justify-between items-center mb-4 flex-wrap gap-3 p-4 bg-white rounded-2xl border border-ink-200 shadow-sm">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-100 to-pink-100 flex items-center justify-center">
+          <i class="bi bi-calendar-week text-brand-700"></i>
+        </div>
+        <div>
+          <p class="mb-0 font-bold text-ink-900"><span class="gradient-text">${steviloDogodkov} ${besedaDogodek}</span></p>
+          <p class="mb-0 text-xs text-ink-500">${regijaTekst}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <label for="razvrscanje-select" class="text-sm font-medium text-ink-700 hidden sm:inline">Razvrsti:</label>
+        <select id="razvrscanje-select" class="form-select d-inline-block w-auto">
+          <option value="datum" ${izbranoSortiranje === 'datum' ? 'selected' : ''}>Po datumu</option>
+          <option value="priljubljenost" ${izbranoSortiranje === 'priljubljenost' ? 'selected' : ''}>Po priljubljenosti</option>
+          <option value="cena" ${izbranoSortiranje === 'cena' ? 'selected' : ''}>Po ceni</option>
+          <option value="oddaljenost" ${izbranoSortiranje === 'oddaljenost' ? 'selected' : ''}>Po oddaljenosti</option>
+        </select>
+      </div>
+    </div>
+  `;
+}
+
+function generirajPaginacijoHtml(trenutna, skupno) {
+  if (skupno <= 1) return '';
+
+  let predhodnaGumb = `<li class="page-item ${trenutna === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${trenutna - 1}">&laquo;</a></li>`;
+  let naslednjaGumb = `<li class="page-item ${trenutna === skupno ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${trenutna + 1}">&raquo;</a></li>`;
+
+  let straniHtml = '';
+  for (let i = 1; i <= skupno; i++) {
+    straniHtml += `<li class="page-item ${trenutna === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+  }
+
+  return `<ul class="pagination justify-content-center">${predhodnaGumb}${straniHtml}${naslednjaGumb}</ul>`;
+}
+
+function pripraviDogodkePaginacije(vseStrani) {
+  document.querySelectorAll('#paginacija-kontejner .page-link').forEach(gumb => {
+    gumb.addEventListener('click', (e) => {
+      e.preventDefault();
+      const novaStran = parseInt(gumb.dataset.page);
+      
+      if (!novaStran || novaStran < 1 || novaStran > vseStrani || novaStran === trenutnaStran) return;
+      
+      trenutnaStran = novaStran;
+      
+      const kontejner = document.getElementById('dogodki-kontejner');
+      if (kontejner) kontejner.innerHTML = '<div class="text-center w-100 p-5"><div class="spinner-border text-primary"></div></div>';
+      
+      naloziVseDogodke();
+      window.scrollTo({ top: 150, behavior: 'smooth' });
+    });
+  });
+}
+
 async function naloziVseDogodke() {
   const kontejner = document.getElementById('dogodki-kontejner');
+  const zgornjaVrsticaKontejner = document.getElementById('zgornja-vrstica-dogodki-kontejner');
+  const paginacijaKontejner = document.getElementById('paginacija-kontejner');
   const privzeta = 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80';
 
   const lokacijaInput = document.getElementById('filter-lokacija');
@@ -237,12 +311,15 @@ async function naloziVseDogodke() {
   if (izbraneCene.length > 0) params.append('cene', izbraneCene.join(','));
   if (izbraneKategorije.length > 0) params.append('kategorije', izbraneKategorije.join(','));
 
+  params.append('sort', trenutnoRazvrscanje);
+  params.append('page', trenutnaStran);
+  params.append('limit', DOGODKOV_NA_STRAN);
 
   if (uporabnikLokacija && razdalja && parseInt(razdalja) < 100) {
-      params.append('userLat', uporabnikLokacija.lat);
-      params.append('userLng', uporabnikLokacija.lng);
-      params.append('maxRazdalja', razdalja);
-    }
+    params.append('userLat', uporabnikLokacija.lat);
+    params.append('userLng', uporabnikLokacija.lng);
+    params.append('maxRazdalja', razdalja);
+  }
 
   const stevecFiltrov = document.getElementById('st-aktivnih-filtrov');
   if (stevecFiltrov) {
@@ -252,13 +329,34 @@ async function naloziVseDogodke() {
   }
 
   try {
-    const url = params.toString() ? `/dogodki?${params.toString()}` : '/dogodki';
-    
+    const url = `/dogodki?${params.toString()}`;
     const odgovor = await apiFetch(url);
+    
     const seznamDogodkov = Array.isArray(odgovor) ? odgovor : (odgovor.dogodki || []);
+    const skupnoStevilo = odgovor.skupnoStevilo !== undefined ? odgovor.skupnoStevilo : seznamDogodkov.length;
+
+    const glavniStevec = document.getElementById('glavni-stevec-aktivnih');
+    if (glavniStevec) {
+      glavniStevec.textContent = skupnoStevilo;
+    }
+
+    if (zgornjaVrsticaKontejner) {
+      zgornjaVrsticaKontejner.innerHTML = generirajZgornjoVrsticoHtml(skupnoStevilo, lokacija, trenutnoRazvrscanje);
+      
+      const selectElement = document.getElementById('razvrscanje-select');
+      if (selectElement) {
+        selectElement.addEventListener('change', (e) => {
+          trenutnoRazvrscanje = e.target.value; 
+          trenutnaStran = 1;
+          kontejner.innerHTML = '<div class="text-center w-100 p-5"><div class="spinner-border text-primary"></div></div>';
+          naloziVseDogodke(); 
+        });
+      }
+    }
 
     if (seznamDogodkov.length === 0) {
       kontejner.innerHTML = '<p class="text-center w-100 mt-4">Noben aktiven dogodek ne ustreza izbranim kriterijem.</p>';
+      if (paginacijaKontejner) paginacijaKontejner.innerHTML = '';
       return;
     }
 
@@ -266,6 +364,12 @@ async function naloziVseDogodke() {
     seznamDogodkov.forEach(dogodek => {
       kontejner.appendChild(generirajKartico(dogodek, 'col-md-6 mb-4', privzeta, false));
     });
+
+    if (paginacijaKontejner) {
+      const vseStrani = Math.ceil(skupnoStevilo / DOGODKOV_NA_STRAN);
+      paginacijaKontejner.innerHTML = generirajPaginacijoHtml(trenutnaStran, vseStrani);
+      pripraviDogodkePaginacije(vseStrani);
+    }
 
     osveziSrckeNaStrani();
 
