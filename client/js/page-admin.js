@@ -3,6 +3,7 @@ import { naloziUporabnike } from './admin/uporabniki.js';
 import { naloziProsnje } from './admin/prosnje.js';
 import { naloziDogodke, pripraviDogodkiHandlerje } from './admin/dogodki.js';
 import { naloziOcene } from './admin/ocene.js';
+import { pripraviHitraDejanjaHandlerje } from './admin/hitra-dejanja.js';
 
 const trenutni = Auth.getUporabnik();
 
@@ -34,6 +35,36 @@ document.querySelectorAll('[data-logout]').forEach(btn => {
 })();
 
 pripraviDogodkiHandlerje();
+pripraviHitraDejanjaHandlerje();
+pripraviZlozljive();
+
+function pripraviZlozljive() {
+  document.querySelectorAll('[data-zlozljiv]').forEach(sec => {
+    const glava = sec.querySelector('.zlozljiv__glava');
+    if (!glava) return;
+    glava.addEventListener('click', () => {
+      const odprt = sec.getAttribute('aria-expanded') === 'true';
+      sec.setAttribute('aria-expanded', odprt ? 'false' : 'true');
+    });
+  });
+
+  function razsiri(id) {
+    if (!id) return;
+    const cilj = document.getElementById(id);
+    if (!cilj) return;
+    const sec = cilj.closest('[data-zlozljiv]') || (cilj.matches('[data-zlozljiv]') ? cilj : null);
+    if (sec) sec.setAttribute('aria-expanded', 'true');
+  }
+
+  document.querySelectorAll('.admin-sidebar a[href^="#"]').forEach(a => {
+    a.addEventListener('click', () => {
+      razsiri(a.getAttribute('href').slice(1));
+    });
+  });
+
+  if (location.hash) razsiri(location.hash.slice(1));
+  window.addEventListener('hashchange', () => razsiri(location.hash.slice(1)));
+}
 
 async function osveziAdminPodatke() {
   await Promise.all([

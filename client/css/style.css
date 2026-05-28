@@ -813,6 +813,71 @@ button.btn[disabled]::after, .btn:disabled::after { display: none; }
   border: 0;
 }
 
+.zlozljiv__glava {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  text-align: left;
+  gap: 1rem;
+  font-family: inherit;
+  color: inherit;
+  transition: opacity 0.18s var(--ease);
+}
+
+.zlozljiv__glava:hover { opacity: 0.85; }
+
+.zlozljiv__glava h3,
+.zlozljiv__glava h4 { margin-bottom: 0.25rem; }
+
+.zlozljiv__chevron {
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  color: var(--brand-700);
+  transition: transform 0.25s var(--ease);
+}
+
+.zlozljiv[aria-expanded="true"] .zlozljiv__chevron {
+  transform: rotate(180deg);
+}
+
+.zlozljiv__telo {
+  margin-top: 1rem;
+  display: none;
+}
+
+.zlozljiv[aria-expanded="true"] .zlozljiv__telo {
+  display: block;
+  animation: zlozljivOdpri 0.22s var(--ease);
+}
+
+.zlozljiv[aria-expanded="false"] {
+  padding-bottom: 1rem;
+}
+
+@keyframes zlozljivOdpri {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+html[data-tema="dark"] .zlozljiv__chevron { color: var(--brand-300); }
+
+.zlozljiv__glava small,
+.zlozljiv__glava .text-muted {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.zlozljiv__glava .badge {
+  font-size: 0.95rem;
+  padding: 0.45rem 0.85rem;
+}
+
 .bell-nav {
   position: relative;
   margin-right: 0.5rem;

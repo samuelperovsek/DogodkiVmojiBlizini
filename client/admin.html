@@ -61,14 +61,19 @@
         </div>
       </div>
 
-      <section id="prosnje-section" class="stat-card mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-          <div>
-            <h3 class="mb-1"><i class="bi bi-inbox text-primary"></i> Prošnje za status organizatorja</h3>
-            <small class="text-muted">Pregledaj prošnje uporabnikov. Ob odobritvi ustvarimo zapis Organizator + uporabniku spremenimo vlogo.</small>
+      <section id="prosnje-section" class="stat-card mb-4 zlozljiv" data-zlozljiv aria-expanded="false">
+        <button type="button" class="zlozljiv__glava">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 flex-grow-1">
+            <div>
+              <h3 class="mb-1"><i class="bi bi-inbox text-primary"></i> Prošnje za status organizatorja</h3>
+              <small class="text-muted">Pregledaj prošnje uporabnikov. Ob odobritvi ustvarimo zapis Organizator + uporabniku spremenimo vlogo.</small>
+            </div>
+            <span id="prosnjeCount" class="badge bg-warning text-dark fs-6"></span>
           </div>
-          <span id="prosnjeCount" class="badge bg-warning text-dark fs-6"></span>
-        </div>
+          <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+        </button>
+
+        <div class="zlozljiv__telo">
 
         <div id="prosnjeList">
           <div class="flex flex-col gap-3">
@@ -84,16 +89,23 @@
             </div>
           </div>
         </div>
+
+        </div>
       </section>
 
-      <section id="uporabniki" class="stat-card mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-          <div>
-            <h3 class="mb-1"><i class="bi bi-people text-primary"></i> Uporabniki in vloge</h3>
-            <small class="text-muted">Spreminjaj vloge uporabnikov. Vloga "organizator" omogoča dodajanje dogodkov.</small>
+      <section id="uporabniki" class="stat-card mb-4 zlozljiv" data-zlozljiv aria-expanded="false">
+        <button type="button" class="zlozljiv__glava">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 flex-grow-1">
+            <div>
+              <h3 class="mb-1"><i class="bi bi-people text-primary"></i> Uporabniki in vloge</h3>
+              <small class="text-muted">Spreminjaj vloge uporabnikov. Vloga "organizator" omogoča dodajanje dogodkov.</small>
+            </div>
+            <span id="userCount" class="badge bg-primary fs-6"></span>
           </div>
-          <span id="userCount" class="badge bg-primary fs-6"></span>
-        </div>
+          <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+        </button>
+
+        <div class="zlozljiv__telo">
 
         <div class="table-responsive">
           <table class="admin-table">
@@ -124,9 +136,22 @@
             </tbody>
           </table>
         </div>
+
+        </div>
       </section>
 
-      <div class="row g-3 mb-4">
+      <section id="statistike" class="stat-card mb-4 zlozljiv" data-zlozljiv aria-expanded="false">
+        <button type="button" class="zlozljiv__glava">
+          <div class="flex-grow-1">
+            <h3 class="mb-1"><i class="bi bi-bar-chart text-primary"></i> Pregled statistike</h3>
+            <small class="text-muted">Aktivni dogodki, uporabniki, čakajoči na odobritev in ocene.</small>
+          </div>
+          <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+        </button>
+
+        <div class="zlozljiv__telo">
+
+      <div class="row g-3">
         <div class="col-6 col-md-3">
           <div class="stat-card">
             <div class="flex items-start justify-between mb-2">
@@ -165,132 +190,103 @@
         </div>
       </div>
 
+        </div>
+      </section>
+
       <div class="row g-4">
 
         <div class="col-lg-8">
-          <div id="dogodki" class="stat-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="mb-0">Dogodki na pregled</h4>
-              <select class="form-select form-select-sm w-auto">
-                <option>Vse kategorije</option>
-                <option>Koncerti</option>
-                <option>Delavnice</option>
-                <option>Šport</option>
-              </select>
+          <section id="dogodki" class="stat-card zlozljiv" data-zlozljiv aria-expanded="false">
+            <button type="button" class="zlozljiv__glava">
+              <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 flex-grow-1">
+                <div>
+                  <h3 class="mb-1"><i class="bi bi-calendar-event text-primary"></i> Dogodki na pregled</h3>
+                  <small class="text-muted">Odobritev, promocija ali zavrnitev dogodkov.</small>
+                </div>
+              </div>
+              <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+            </button>
+            <div class="zlozljiv__telo">
+              <div class="d-flex justify-content-end align-items-center mb-3">
+                <select class="form-select form-select-sm w-auto">
+                  <option>Vse kategorije</option>
+                  <option>Koncerti</option>
+                  <option>Delavnice</option>
+                  <option>Šport</option>
+                </select>
+              </div>
+
+              <div class="table-responsive">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>Dogodek</th>
+                      <th>Organizator</th>
+                      <th>Datum</th>
+                      <th>Status</th>
+                      <th>Akcije</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-dogodki-tbody">
+
+                  </tbody>
+                </table>
+              </div>
+
+              <a href="#dogodki" class="btn btn-outline-primary w-100 mt-3">Prikaži vseh <span data-stat="dogodki-vse">0</span> dogodkov</a>
             </div>
+          </section>
 
-            <div class="table-responsive">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th>Dogodek</th>
-                    <th>Organizator</th>
-                    <th>Datum</th>
-                    <th>Status</th>
-                    <th>Akcije</th>
-                  </tr>
-                </thead>
-                <tbody id="admin-dogodki-tbody">
-
-                </tbody>
-              </table>
-            </div>
-
-            <a href="#dogodki" class="btn btn-outline-primary w-100 mt-3">Prikaži vseh <span data-stat="dogodki-vse">0</span> dogodkov</a>
-          </div>
-
-          <div class="stat-card mt-4">
-            <h4 class="mb-3">Aktivnost zadnjih 7 dni</h4>
-            <table class="admin-table">
-              <thead>
-                <tr>
-                  <th>Dan</th>
-                  <th>Nove prijave</th>
-                  <th>Novi dogodki</th>
-                  <th>Mnenja</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td>Pon</td><td>142</td><td>8</td><td>34</td></tr>
-                <tr><td>Tor</td><td>168</td><td>11</td><td>41</td></tr>
-                <tr><td>Sre</td><td>129</td><td>9</td><td>28</td></tr>
-                <tr><td>Čet</td><td>195</td><td>14</td><td>56</td></tr>
-                <tr><td><strong>Pet</strong></td><td><strong>231</strong></td><td><strong>18</strong></td><td><strong>62</strong></td></tr>
-                <tr><td><strong>Sob</strong></td><td><strong>248</strong></td><td><strong>15</strong></td><td><strong>59</strong></td></tr>
-                <tr><td>Ned</td><td>184</td><td>9</td><td>32</td></tr>
-                <tr style="background-color: #f5f3ff;">
-                  <td><strong>Skupaj</strong></td>
-                  <td><strong>1.297</strong></td>
-                  <td><strong>84</strong></td>
-                  <td><strong>312</strong></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
         </div>
 
         <div class="col-lg-4">
 
-          <div class="stat-card mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <h4 class="mb-0">Prijave neprimernega</h4>
-              <span class="badge bg-danger">5</span>
+          <section class="stat-card mb-4 zlozljiv" data-zlozljiv aria-expanded="false">
+            <button type="button" class="zlozljiv__glava">
+              <div class="flex-grow-1">
+                <h4 class="mb-0"><i class="bi bi-grid text-primary"></i> Top kategorije</h4>
+              </div>
+              <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+            </button>
+            <div class="zlozljiv__telo">
+              <div id="topKategorije"></div>
             </div>
+          </section>
 
-            <div class="border-bottom pb-2 mb-2">
-              <p class="mb-1"><i class="bi bi-flag-fill text-danger"></i> <strong>"Nočna zabava (sumljivo)"</strong></p>
-              <small class="text-muted">prijavljeno za neprimerno vsebino — 4 prijave</small><br>
-              <small class="text-muted">pred 12 min</small>
+          <section class="stat-card zlozljiv" data-zlozljiv aria-expanded="false">
+            <button type="button" class="zlozljiv__glava">
+              <div class="flex-grow-1">
+                <h4 class="mb-0"><i class="bi bi-lightning-charge-fill text-primary"></i> Hitra dejanja</h4>
+              </div>
+              <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+            </button>
+            <div class="zlozljiv__telo">
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary text-start" data-hitra-promoviraj>
+                  <i class="bi bi-star-fill text-warning"></i> Promoviraj dogodek
+                </button>
+                <button class="btn btn-outline-primary text-start" data-hitra-obvestilo>
+                  <i class="bi bi-megaphone"></i> Obvestilo vsem
+                </button>
+              </div>
             </div>
-
-            <div class="border-bottom pb-2 mb-2">
-              <p class="mb-1"><i class="bi bi-chat-square-text-fill text-warning"></i> <strong>Komentar — "Open Air"</strong></p>
-              <small class="text-muted">žaljiv jezik</small><br>
-              <small class="text-muted">pred 1 uro</small>
-            </div>
-
-            <div>
-              <p class="mb-1"><i class="bi bi-flag-fill text-danger"></i> <strong>"Brezplačna delavnica"</strong></p>
-              <small class="text-muted">zavajajoč opis</small><br>
-              <small class="text-muted">pred 3 urami</small>
-            </div>
-
-            <a href="#" class="btn btn-outline-primary btn-sm w-100 mt-3">Vse prijave</a>
-          </div>
-
-          <div class="stat-card mb-4">
-            <h4 class="mb-3">Top kategorije</h4>
-            <div id="topKategorije"></div>
-          </div>
-
-          <div class="stat-card">
-            <h4 class="mb-3">Hitra dejanja</h4>
-            <div class="d-grid gap-2">
-              <button class="btn btn-outline-primary text-start">
-                <i class="bi bi-star-fill text-warning"></i> Promoviraj dogodek
-              </button>
-              <button class="btn btn-outline-primary text-start">
-                <i class="bi bi-megaphone"></i> Obvestilo vsem
-              </button>
-              <button class="btn btn-outline-primary text-start">
-                <i class="bi bi-tags"></i> Dodaj kategorijo
-              </button>
-              <button class="btn btn-outline-primary text-start">
-                <i class="bi bi-shield-lock"></i> Blokirani
-              </button>
-            </div>
-          </div>
+          </section>
         </div>
       </div>
 
-      <section id="komentarji" class="stat-card mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-          <div>
-            <h3 class="mb-1"><i class="bi bi-chat-square-text text-primary"></i> Komentarji in ocene</h3>
-            <small class="text-muted">Vsi komentarji uporabnikov, povezani z dogodki. Lahko jih izbrišeš za moderacijo.</small>
+      <section id="komentarji" class="stat-card mb-4 zlozljiv" data-zlozljiv aria-expanded="false">
+        <button type="button" class="zlozljiv__glava">
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 flex-grow-1">
+            <div>
+              <h3 class="mb-1"><i class="bi bi-chat-square-text text-primary"></i> Komentarji in ocene</h3>
+              <small class="text-muted">Vsi komentarji uporabnikov, povezani z dogodki. Lahko jih izbrišeš za moderacijo.</small>
+            </div>
+            <span id="oceneCount" class="badge bg-primary fs-6"></span>
           </div>
-          <span id="oceneCount" class="badge bg-primary fs-6"></span>
-        </div>
+          <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+        </button>
+
+        <div class="zlozljiv__telo">
 
         <div class="table-responsive">
           <table class="admin-table">
@@ -323,6 +319,8 @@
               </tr>
             </tbody>
           </table>
+        </div>
+
         </div>
       </section>
 

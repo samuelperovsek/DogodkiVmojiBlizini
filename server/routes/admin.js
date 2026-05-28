@@ -194,4 +194,52 @@ router.patch(
   }
 );
 
+router.post(
+  '/obvestilo-vsem',
+  [
+    body('sporocilo')
+      .trim()
+      .notEmpty().withMessage('Sporočilo ne sme biti prazno.')
+      .isLength({ max: 500 }).withMessage('Največ 500 znakov.'),
+    body('povezava').optional({ checkFalsy: true }).trim().isLength({ max: 255 }),
+  ],
+  async (req, res) => {
+    const napake = validationResult(req);
+    if (!napake.isEmpty()) {
+      return res.status(400).json({
+        napaka: 'Neveljavni podatki',
+        podrobnosti: napake.array().map(n => n.msg),
+      });
+    }
+
+    const sporocilo = req.body.sporocilo.trim();
+    const povezava = req.body.povezava?.trim() || null;
+
+    try {
+      const [uporabniki] = await pool.query(
+        'SELECT ID_uporabnik FROM Uporabnik WHERE ID_uporabnik <> ?',
+        [req.uporabnik.id]
+      );
+
+      if (uporabniki.length === 0) {
+        return res.json({ sporocilo: 'Ni uporabnikov za obvestiti.', poslano: 0 });
+      }
+
+      const vrednosti = uporabniki.map(u => [u.ID_uporabnik, 'splosno', sporocilo, povezava]);
+      await pool.query(
+        'INSERT INTO Obvestilo (TK_uporabnik, tip, sporocilo, povezava) VALUES ?',
+        [vrednosti]
+      );
+
+      res.json({
+        sporocilo: `Obvestilo poslano ${uporabniki.length} uporabnikom.`,
+        poslano: uporabniki.length,
+      });
+    } catch (err) {
+      console.error('Napaka pri pošiljanju obvestila vsem:', err);
+      res.status(500).json({ napaka: 'Napaka strežnika.' });
+    }
+  }
+);
+
 export default router;
