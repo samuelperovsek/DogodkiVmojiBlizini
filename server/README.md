@@ -1,4 +1,4 @@
-# Backend — Dogodki v moji bližini
+# Backend — Eventli
 
 Node.js + Express + MySQL.
 
@@ -57,7 +57,7 @@ node scripts/hash-existing-passwords.js
 ## Test uporabniki (po hashiranju)
 
 | Email | Geslo | Vloga |
-| `admin@dogodki.si` | `varnoGeslo!` | admin |
+| `admin@eventli.si` | `varnoGeslo!` | admin |
 | `janez@email.si` | `geslo123` | uporabnik |
 | `maja.kovac@email.si` | `skritoGeslo1` | uporabnik |
 | `luka.zupan@email.si` | `superVarno!` | uporabnik |

@@ -1365,6 +1365,29 @@ html[data-tema="dark"] .bell-empty { color: #9ca3af; }
   opacity: 0.35;
 }
 
+.page-header__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.28;
+  mix-blend-mode: overlay;
+  filter: saturate(1.1) contrast(1.05);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-header--with-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0) 0%, rgba(15, 23, 42, 0.35) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
 .page-header > .container { position: relative; z-index: 1; }
 
 .page-header h1 {
@@ -2598,14 +2621,114 @@ html[data-tema="dark"] .modal-content,
 html[data-tema="dark"] .modal-overlay .modal-content {
   background-color: var(--bg-elev-2);
   color: var(--text-1);
-  border-color: var(--border-1);
+  border: 1px solid var(--border-2);
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.65),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 0 120px rgba(139, 92, 246, 0.18);
 }
 
-html[data-tema="dark"] .modal-header,
-html[data-tema="dark"] .modal-footer {
-  background-color: var(--bg-elev-1);
-  border-color: var(--border-1);
+html[data-tema="dark"] .modal-header {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), transparent);
+  border-bottom: 1px solid var(--border-2);
   color: var(--text-1);
+}
+
+html[data-tema="dark"] .modal-header h3 {
+  color: var(--text-1);
+}
+
+html[data-tema="dark"] .modal-footer {
+  background-color: rgba(11, 18, 36, 0.7);
+  border-top: 1px solid var(--border-2);
+  color: var(--text-1);
+}
+
+html[data-tema="dark"] .modal-close {
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html[data-tema="dark"] .modal-close:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+html[data-tema="dark"] .modal-body .form-label,
+html[data-tema="dark"] .modal-dialog .form-label,
+html[data-tema="dark"] .modal-body label,
+html[data-tema="dark"] .modal-dialog label {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+html[data-tema="dark"] .modal-body .form-control,
+html[data-tema="dark"] .modal-dialog .form-control,
+html[data-tema="dark"] .modal-body .form-select,
+html[data-tema="dark"] .modal-dialog .form-select {
+  background-color: rgba(11, 18, 36, 0.85);
+  border: 1px solid var(--border-2);
+  color: var(--text-1);
+}
+
+html[data-tema="dark"] .modal-body .form-control:hover,
+html[data-tema="dark"] .modal-dialog .form-control:hover {
+  border-color: rgba(196, 181, 253, 0.45);
+}
+
+html[data-tema="dark"] .modal-body .form-control:focus,
+html[data-tema="dark"] .modal-dialog .form-control:focus {
+  background-color: rgba(11, 18, 36, 0.95);
+  border-color: var(--brand-400);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.28);
+  color: #fff;
+}
+
+html[data-tema="dark"] .modal-body .form-control::placeholder {
+  color: rgba(203, 213, 225, 0.45);
+}
+
+html[data-tema="dark"] .modal-body .field-hint,
+html[data-tema="dark"] .modal-dialog .field-hint {
+  color: var(--text-2);
+}
+
+html[data-tema="dark"] .modal-body .field-hint.valid { color: #6ee7b7; }
+html[data-tema="dark"] .modal-body .field-hint.invalid { color: #fca5a5; }
+
+html[data-tema="dark"] .modal-body .password-strength-bar {
+  background-color: rgba(148, 163, 184, 0.22);
+}
+
+html[data-tema="dark"] .modal-body .nav-pills {
+  background-color: rgba(11, 18, 36, 0.6);
+  border: 1px solid var(--border-1);
+}
+
+html[data-tema="dark"] .modal-body .nav-pills .nav-link {
+  color: var(--text-2);
+}
+
+html[data-tema="dark"] .modal-body .nav-pills .nav-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+html[data-tema="dark"] .modal-body .nav-pills .nav-link.active {
+  background: var(--gradient-brand);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(109, 40, 217, 0.45);
+}
+
+html[data-tema="dark"] .modal-body .password-toggle {
+  color: var(--text-2);
+}
+html[data-tema="dark"] .modal-body .password-toggle:hover {
+  color: #fff;
+}
+
+html[data-tema="dark"] .modal-body .alert {
+  border-width: 1px;
 }
 
 html[data-tema="dark"] .form-control,

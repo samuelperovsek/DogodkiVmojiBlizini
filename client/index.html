@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DogodkiVMojiBližini.si — Odkrijte dogodke v vaši okolici</title>
+  <title>Eventli.si — Odkrijte dogodke v vaši okolici</title>
 
   <script src="js/guard-redirect-admin.js"></script>
   <script src="js/uveljavi-temo.js"></script>
@@ -19,7 +19,7 @@
   <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
       <a class="navbar-brand" href="index.html">
-        <i class="bi bi-geo-alt-fill"></i>DogodkiVMojiBližini
+        <i class="bi bi-geo-alt-fill"></i>Eventli
       </a>
 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
@@ -140,31 +140,56 @@
           </div>
         </div>
 
-        <div class="col-lg-5 d-none d-lg-block text-center relative">
+        <div class="col-lg-5 d-none d-lg-block relative">
           <div class="absolute -top-10 -left-10 w-40 h-40 bg-pink-500/50 rounded-full blur-3xl animate-float pointer-events-none"></div>
           <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-violet-400/50 rounded-full blur-3xl animate-float pointer-events-none" style="animation-delay: -2s;"></div>
 
-          <div class="absolute -bottom-4 -left-6 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -1s;">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 text-white flex items-center justify-center shadow-md">
-              <i class="bi bi-ticket-perforated text-lg"></i>
-            </div>
-            <div class="relative text-left">
-              <div class="text-xs -right-12 text-ink-500 font-medium">Pravkar rezervirano</div>
-              <div class="text-sm font-bold text-ink-900">Festival Lent</div>
-            </div>
-          </div>
+          <div class="relative mx-auto" style="max-width: 420px;">
+            <div class="relative overflow-hidden rounded-3xl shadow-2xl ring-1 ring-white/20" style="aspect-ratio: 4/5;">
+              <img
+                src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=900&q=80&auto=format&fit=crop"
+                alt="Koncert pred polno množico"
+                loading="eager"
+                class="w-full h-full object-cover"
+                style="transform: scale(1.02);"
+              >
+              <div class="absolute inset-0 bg-gradient-to-tr from-brand-900/45 via-transparent to-pink-500/25"></div>
+              <div class="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/60 to-transparent"></div>
 
-          <div class="absolute -bottom-2 -right-4 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -4s;">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 text-white flex items-center justify-center shadow-md">
-              <i class="bi bi-star-fill text-lg"></i>
+              <div class="absolute top-4 left-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md ring-1 ring-white/30 text-white text-xs font-semibold">
+                <span class="relative flex h-2 w-2">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-pink-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2 w-2 bg-pink-400"></span>
+                </span>
+                V živo nocoj
+              </div>
+
+              <div class="absolute bottom-5 left-5 right-5 text-white">
+                <div class="text-xs uppercase tracking-wider text-white/75 font-semibold mb-1">Koncert</div>
+                <div class="text-xl font-bold leading-tight" style="text-shadow: 0 2px 12px rgba(0,0,0,0.4);">Sound of the Summer</div>
+                <div class="text-sm text-white/85 mt-1"><i class="bi bi-geo-alt-fill"></i> Ljubljana, Križanke</div>
+              </div>
             </div>
-            <div class="text-left">
-              <div class="text-xs text-ink-500 font-medium">Ocena</div>
-              <div class="text-sm font-bold text-ink-900">4.8 / 5.0</div>
+
+            <div class="absolute -bottom-4 -left-6 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -1s;">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-pink-500 text-white flex items-center justify-center shadow-md">
+                <i class="bi bi-ticket-perforated text-lg"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs text-ink-500 font-medium">Pravkar rezervirano</div>
+                <div class="text-sm font-bold text-ink-900">Festival Lent</div>
+              </div>
             </div>
-          </div>
-          <div class="container">
-            <div class="w-40 h-40"></div>
+
+            <div class="absolute -top-4 -right-4 z-10 bg-white/95 backdrop-blur-md rounded-2xl shadow-xl px-4 py-3 flex items-center gap-3 animate-float ring-1 ring-black/5" style="animation-delay: -4s;">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-pink-500 text-white flex items-center justify-center shadow-md">
+                <i class="bi bi-star-fill text-lg"></i>
+              </div>
+              <div class="text-left">
+                <div class="text-xs text-ink-500 font-medium">Ocena</div>
+                <div class="text-sm font-bold text-ink-900">4.8 / 5.0</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -259,6 +284,13 @@
 
         <div class="col-lg-5 reveal">
           <div class="relative overflow-hidden rounded-3xl h-full p-8 bg-gradient-to-br from-brand-900 via-brand-700 to-accent-600 shadow-glow flex flex-col justify-center animate-glow-pulse">
+            <img
+              src="https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=900&q=80&auto=format&fit=crop"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              class="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-overlay pointer-events-none"
+            >
             <div class="absolute -top-16 -right-16 w-56 h-56 bg-pink-400/40 rounded-full blur-3xl animate-float"></div>
             <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 rounded-full blur-3xl animate-float" style="animation-delay: -3s;"></div>
             <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px); background-size: 22px 22px;"></div>
@@ -302,7 +334,7 @@
     <div class="container">
       <div class="row g-4">
         <div class="col-md-4">
-          <h5><i class="bi bi-geo-alt-fill"></i> DogodkiVMojiBližini</h5>
+          <h5><i class="bi bi-geo-alt-fill"></i> Eventli</h5>
           <p class="text-white/70 mb-4">Slovenska platforma, ki povezuje organizatorje dogodkov z lokalno skupnostjo.</p>
           <div class="footer-social">
             <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
@@ -341,7 +373,7 @@
         <span class="flex items-center gap-2">
           <span class="inline-flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400"></span> Vsi sistemi delujejo</span>
           <span class="text-white/30">•</span>
-          © 2026 DogodkiVMojiBližini.si
+          © 2026 Eventli.si
         </span>
         <div class="flex gap-4">
           <a href="#" class="inline">Pogoji uporabe</a>

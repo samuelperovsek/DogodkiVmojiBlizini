@@ -171,7 +171,7 @@ INSERT INTO Kategorija (naziv) VALUES
 
 INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga, naziv_podjetja, spletna_stran, telefon) VALUES
 ('Janez', 'Novak', 'janez@email.si', 'geslo123', 'uporabnik', NULL, NULL, NULL),
-('Samuel', 'Admin', 'admin@dogodki.si', 'varnoGeslo!', 'admin', NULL, NULL, NULL),
+('Samuel', 'Admin', 'admin@eventli.si', 'varnoGeslo!', 'admin', NULL, NULL, NULL),
 ('Maja', 'Kovač', 'maja.kovac@email.si', 'skritoGeslo1', 'uporabnik', NULL, NULL, NULL),
 ('Luka', 'Zupan', 'luka.zupan@email.si', 'superVarno!', 'uporabnik', NULL, NULL, NULL),
 ('Ana', 'Bizjak', 'ana.bizjak@kinosiska.si', 'organVarno!', 'organizator', 'Kino Šiška', 'https://www.kinosiska.si', '01 500 30 00');

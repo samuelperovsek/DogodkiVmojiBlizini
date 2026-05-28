@@ -42,7 +42,7 @@ export const Auth = {
 const POTI_BREZ_REDIRECT = ['/me', '/prijava', '/registracija'];
 
 const METODE_S_SPREMEMBO = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
-const POTI_BREZ_DOGODKA = ['/obvestila', '/me'];
+const POTI_BREZ_DOGODKA = ['/obvestila'];
 
 export async function apiFetch(pot, opcije = {}) {
   const jeFormData = opcije.body instanceof FormData;

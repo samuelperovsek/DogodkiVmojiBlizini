@@ -9,4 +9,4 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-export const FROM = process.env.EMAIL_FROM || '"Spletna platforma Dogodki" <info@dogodki.si>';
+export const FROM = process.env.EMAIL_FROM || '"Eventli" <info@eventli.si>';

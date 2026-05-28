@@ -72,7 +72,7 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
         
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(polnNaslov)}&limit=1`,
-          { headers: { 'User-Agent': 'DogodkiVMojiBliziniApp/1.0' } }
+          { headers: { 'User-Agent': 'EventliApp/1.0' } }
         );
         const data = await response.json();
 
