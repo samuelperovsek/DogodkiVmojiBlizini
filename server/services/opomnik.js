@@ -1,17 +1,20 @@
 import cron from 'node-cron';
 import pool from '../db.js';
 import { transporter, FROM } from './email.js';
+import { ustvariObvestilo } from './obvestila.js';
 
 cron.schedule('*/15 * * * *', async () => {
   console.log('[Cron] Preverjanje dogodkov za pošiljanje opomnikov...');
 
   try {
     const [prijave] = await pool.query(`
-      SELECT 
-        p.ID_prijava, 
-        u.email AS uporabnik_email, 
-        u.ime AS uporabnik_ime, 
-        d.Naslov AS dogodek_naslov, 
+      SELECT
+        p.ID_prijava,
+        p.TK_uporabnik,
+        p.TK_dogodek,
+        u.email AS uporabnik_email,
+        u.ime AS uporabnik_ime,
+        d.Naslov AS dogodek_naslov,
         d.datum_zacetka,
         d.ulica,
         k.ime_kraja AS kraj
@@ -63,8 +66,16 @@ cron.schedule('*/15 * * * *', async () => {
 
       try {
         await transporter.sendMail(mailOptions);
-        
+
         await pool.query('UPDATE Prijava SET opomnik_poslan = 1 WHERE ID_prijava = ?', [prijava.ID_prijava]);
+
+        ustvariObvestilo({
+          uporabnikId: prijava.TK_uporabnik,
+          tip: 'dogodek_kmalu',
+          sporocilo: `Manj kot 24 ur do dogodka "${prijava.dogodek_naslov}" (${formatiranDatum}).`,
+          povezava: `dogodek.html?id=${prijava.TK_dogodek}`,
+        }).catch(err => console.error('Obvestilo dogodek_kmalu:', err));
+
         console.log(`[Cron] Opomnik uspešno poslan na ${prijava.uporabnik_email} za dogodek id: ${prijava.ID_prijava}`);
       } catch (mailErr) {
         console.error(`[Cron] Napaka pri pošiljanju maila za prijava_id ${prijava.ID_prijava}:`, mailErr);

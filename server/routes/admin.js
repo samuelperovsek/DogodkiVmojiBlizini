@@ -2,6 +2,7 @@ import express from 'express';
 import { body, param, validationResult } from 'express-validator';
 import pool from '../db.js';
 import { zahtevajPrijavo, zahtevajAdmina } from '../middleware/auth.js';
+import { ustvariObvestilo } from '../services/obvestila.js';
 
 const router = express.Router();
 
@@ -46,6 +47,15 @@ router.patch(
     }
 
     try {
+      const [starePodatki] = await pool.query(
+        'SELECT vloga AS stara_vloga FROM Uporabnik WHERE ID_uporabnik = ?',
+        [idUporabnika]
+      );
+      if (starePodatki.length === 0) {
+        return res.status(404).json({ napaka: 'Uporabnik ne obstaja.' });
+      }
+      const staraVloga = starePodatki[0].stara_vloga;
+
       const [rezultat] = await pool.query(
         'UPDATE Uporabnik SET vloga = ? WHERE ID_uporabnik = ?',
         [vloga, idUporabnika]
@@ -53,6 +63,15 @@ router.patch(
 
       if (rezultat.affectedRows === 0) {
         return res.status(404).json({ napaka: 'Uporabnik ne obstaja.' });
+      }
+
+      if (staraVloga !== vloga) {
+        ustvariObvestilo({
+          uporabnikId: idUporabnika,
+          tip: 'profil_posodobljen',
+          sporocilo: `Tvoja vloga na platformi je bila spremenjena iz "${staraVloga}" v "${vloga}".`,
+          povezava: 'profil.html',
+        }).catch(err => console.error('Obvestilo vloga sprememba:', err));
       }
 
       res.json({ sporocilo: `Vloga spremenjena v "${vloga}".` });
@@ -140,12 +159,30 @@ router.patch(
         );
 
         await conn.commit();
+
+        ustvariObvestilo({
+          uporabnikId: prosnja.TK_uporabnik,
+          tip: 'prosnja_odobrena',
+          sporocilo: `Tvoja prošnja za status organizatorja (${prosnja.naziv_podjetja}) je bila odobrena. Zdaj lahko dodajaš dogodke!`,
+          povezava: 'dodaj-dogodek.html',
+        }).catch(err => console.error('Obvestilo prosnja_odobrena:', err));
+
         return res.json({
           sporocilo: 'Prošnja odobrena. Uporabnik je zdaj organizator.',
         });
       }
 
       await conn.commit();
+
+      ustvariObvestilo({
+        uporabnikId: prosnja.TK_uporabnik,
+        tip: 'prosnja_zavrnjena',
+        sporocilo: opomba_admina
+          ? `Tvoja prošnja za status organizatorja je bila zavrnjena. Razlog: ${opomba_admina}`
+          : 'Tvoja prošnja za status organizatorja je bila zavrnjena.',
+        povezava: 'profil.html',
+      }).catch(err => console.error('Obvestilo prosnja_zavrnjena:', err));
+
       res.json({ sporocilo: 'Prošnja zavrnjena.' });
     } catch (err) {
       await conn.rollback();

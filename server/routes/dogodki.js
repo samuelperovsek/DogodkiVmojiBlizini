@@ -1,5 +1,6 @@
 import express from 'express';
 import pool from '../db.js';
+import { ustvariObvestilo } from '../services/obvestila.js';
 
 const router = express.Router();
 
@@ -30,7 +31,6 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
   try {
     const { lokacija, datum, cene, kategorije, userLat, userLng, maxRazdalja, sort, page, limit } = req.query;
 
-    // Paginacija nastavitve
     const trenutnaStran = parseInt(page) || 1;
     const poStrani = parseInt(limit) || 6;
     const zamik = (trenutnaStran - 1) * poStrani;
@@ -213,7 +213,7 @@ router.post('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
     await connection.beginTransaction();
 
     const [dogodki] = await connection.query(
-      'SELECT st_prostih_sedezov, datum_zacetka, status FROM Dogodek WHERE ID_dogodek = ? FOR UPDATE',
+      'SELECT Naslov, st_prostih_sedezov, datum_zacetka, status, TK_uporabnik_organizator FROM Dogodek WHERE ID_dogodek = ? FOR UPDATE',
       [dogodekId]
     );
 
@@ -255,6 +255,23 @@ router.post('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
     }
 
     await connection.commit();
+
+    ustvariObvestilo({
+      uporabnikId: uporabnikId,
+      tip: 'prijava_potrjena',
+      sporocilo: `Tvoja prijava na dogodek "${dogodek.Naslov}" je potrjena. Vidimo se na dogodku!`,
+      povezava: `dogodek.html?id=${dogodekId}`,
+    }).catch(err => console.error('Obvestilo prijava_potrjena:', err));
+
+    if (dogodek.TK_uporabnik_organizator && dogodek.TK_uporabnik_organizator !== uporabnikId) {
+      ustvariObvestilo({
+        uporabnikId: dogodek.TK_uporabnik_organizator,
+        tip: 'nova_prijava',
+        sporocilo: `Nov udeleženec se je prijavil na tvoj dogodek "${dogodek.Naslov}".`,
+        povezava: `dogodek.html?id=${dogodekId}`,
+      }).catch(err => console.error('Obvestilo nova_prijava:', err));
+    }
+
     res.json({ uspeh: true, message: 'Rezervacija uspešna.' });
 
   } catch (err) {
@@ -284,6 +301,12 @@ router.delete('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
       return res.status(404).json({ message: 'Nisi prijavljen na ta dogodek.' });
     }
 
+    const [dogodki] = await connection.query(
+      'SELECT Naslov, TK_uporabnik_organizator FROM Dogodek WHERE ID_dogodek = ?',
+      [dogodekId]
+    );
+    const dogodek = dogodki[0] || null;
+
     await connection.query(
       'DELETE FROM Prijava WHERE TK_uporabnik = ? AND TK_dogodek = ?',
       [uporabnikId, dogodekId]
@@ -295,6 +318,25 @@ router.delete('/dogodki/:id/rezervacija', zahtevajPrijavo, async (req, res) => {
     );
 
     await connection.commit();
+
+    if (dogodek?.Naslov) {
+      ustvariObvestilo({
+        uporabnikId: uporabnikId,
+        tip: 'prijava_preklicana',
+        sporocilo: `Preklical/a si prijavo na dogodek "${dogodek.Naslov}".`,
+        povezava: `dogodek.html?id=${dogodekId}`,
+      }).catch(err => console.error('Obvestilo prijava_preklicana:', err));
+    }
+
+    if (dogodek?.TK_uporabnik_organizator && dogodek.TK_uporabnik_organizator !== uporabnikId) {
+      ustvariObvestilo({
+        uporabnikId: dogodek.TK_uporabnik_organizator,
+        tip: 'odpoved_prijave',
+        sporocilo: `Udeleženec je preklical prijavo na tvoj dogodek "${dogodek.Naslov}".`,
+        povezava: `dogodek.html?id=${dogodekId}`,
+      }).catch(err => console.error('Obvestilo odpoved_prijave:', err));
+    }
+
     res.json({ uspeh: true, message: 'Uspešno odjavljen z dogodka.' });
   } catch (err) {
     await connection.rollback();

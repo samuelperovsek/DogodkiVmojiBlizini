@@ -122,6 +122,19 @@ CREATE TABLE Prosnja_organizator (
     FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik(ID_uporabnik),
     FOREIGN KEY (TK_odobril) REFERENCES Uporabnik(ID_uporabnik)
 );
+CREATE TABLE Obvestilo (
+    ID_obvestilo int(10) NOT NULL AUTO_INCREMENT,
+    TK_uporabnik int(10) NOT NULL,
+    tip ENUM('prosnja_odobrena', 'prosnja_zavrnjena', 'dogodek_aktiven', 'dogodek_zavrnjen', 'dogodek_promoviran', 'nova_prijava', 'odpoved_prijave', 'prijava_potrjena', 'prijava_preklicana', 'dogodek_odpovedan_zame', 'dogodek_kmalu', 'geslo_spremenjeno', 'profil_posodobljen', 'splosno') NOT NULL,
+    sporocilo varchar(500) NOT NULL,
+    povezava varchar(255) DEFAULT NULL,
+    prebrano boolean NOT NULL DEFAULT 0,
+    datum_obvestila timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (ID_obvestilo),
+    FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik(ID_uporabnik) ON DELETE CASCADE,
+    INDEX idx_obvestilo_uporabnik_prebrano (TK_uporabnik, prebrano, datum_obvestila DESC)
+);
+
 -- Tuji ključi
 ALTER TABLE Kraj ADD CONSTRAINT FKKraj_Regija FOREIGN KEY (TK_regija) REFERENCES Regija (ID_regija);
 

@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import pool from '../db.js';
 import { transporter, FROM } from '../services/email.js';
+import { ustvariObvestilo } from '../services/obvestila.js';
 
 const router = express.Router();
 
@@ -150,6 +151,13 @@ router.post(
         'UPDATE Uporabnik SET geslo = ? WHERE ID_uporabnik = ?',
         [novHash, uporabnik.ID_uporabnik]
       );
+
+      ustvariObvestilo({
+        uporabnikId: uporabnik.ID_uporabnik,
+        tip: 'geslo_spremenjeno',
+        sporocilo: 'Geslo si ponastavil/a preko e-poštne povezave. Če nisi bil/a to ti, takoj kontaktiraj podporo.',
+        povezava: 'nastavitve.html',
+      }).catch(err => console.error('Obvestilo geslo_spremenjeno (reset):', err));
 
       res.json({ sporocilo: 'Geslo uspešno ponastavljeno. Lahko se prijaviš z novim geslom.' });
     } catch (err) {

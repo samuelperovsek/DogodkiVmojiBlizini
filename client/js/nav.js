@@ -1,4 +1,5 @@
 import { Auth, apiFetch, ApiError } from './auth.js';
+import { ObvestilaBell } from './obvestila.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const gumbi = document.querySelector('[data-auth-buttons]');
@@ -44,11 +45,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const vlogaEl = meni.querySelector('[data-user-vloga]');
     if (vlogaEl) vlogaEl.textContent = u.vloga;
+
+    ObvestilaBell.inicializiraj();
   }
 
   function pokaziGoste() {
     gumbi.classList.remove('d-none');
     meni.classList.add('d-none');
+    ObvestilaBell.skrij();
   }
 
   function aplicirajVlogo(vloga) {

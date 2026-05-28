@@ -111,8 +111,8 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
       p.opomnik_omogocen === 'true' ? 1 : 0, 
       Number.isNaN(parseInt(p.kategorija)) ? 1 : parseInt(p.kategorija),         
       p.podkategorija || null,
-      lat, // Ddodano
-      lng  // Dodano
+      lat,
+      lng,
     ];
 
     const sql = `

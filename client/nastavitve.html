@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nastavitve — DogodkiVMojiBližini.si</title>
+
+  <script src="js/guard-redirect-admin.js"></script>
+  <script src="js/uveljavi-temo.js"></script>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/tailwind.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <i class="bi bi-geo-alt-fill"></i>DogodkiVMojiBližini
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="navbar-collapse" id="mainNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Domov</a></li>
+          <li class="nav-item"><a class="nav-link" href="dogodki.html">Dogodki</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html#kategorije">Kategorije</a></li>
+          <li class="nav-item d-none" data-only-organizator><a class="nav-link" href="dodaj-dogodek.html">Dodaj dogodek</a></li>
+        </ul>
+        <div data-bell class="bell-nav dropdown d-none">
+          <button class="bell-trigger" data-dropdown-toggle aria-label="Obvestila">
+            <i class="bi bi-bell-fill"></i>
+            <span data-bell-counter class="bell-counter d-none">0</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end bell-menu">
+            <li class="bell-header">
+              <span><i class="bi bi-bell"></i> Obvestila</span>
+              <button type="button" class="bell-mark-all" data-bell-mark-all>Označi vse prebrano</button>
+            </li>
+            <li data-bell-list class="bell-list">
+              <div class="bell-empty"><i class="bi bi-bell-slash"></i><p>Nalaganje…</p></div>
+            </li>
+          </ul>
+        </div>
+        <div data-auth-buttons class="d-flex gap-2 d-none">
+          <a href="prijava.html" class="btn btn-outline-primary">Prijava</a>
+          <a href="prijava.html#registracija" class="btn btn-primary">Registracija</a>
+        </div>
+        <div data-user-menu class="dropdown">
+          <button class="btn btn-outline-primary dropdown-toggle" data-dropdown-toggle>
+            <i class="bi bi-person-circle"></i> <span data-user-name>…</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person"></i> Moj profil</a></li>
+            <li><a class="dropdown-item" href="profil.html#priljubljeni"><i class="bi bi-heart"></i> Priljubljeni</a></li>
+            <li><a class="dropdown-item active" href="nastavitve.html"><i class="bi bi-gear"></i> Nastavitve</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#" data-logout><i class="bi bi-box-arrow-right"></i> Odjava</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div class="container">
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="index.html">Domov</a></li>
+          <li class="breadcrumb-item"><a href="profil.html">Profil</a></li>
+          <li class="breadcrumb-item active">Nastavitve</li>
+        </ol>
+      </nav>
+      <h1><i class="bi bi-gear-fill"></i> Nastavitve</h1>
+      <p class="lead">Prilagodi izgled in obnašanje aplikacije.</p>
+    </div>
+  </header>
+
+  <section class="section-padding">
+    <div class="container" style="max-width: 720px;">
+
+      <div class="form-section">
+        <h3><i class="bi bi-palette"></i> Videz</h3>
+        <p class="text-muted mb-4">Izberi temo, ki ti najbolj ustreza.</p>
+
+        <div class="row g-3" id="izbor-teme">
+          <div class="col-md-4">
+            <button type="button" class="tema-izbira w-100" data-tema="light">
+              <div class="tema-predogled tema-predogled-light">
+                <div class="tema-predogled-navbar"></div>
+                <div class="tema-predogled-vsebina">
+                  <div class="tema-predogled-card"></div>
+                  <div class="tema-predogled-card"></div>
+                </div>
+              </div>
+              <div class="tema-label">
+                <i class="bi bi-sun-fill"></i> Svetla
+              </div>
+            </button>
+          </div>
+          <div class="col-md-4">
+            <button type="button" class="tema-izbira w-100" data-tema="dark">
+              <div class="tema-predogled tema-predogled-dark">
+                <div class="tema-predogled-navbar"></div>
+                <div class="tema-predogled-vsebina">
+                  <div class="tema-predogled-card"></div>
+                  <div class="tema-predogled-card"></div>
+                </div>
+              </div>
+              <div class="tema-label">
+                <i class="bi bi-moon-fill"></i> Temna
+              </div>
+            </button>
+          </div>
+          <div class="col-md-4">
+            <button type="button" class="tema-izbira w-100" data-tema="auto">
+              <div class="tema-predogled tema-predogled-auto">
+                <div class="tema-predogled-navbar"></div>
+                <div class="tema-predogled-vsebina">
+                  <div class="tema-predogled-card"></div>
+                  <div class="tema-predogled-card"></div>
+                </div>
+              </div>
+              <div class="tema-label">
+                <i class="bi bi-circle-half"></i> Samodejno
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <small class="text-muted d-block mt-3">
+          <i class="bi bi-info-circle"></i> "Samodejno" sledi sistemski temi tvojega računalnika.
+        </small>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="bi bi-bell"></i> Obvestila</h3>
+        <p class="text-muted mb-4">Kdaj ti aplikacija pošlje e-pošto.</p>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="pref-opomnik" checked>
+          <label class="form-check-label" for="pref-opomnik">
+            <strong>Opomnik pred dogodkom</strong>
+            <small class="d-block text-muted">Prejmi e-pošto 24 ur pred začetkom dogodka, na katerega si prijavljen.</small>
+          </label>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="pref-novicnik">
+          <label class="form-check-label" for="pref-novicnik">
+            <strong>Tedenski novičnik</strong>
+            <small class="d-block text-muted">Tedenski izbor najboljših dogodkov v tvojem mestu.</small>
+          </label>
+        </div>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" id="pref-prosnja-update">
+          <label class="form-check-label" for="pref-prosnja-update">
+            <strong>Obvestilo o statusu prošnje</strong>
+            <small class="d-block text-muted">Ko admin obravnava tvojo prošnjo za status organizatorja.</small>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3><i class="bi bi-sliders"></i> Prikaz</h3>
+        <p class="text-muted mb-4">Kako se vsebina prikazuje.</p>
+
+        <div class="mb-3">
+          <label class="form-label">Privzeti polmer iskanja</label>
+          <div class="d-flex align-items-center gap-3">
+            <input type="range" class="form-range flex-grow-1" id="pref-radius" min="5" max="100" step="5" value="25">
+            <strong class="text-brand-700" style="min-width: 70px; text-align: right;" id="pref-radius-izpis">25 km</strong>
+          </div>
+          <small class="text-muted">Začetna vrednost drsnika v filtru "Oddaljenost".</small>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Jezik vmesnika</label>
+          <select class="form-select" id="pref-jezik" disabled>
+            <option value="sl">Slovenščina</option>
+            <option value="en">English (kmalu)</option>
+          </select>
+          <small class="text-muted">Trenutno je na voljo samo slovenščina.</small>
+        </div>
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end flex-wrap">
+        <button type="button" id="gumb-ponastavi" class="btn btn-outline-primary">
+          <i class="bi bi-arrow-counterclockwise"></i> Ponastavi privzeto
+        </button>
+        <button type="button" id="gumb-shrani" class="btn btn-primary">
+          <i class="bi bi-check-lg"></i> Shrani nastavitve
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <h5><i class="bi bi-geo-alt-fill"></i> DogodkiVMojiBližini</h5>
+          <p>Slovenska platforma, ki povezuje organizatorje dogodkov z lokalno skupnostjo.</p>
+        </div>
+        <div class="col-6 col-md-2">
+          <h5>Razišči</h5>
+          <a href="dogodki.html">Vsi dogodki</a>
+          <a href="index.html#kategorije">Kategorije</a>
+        </div>
+        <div class="col-6 col-md-2">
+          <h5>Profil</h5>
+          <a href="profil.html">Moj profil</a>
+          <a href="profil.html#priljubljeni">Priljubljeni</a>
+        </div>
+      </div>
+      <div class="footer-bottom d-flex justify-content-between flex-wrap">
+        <span>© 2026 DogodkiVMojiBližini.si</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/components.js"></script>
+  <script src="js/dropdown.js"></script>
+  <script type="module" src="js/nav.js"></script>
+  <script type="module" src="js/page-nastavitve.js"></script>
+</body>
+</html>

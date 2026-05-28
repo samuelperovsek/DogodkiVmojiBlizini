@@ -1,4 +1,3 @@
-// Enkratna skripta, ki vzame vsa NEhashirana gesla iz baze in jih hashira.
 import 'dotenv/config';
 import bcrypt from 'bcrypt';
 import pool from '../db.js';

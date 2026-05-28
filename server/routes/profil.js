@@ -3,8 +3,15 @@ import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
 import pool from '../db.js';
 import { zahtevajPrijavo } from '../middleware/auth.js';
+import { ustvariObvestilo } from '../services/obvestila.js';
 
 const router = express.Router();
+
+const OZNAKE_POLJ = {
+  ime: 'ime',
+  priimek: 'priimek',
+  email: 'e-mail',
+};
 
 router.get('/me', zahtevajPrijavo, async (req, res) => {
   try {
@@ -48,6 +55,12 @@ router.patch(
     }
 
     try {
+      const [staraVrstica] = await pool.query(
+        'SELECT ime, priimek, email FROM Uporabnik WHERE ID_uporabnik = ?',
+        [req.uporabnik.id]
+      );
+      const star = staraVrstica[0] || {};
+
       if (polja.includes('email')) {
         const [obstaja] = await pool.query(
           'SELECT ID_uporabnik FROM Uporabnik WHERE email = ? AND ID_uporabnik <> ?',
@@ -70,6 +83,17 @@ router.patch(
          FROM Uporabnik WHERE ID_uporabnik = ?`,
         [req.uporabnik.id]
       );
+
+      const spremenjenaPolja = polja.filter(k => String(star[k] ?? '') !== String(req.body[k] ?? ''));
+      if (spremenjenaPolja.length > 0) {
+        const oznake = spremenjenaPolja.map(k => OZNAKE_POLJ[k] || k).join(', ');
+        ustvariObvestilo({
+          uporabnikId: req.uporabnik.id,
+          tip: 'profil_posodobljen',
+          sporocilo: `Posodobil/a si svoj profil (${oznake}). Če nisi ti, takoj spremeni geslo.`,
+          povezava: 'profil.html',
+        }).catch(err => console.error('Obvestilo profil_posodobljen:', err));
+      }
 
       res.json({ sporocilo: 'Profil posodobljen.', uporabnik: vrstice[0] });
     } catch (err) {
@@ -110,6 +134,13 @@ router.post(
 
       const novHash = await bcrypt.hash(req.body.novo_geslo, 10);
       await pool.query('UPDATE Uporabnik SET geslo = ? WHERE ID_uporabnik = ?', [novHash, req.uporabnik.id]);
+
+      ustvariObvestilo({
+        uporabnikId: req.uporabnik.id,
+        tip: 'geslo_spremenjeno',
+        sporocilo: 'Geslo si uspešno spremenil/a. Če nisi bil/a to ti, takoj kontaktiraj podporo.',
+        povezava: 'nastavitve.html',
+      }).catch(err => console.error('Obvestilo geslo_spremenjeno:', err));
 
       res.json({ sporocilo: 'Geslo uspešno spremenjeno.' });
     } catch (err) {

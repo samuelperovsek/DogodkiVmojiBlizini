@@ -6,6 +6,7 @@
   <title>Dodaj dogodek — DogodkiVMojiBližini.si</title>
 
   <script src="js/guard-only-organizator.js"></script>
+  <script src="js/uveljavi-temo.js"></script>
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -30,6 +31,21 @@
           <li class="nav-item"><a class="nav-link" href="index.html#kategorije">Kategorije</a></li>
           <li class="nav-item"><a class="nav-link active" href="dodaj-dogodek.html">Dodaj dogodek</a></li>
         </ul>
+        <div data-bell class="bell-nav dropdown d-none">
+          <button class="bell-trigger" data-dropdown-toggle aria-label="Obvestila">
+            <i class="bi bi-bell-fill"></i>
+            <span data-bell-counter class="bell-counter d-none">0</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end bell-menu">
+            <li class="bell-header">
+              <span><i class="bi bi-bell"></i> Obvestila</span>
+              <button type="button" class="bell-mark-all" data-bell-mark-all>Označi vse prebrano</button>
+            </li>
+            <li data-bell-list class="bell-list">
+              <div class="bell-empty"><i class="bi bi-bell-slash"></i><p>Nalaganje…</p></div>
+            </li>
+          </ul>
+        </div>
         <div data-auth-buttons class="d-flex gap-2">
           <a href="prijava.html" class="btn btn-outline-primary">Prijava</a>
           <a href="prijava.html#registracija" class="btn btn-primary">Registracija</a>
@@ -40,8 +56,8 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
             <li><a class="dropdown-item" href="profil.html"><i class="bi bi-person"></i> Moj profil</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-heart"></i> Priljubljeni</a></li>
-            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Nastavitve</a></li>
+            <li><a class="dropdown-item" href="profil.html#priljubljeni"><i class="bi bi-heart"></i> Priljubljeni</a></li>
+            <li><a class="dropdown-item" href="nastavitve.html"><i class="bi bi-gear"></i> Nastavitve</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#" data-logout><i class="bi bi-box-arrow-right"></i> Odjava</a></li>
           </ul>
