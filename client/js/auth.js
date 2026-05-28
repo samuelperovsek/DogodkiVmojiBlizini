@@ -41,6 +41,9 @@ export const Auth = {
 
 const POTI_BREZ_REDIRECT = ['/me', '/prijava', '/registracija'];
 
+const METODE_S_SPREMEMBO = new Set(['POST', 'PATCH', 'PUT', 'DELETE']);
+const POTI_BREZ_DOGODKA = ['/obvestila', '/me'];
+
 export async function apiFetch(pot, opcije = {}) {
   const jeFormData = opcije.body instanceof FormData;
 
@@ -53,6 +56,8 @@ export async function apiFetch(pot, opcije = {}) {
   if (tokenPrePoslanja) {
     headers.Authorization = `Bearer ${tokenPrePoslanja}`;
   }
+
+  const metoda = (opcije.method || 'GET').toUpperCase();
 
   const odgovor = await fetch(`${API_URL}${pot}`, {
     ...opcije,
@@ -77,6 +82,12 @@ export async function apiFetch(pot, opcije = {}) {
     }
 
     throw new ApiError(sporocilo, odgovor.status, podrobnosti);
+  }
+
+  if (METODE_S_SPREMEMBO.has(metoda) && !POTI_BREZ_DOGODKA.some(p => pot.startsWith(p))) {
+    document.dispatchEvent(new CustomEvent('app:akcija', {
+      detail: { pot, metoda, odgovor: podatki },
+    }));
   }
 
   return podatki;

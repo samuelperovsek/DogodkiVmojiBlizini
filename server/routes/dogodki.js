@@ -38,7 +38,6 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
     let queryArgs = [];
     let razdaljaStolpec = '';
     
-    // Haversinova formula za izračun razdalje med dvema koordinatama
     if (userLat && userLng) {
       razdaljaStolpec = `,
         (6371 * acos(

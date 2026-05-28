@@ -135,7 +135,6 @@ CREATE TABLE Obvestilo (
     INDEX idx_obvestilo_uporabnik_prebrano (TK_uporabnik, prebrano, datum_obvestila DESC)
 );
 
--- Tuji ključi
 ALTER TABLE Kraj ADD CONSTRAINT FKKraj_Regija FOREIGN KEY (TK_regija) REFERENCES Regija (ID_regija);
 
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_Kraj FOREIGN KEY (TK_kraj) REFERENCES Kraj (postna_stevilka);
@@ -154,7 +153,6 @@ ALTER TABLE Priljubljeni_dogodki ADD CONSTRAINT FKPriljDog_Dogodek FOREIGN KEY (
 ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Uporabnik FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik (ID_uporabnik) ON DELETE CASCADE;
 ALTER TABLE Priljubljeni_organizatorji ADD CONSTRAINT FKPriljOrg_Organizator FOREIGN KEY (TK_organizator) REFERENCES Uporabnik (ID_uporabnik) ON DELETE CASCADE;
 
--- Indeksi za pogoste poizvedbe
 CREATE INDEX idx_dogodek_status_datum ON Dogodek (status, datum_zacetka);
 CREATE INDEX idx_dogodek_kategorija    ON Dogodek (TK_kategorija);
 CREATE INDEX idx_dogodek_kraj          ON Dogodek (TK_kraj);
@@ -162,9 +160,7 @@ CREATE INDEX idx_ocena_dogodek         ON Ocena_komentar (TK_dogodek);
 CREATE INDEX idx_prijava_dogodek       ON Prijava (TK_dogodek);
 CREATE INDEX idx_prosnja_status        ON Prosnja_organizator (status, datum_prosnje);
 
--- INSERTI
-
-INSERT INTO Regija (ime_regije) VALUES 
+INSERT INTO Regija (ime_regije) VALUES
 ('Osrednjeslovenska'), ('Obalno-kraška'), ('Štajerska'), ('Gorenjska'), ('Dolenjska');
 
 INSERT INTO Kraj (postna_stevilka, ime_kraja, TK_regija) VALUES 

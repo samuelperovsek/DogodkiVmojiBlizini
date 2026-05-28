@@ -35,9 +35,28 @@ document.querySelectorAll('[data-logout]').forEach(btn => {
 
 pripraviDogodkiHandlerje();
 
-(async function inicializirajAdminPanel() {
-  await naloziUporabnike();
-  await naloziProsnje();
-  await naloziDogodke();
-  await naloziOcene();
-})();
+async function osveziAdminPodatke() {
+  await Promise.all([
+    naloziUporabnike(),
+    naloziProsnje(),
+    naloziDogodke(),
+    naloziOcene(),
+  ]);
+}
+
+osveziAdminPodatke();
+
+let casovnikAdmin = null;
+document.addEventListener('app:akcija', (ev) => {
+  const pot = ev.detail?.pot || '';
+  if (pot.startsWith('/obvestila')) return;
+  if (casovnikAdmin) clearTimeout(casovnikAdmin);
+  casovnikAdmin = setTimeout(() => {
+    casovnikAdmin = null;
+    osveziAdminPodatke();
+  }, 350);
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') osveziAdminPodatke();
+});

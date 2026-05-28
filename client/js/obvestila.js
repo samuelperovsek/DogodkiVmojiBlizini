@@ -172,6 +172,27 @@ function priklopiPoslusalce() {
   });
 }
 
+let osvezitevTimeout = null;
+function osveziSPlanom() {
+  if (osvezitevTimeout) clearTimeout(osvezitevTimeout);
+  osvezitevTimeout = setTimeout(() => {
+    osvezitevTimeout = null;
+    nalozi();
+  }, 250);
+}
+
+let prijavljenNaDogodke = false;
+function prijaviPoslusalcaDogodkov() {
+  if (prijavljenNaDogodke) return;
+  prijavljenNaDogodke = true;
+
+  document.addEventListener('app:akcija', osveziSPlanom);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') nalozi();
+  });
+}
+
 export const ObvestilaBell = {
   inicializiraj() {
     const bell = pridobiBellEl();
@@ -183,9 +204,7 @@ export const ObvestilaBell = {
     if (casovnik) clearInterval(casovnik);
     casovnik = setInterval(nalozi, INTERVAL_OSVEZITVE_MS);
 
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') nalozi();
-    });
+    prijaviPoslusalcaDogodkov();
   },
 
   skrij() {
@@ -199,3 +218,5 @@ export const ObvestilaBell = {
 
   osvezi: nalozi,
 };
+
+window.ObvestilaBell = ObvestilaBell;

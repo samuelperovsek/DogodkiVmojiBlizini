@@ -55,3 +55,18 @@ if (lokalniUporabnik) {
 }
 
 osveziPodatkeProfila();
+
+let casovnikOsvezitve = null;
+document.addEventListener('app:akcija', (ev) => {
+  const pot = ev.detail?.pot || '';
+  if (pot.startsWith('/obvestila')) return;
+  if (casovnikOsvezitve) clearTimeout(casovnikOsvezitve);
+  casovnikOsvezitve = setTimeout(() => {
+    casovnikOsvezitve = null;
+    osveziPodatkeProfila();
+  }, 350);
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') osveziPodatkeProfila();
+});

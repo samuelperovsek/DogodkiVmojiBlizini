@@ -36,6 +36,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  document.addEventListener('app:akcija', async (ev) => {
+    const pot = ev.detail?.pot || '';
+    if (pot === '/me' || pot.startsWith('/admin/uporabniki')) {
+      try {
+        const { uporabnik } = await apiFetch('/me');
+        Auth.osveziUporabnika(uporabnik);
+        if (Auth.jePrijavljen() && gumbi && meni && !meni.classList.contains('d-none')) {
+          const ime = meni.querySelector('[data-user-name]');
+          if (ime) ime.textContent = uporabnik.ime;
+          const vlogaEl = meni.querySelector('[data-user-vloga]');
+          if (vlogaEl) vlogaEl.textContent = uporabnik.vloga;
+          aplicirajVlogo(uporabnik.vloga);
+        }
+      } catch {}
+    }
+  });
+
   function pokaziPrijavljenega(u) {
     gumbi.classList.add('d-none');
     meni.classList.remove('d-none');
