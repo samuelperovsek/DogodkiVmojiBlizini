@@ -83,6 +83,16 @@ function poskusiPridobitiLokacijo() {
   });
 }
 
+function preberiShranjenPolmer() {
+  try {
+    const nastavitve = JSON.parse(localStorage.getItem('nastavitve') || '{}');
+    const polmer = parseInt(nastavitve.radius, 10);
+    return Number.isInteger(polmer) ? polmer : null;
+  } catch {
+    return null;
+  }
+}
+
 function pripraviFiltre() {
   const gumbUporabi = document.getElementById('gumb-uporabi-filtre');
   const gumbPonastavi = document.getElementById('gumb-ponastavi-filtre');
@@ -92,6 +102,14 @@ function pripraviFiltre() {
 
   let drsnikTimeout = null;
   let iskanjeTimeout = null;
+
+  if (drsnikRazdalje && izpisRazdalje) {
+    const shranjenPolmer = preberiShranjenPolmer();
+    if (shranjenPolmer !== null) {
+      drsnikRazdalje.value = shranjenPolmer;
+      izpisRazdalje.textContent = shranjenPolmer >= 100 ? 'Vsa Slovenija' : `${shranjenPolmer} km`;
+    }
+  }
 
   if (iskanjeInput) {
     iskanjeInput.addEventListener('input', (e) => {
