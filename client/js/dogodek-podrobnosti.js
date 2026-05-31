@@ -33,6 +33,10 @@ async function naloziPodrobnostiDogodka() {
     osveziSrckeNaStrani();
 
     pripraviRezervacija(dogodek, dogodekId);
+
+    // Klic za nalaganje priporočenih dogodkov na dnu strani
+    await naloziPriporoceneDogodke(dogodekId);
+
   } catch (err) {
     console.error('Napaka pri nalaganju podrobnosti:', err);
     kontejner.innerHTML = '<div class="container mt-5"><p class="alert alert-danger">Napaka pri nalaganju podatkov o dogodku.</p></div>';
@@ -272,5 +276,56 @@ async function pripraviRezervacija(dogodek, dogodekId) {
     }
   } else {
     renderRezerviraj();
+  }
+}
+
+async function naloziPriporoceneDogodke(trenutniDogodekId) {
+  const kontejner = document.getElementById('priporoceniDogodki');
+  if (!kontejner) return;
+
+  try {
+    const dogodki = await apiFetch(`/priporoceni-dogodki?trenutniId=${trenutniDogodekId}`);
+    
+    if (!dogodki || dogodki.length === 0) {
+      kontejner.innerHTML = '<div class="col-12 text-center text-muted">Trenutno ni drugih podobnih dogodkov po vaših interesih.</div>';
+      return;
+    }
+
+    kontejner.innerHTML = dogodki.map(dogodek => {
+      const d = new Date(dogodek.datum_zacetka);
+      const dan = String(d.getDate()).padStart(2, '0');
+      const mesec = d.toLocaleString('sl-SI', { month: 'short' }).toUpperCase().replace('.', '');
+      const cenaPrikaz = parseFloat(dogodek.cena) === 0 ? 'Brezplačno' : `${dogodek.cena} €`;
+
+      return `
+        <div class="col-md-4">
+          <div class="event-card">
+            <div class="event-card-img">
+              <img src="${dogodek.slika || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'}" alt="${pobegniHtml(dogodek.Naslov)}">
+              <div class="event-date">
+                <span class="day">${dan}</span>
+                <span class="month">${mesec}</span>
+              </div>
+              <span class="event-cat-tag">${pobegniHtml(dogodek.kategorija)}</span>
+            </div>
+            <div class="event-card-body">
+              <div class="event-meta"><i class="bi bi-geo-alt"></i>${pobegniHtml(dogodek.kraj || 'Neznano')}</div>
+              <h5><a href="dogodek.html?id=${dogodek.ID_dogodek}">${pobegniHtml(dogodek.Naslov)}</a></h5>
+              <p class="event-card-desc">${pobegniHtml(dogodek.opis ? dogodek.opis.substring(0, 80) + '...' : 'Ni opisa.')}</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="event-price">${cenaPrikaz}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+
+    osveziSrckeNaStrani();
+
+  } catch (err) {
+    console.error("Napaka pri nalaganju priporočil:", err);
+    kontejner.innerHTML = '<div class="col-12 text-center text-danger">Morda vas zanima tudi: Ni bilo mogoče naložiti priporočil.</div>';
   }
 }

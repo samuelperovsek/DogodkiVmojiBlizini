@@ -35,6 +35,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   await inicializirajPriljubljene();
 
   if (document.getElementById('dogodki-kontejner')) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const iskanjeIzUrl = urlParams.get('iskanje') || '';
+    const lokacijaIzUrl = urlParams.get('lokacija') || '';
+    const datumIzUrl = urlParams.get('datum') || 'kadarkoli';
+
+    const lokacijaInput = document.getElementById('filter-lokacija');
+    const datumSelect = document.getElementById('filter-datum');
+    const iskanjeInput = document.getElementById('filter-iskanje'); 
+
+    if (lokacijaInput && lokacijaIzUrl) lokacijaInput.value = lokacijaIzUrl;
+    if (datumSelect && datumIzUrl) datumSelect.value = datumIzUrl;
+    if (iskanjeInput && iskanjeIzUrl) iskanjeInput.value = iskanjeIzUrl;
+
     poskusiPridobitiLokacijo()
       .finally(() => {
         naloziVseDogodke();
@@ -75,8 +88,20 @@ function pripraviFiltre() {
   const gumbPonastavi = document.getElementById('gumb-ponastavi-filtre');
   const drsnikRazdalje = document.getElementById('filter-razdalja');
   const izpisRazdalje = document.getElementById('izpis-razdalje');
+  const iskanjeInput = document.getElementById('filter-iskanje');
 
   let drsnikTimeout = null;
+  let iskanjeTimeout = null;
+
+  if (iskanjeInput) {
+    iskanjeInput.addEventListener('input', (e) => {
+      clearTimeout(iskanjeTimeout);
+      iskanjeTimeout = setTimeout(() => {
+        trenutnaStran = 1;
+        naloziVseDogodke();
+      }, 300);
+    });
+  }
 
   if (drsnikRazdalje && izpisRazdalje) {
     drsnikRazdalje.addEventListener('input', async (e) => {
@@ -122,10 +147,12 @@ function pripraviFiltre() {
 
   if (gumbPonastavi) {
     gumbPonastavi.addEventListener('click', () => {
+      const iskanjeInput = document.getElementById('filter-iskanje');
       const lokacijaInput = document.getElementById('filter-lokacija');
       const datumSelect = document.getElementById('filter-datum');
       const drsnik = document.getElementById('filter-razdalja');
       
+      if (iskanjeInput) iskanjeInput.value = '';
       if (lokacijaInput) lokacijaInput.value = '';
       if (datumSelect) datumSelect.value = 'kadarkoli';
       if (drsnik) {
@@ -135,6 +162,8 @@ function pripraviFiltre() {
       
       document.querySelectorAll('.filter-cena, .filter-kategorija').forEach(el => el.checked = false);
       
+      window.history.replaceState({}, document.title, window.location.pathname);
+
       trenutnoRazvrscanje = 'datum';
       trenutnaStran = 1;
       naloziVseDogodke();
@@ -274,15 +303,17 @@ function pripraviDogodkePaginacije(vseStrani) {
       
       if (!novaStran || novaStran < 1 || novaStran > vseStrani || novaStran === trenutnaStran) return;
       
-      trenutnaStran = novaStran;
-      
-      const kontejner = document.getElementById('dogodki-kontejner');
-      if (kontejner) kontejner.innerHTML = '<div class="text-center w-100 p-5"><div class="spinner-border text-primary"></div></div>';
-      
-      naloziVseDogodke();
-      window.scrollTo({ top: 150, behavior: 'smooth' });
+      varneSprembeStrani(novaStran, vseStrani);
     });
   });
+}
+
+function varneSprembeStrani(novaStran, vseStrani) {
+  trenutnaStran = novaStran;
+  const kontejner = document.getElementById('dogodki-kontejner');
+  if (kontejner) kontejner.innerHTML = '<div class="text-center w-100 p-5"><div class="spinner-border text-primary"></div></div>';
+  naloziVseDogodke();
+  window.scrollTo({ top: 150, behavior: 'smooth' });
 }
 
 async function naloziVseDogodke() {
@@ -294,10 +325,12 @@ async function naloziVseDogodke() {
   const lokacijaInput = document.getElementById('filter-lokacija');
   const datumSelect = document.getElementById('filter-datum');
   const drsnikRazdalje = document.getElementById('filter-razdalja');
+  const iskanjeInput = document.getElementById('filter-iskanje');
   
   const lokacija = lokacijaInput ? lokacijaInput.value.trim() : '';
   const datum = datumSelect ? datumSelect.value : 'kadarkoli';
   const razdalja = drsnikRazdalje ? drsnikRazdalje.value : '25';
+  const iskanje = iskanjeInput ? iskanjeInput.value.trim() : '';
   
   const izbraneCene = [];
   document.querySelectorAll('.filter-cena:checked').forEach(el => izbraneCene.push(el.value));
@@ -306,6 +339,7 @@ async function naloziVseDogodke() {
   document.querySelectorAll('.filter-kategorija:checked').forEach(el => izbraneKategorije.push(el.value));
 
   const params = new URLSearchParams();
+  if (iskanje) params.append('iskanje', iskanje); 
   if (lokacija) params.append('lokacija', lokacija);
   if (datum && datum !== 'kadarkoli') params.append('datum', datum);
   if (izbraneCene.length > 0) params.append('cene', izbraneCene.join(','));
@@ -323,7 +357,7 @@ async function naloziVseDogodke() {
 
   const stevecFiltrov = document.getElementById('st-aktivnih-filtrov');
   if (stevecFiltrov) {
-    const stAktivnih = (lokacija ? 1 : 0) + (datum !== 'kadarkoli' ? 1 : 0) + 
+    const stAktivnih = (iskanje ? 1 : 0) + (lokacija ? 1 : 0) + (datum !== 'kadarkoli' ? 1 : 0) + 
                        (uporabnikLokacija ? 1 : 0) + izbraneCene.length + izbraneKategorije.length;
     stevecFiltrov.textContent = `${stAktivnih} aktivnih`;
   }
@@ -444,3 +478,24 @@ async function preklopiPriljubljen(e) {
     gumb.disabled = false;
   }
 }
+
+export function preusmeriZFiltri(event, form) {
+  event.preventDefault();
+
+  const iskanje = form.querySelector('[name="iskanje"]').value.trim();
+  const lokacija = form.querySelector('[name="lokacija"]').value.trim();
+  const datum = form.querySelector('[name="datum"]').value;
+
+  const params = new URLSearchParams();
+  if (iskanje) params.append('iskanje', iskanje);
+  if (lokacija) params.append('lokacija', lokacija);
+  if (datum) {
+    params.append('datum', datum);
+  } else {
+    params.append('datum', 'kadarkoli');
+  }
+
+  window.location.href = `dogodki.html?${params.toString()}`;
+}
+
+window.preusmeriZFiltri = preusmeriZFiltri;

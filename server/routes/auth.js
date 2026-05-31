@@ -39,6 +39,9 @@ router.post(
       .isLength({ min: 8 }).withMessage('Geslo mora imeti vsaj 8 znakov.')
       .matches(/[A-Z]/).withMessage('Geslo mora vsebovati veliko črko.')
       .matches(/[0-9]/).withMessage('Geslo mora vsebovati številko.'),
+    body('interesi')
+      .optional()
+      .isArray().withMessage('Interesi morajo biti poslani kot polje (array).'),
   ],
 
   async (req, res) => {
@@ -50,14 +53,17 @@ router.post(
       });
     }
 
-    const { ime, priimek, email, geslo } = req.body;
+    const { ime, priimek, email, geslo, interesi } = req.body;
+
+    const connection = await pool.getConnection();
 
     try {
-      const [obstajaUporabnik] = await pool.query(
+      const [obstajaUporabnik] = await connection.query(
         'SELECT ID_uporabnik FROM Uporabnik WHERE email = ?',
         [email]
       );
       if (obstajaUporabnik.length > 0) {
+        connection.release();
         return res.status(409).json({
           napaka: 'Uporabnik s tem emailom že obstaja.',
         });
@@ -65,14 +71,30 @@ router.post(
 
       const hashGesla = await bcrypt.hash(geslo, 10);
 
-      const [rezultat] = await pool.query(
+      await connection.beginTransaction();
+
+      const [rezultat] = await connection.query(
         `INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga)
          VALUES (?, ?, ?, ?, 'uporabnik')`,
         [ime, priimek, email, hashGesla]
       );
 
+      const noviUporabnikId = rezultat.insertId;
+
+      if (interesi && interesi.length > 0) {
+        const vrednostiInteresov = interesi.map(katId => [noviUporabnikId, katId]);
+
+        await connection.query(
+          'INSERT INTO Uporabnik_Interesi (TK_uporabnik, TK_kategorija) VALUES ?',
+          [vrednostiInteresov]
+        );
+      }
+
+      await connection.commit();
+      connection.release();
+
       const uporabnik = {
-        ID_uporabnik: rezultat.insertId,
+        ID_uporabnik: noviUporabnikId,
         email,
         vloga: 'uporabnik',
       };
@@ -80,7 +102,7 @@ router.post(
       const token = ustvariToken(uporabnik);
 
       res.status(201).json({
-        sporocilo: 'Račun uspešno ustvarjen.',
+        sporocilo: 'Račun uspešno ustvarjen z interesi.',
         token,
         uporabnik: {
           id:      uporabnik.ID_uporabnik,
@@ -91,8 +113,11 @@ router.post(
         },
       });
     } catch (err) {
+      await connection.rollback();
+      connection.release();
+      
       console.error('Napaka pri registraciji:', err);
-      res.status(500).json({ napaka: 'Napaka strežnika.' });
+      res.status(500).json({ napaka: 'Napaka strežnika pri shranjevanju računa.' });
     }
   }
 );

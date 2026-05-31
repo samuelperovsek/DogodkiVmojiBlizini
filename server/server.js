@@ -15,6 +15,7 @@ import dodajDogodekRoutes from './routes/dodaj_dogodek.js';
 import adminDogodkiRoutes from './routes/admin_dogodki.js';
 import adminOceneRoutes from './routes/admin_ocene.js';
 import organizatorjiRuter from './routes/organizatorji.js';
+import organizatorRoutes from './routes/organizator.js';
 import oceneRouter from './routes/ocene.js';
 import priljubljeniRouter from './routes/priljubljeni.js';
 import statistikaRouter from './routes/statistika.js';
@@ -63,10 +64,12 @@ app.use('/api', dodajDogodekRoutes);
 app.use('/api/admin', adminDogodkiRoutes);
 app.use('/api/admin', adminOceneRoutes);
 app.use('/api/organizatorji', organizatorjiRuter);
+app.use('/api/organizator', organizatorRoutes);
 app.use('/api', oceneRouter);
 app.use('/api', priljubljeniRouter);
 app.use('/api', statistikaRouter);
 app.use('/api', obvestilaRoutes);
+
 app.use('/api', (req, res) => {
   res.status(404).json({ napaka: 'Endpoint ne obstaja.' });
 });

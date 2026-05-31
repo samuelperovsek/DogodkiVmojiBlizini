@@ -88,23 +88,29 @@ export function renderOrganizatorji(organizatorji, onSpremembi) {
   }
 
   el.innerHTML = `<div class="d-flex flex-column gap-3">` + organizatorji.map(o => {
+    const orgId = Number(o.id || o.ID_uporabnik);
     const inic = pobegniHtml(o.naziv ? o.naziv.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() : 'ORG');
     const nazivVarno = pobegniHtml(o.naziv);
     const spletnaPrikaz = o.spletna_stran ? pobegniHtml(o.spletna_stran.replace(/^https?:\/\/(www\.)?/, '')) : '';
+    
     return `
-      <div class="card p-3 shadow-sm border-0 position-relative organizator-kartica" data-id="${Number(o.id || o.ID_uporabnik)}">
+      <div class="card p-3 shadow-sm border-0 position-relative organizator-kartica" data-id="${orgId}">
         <div class="d-flex align-items-center gap-3">
-          <div class="profile-avatar flex-shrink-0" style="width: 45px; height: 45px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; background-color: #0d6efd; color: white; border-radius: 50%; font-weight: bold;">
-            ${inic}
-          </div>
-          <div class="flex-grow-1 min-w-0">
-            <h6 class="mb-1 text-truncate" style="font-size:0.92rem;" title="${nazivVarno}">${nazivVarno}</h6>
-            <p class="mb-0 text-muted" style="font-size: 0.8rem;">
-              <i class="bi bi-patch-check-fill text-primary"></i> Preverjen
-              ${o.spletna_stran ? `<br><i class="bi bi-link-45deg"></i> <a href="${varnoUrl(o.spletna_stran)}" target="_blank" rel="noopener noreferrer" class="text-muted text-decoration-none text-truncate d-inline-block" style="max-width:130px;">${spletnaPrikaz}</a>` : ''}
-            </p>
-          </div>
-          <button class="btn btn-sm btn-link text-danger p-0 gumb-odstrani-org" style="font-size: 1.1rem;" title="Prenehaj slediti">
+          
+          <a href="organizator.html?id=${orgId}" class="d-flex align-items-center gap-3 flex-grow-1 min-w-0 text-decoration-none text-reset">
+            <div class="profile-avatar flex-shrink-0" style="width: 45px; height: 45px; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; background-color: #0d6efd; color: white; border-radius: 50%; font-weight: bold;">
+              ${inic}
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <h6 class="mb-1 text-truncate font-semibold text-slate-900" style="font-size:0.92rem;" title="${nazivVarno}">${nazivVarno}</h6>
+              <p class="mb-0 text-muted" style="font-size: 0.8rem;">
+                <i class="bi bi-patch-check-fill text-primary"></i> Preverjen
+                ${o.spletna_stran ? `<br><span class="text-muted"><i class="bi bi-link-45deg"></i> ${spletnaPrikaz}</span>` : ''}
+              </p>
+            </div>
+          </a>
+
+          <button class="btn btn-sm btn-link text-danger p-0 gumb-odstrani-org position-relative" style="font-size: 1.1rem; z-index: 2;" title="Prenehaj slediti">
             <i class="bi bi-x-circle-fill"></i>
           </button>
         </div>

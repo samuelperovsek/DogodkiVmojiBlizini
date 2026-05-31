@@ -135,6 +135,14 @@ CREATE TABLE Obvestilo (
     INDEX idx_obvestilo_uporabnik_prebrano (TK_uporabnik, prebrano, datum_obvestila DESC)
 );
 
+CREATE TABLE Uporabnik_Interesi (
+    TK_uporabnik int(10) NOT NULL,
+    TK_kategorija int(10) NOT NULL,
+    PRIMARY KEY (TK_uporabnik, TK_kategorija),
+    FOREIGN KEY (TK_uporabnik) REFERENCES Uporabnik(ID_uporabnik) ON DELETE CASCADE,
+    FOREIGN KEY (TK_kategorija) REFERENCES Kategorija(ID_kategorija) ON DELETE CASCADE
+);
+
 ALTER TABLE Kraj ADD CONSTRAINT FKKraj_Regija FOREIGN KEY (TK_regija) REFERENCES Regija (ID_regija);
 
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_Kraj FOREIGN KEY (TK_kraj) REFERENCES Kraj (postna_stevilka);

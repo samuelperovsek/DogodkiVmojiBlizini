@@ -6,8 +6,6 @@ services:
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
       MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USER}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
       TZ: Europe/Ljubljana
     command: --default-time-zone='+02:00'
     ports:

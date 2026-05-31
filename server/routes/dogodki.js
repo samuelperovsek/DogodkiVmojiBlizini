@@ -1,10 +1,9 @@
 import express from 'express';
 import pool from '../db.js';
 import { ustvariObvestilo } from '../services/obvestila.js';
+import { zahtevajPrijavo } from '../middleware/auth.js';
 
 const router = express.Router();
-
-import { zahtevajPrijavo } from '../middleware/auth.js';
 
 router.get('/dogodki/najboljsi', async (req, res) => {
   try {
@@ -27,9 +26,9 @@ router.get('/dogodki/najboljsi', async (req, res) => {
   }
 });
 
-router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
+router.get('/dogodki', async (req, res) => {
   try {
-    const { lokacija, datum, cene, kategorije, userLat, userLng, maxRazdalja, sort, page, limit } = req.query;
+    const { iskanje, lokacija, datum, cene, kategorije, userLat, userLng, maxRazdalja, sort, page, limit } = req.query;
 
     const trenutnaStran = parseInt(page) || 1;
     const poStrani = parseInt(limit) || 6;
@@ -54,6 +53,11 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
       WHERE d.status IN ('aktiven', 'promoviran')
         AND d.datum_zacetka >= NOW()
     `;
+
+    if (iskanje && iskanje.trim() !== '') {
+      whereSql += ` AND (d.Naslov LIKE ? OR d.opis LIKE ?)`;
+      queryArgs.push(`%${iskanje.trim()}%`, `%${iskanje.trim()}%`);
+    }
 
     if (lokacija) {
       whereSql += ` AND (k.ime_kraja LIKE ? OR d.ulica LIKE ?)`;
@@ -105,6 +109,8 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
       queryArgs.push(parseFloat(maxRazdalja));
     }
 
+    const queryArgsZaStevec = [...queryArgs];
+
     const sqlStevec = `
       SELECT COUNT(*) AS skupno FROM (
         SELECT d.ID_dogodek ${razdaljaStolpec}
@@ -116,7 +122,7 @@ router.get('/dogodki', zahtevajPrijavo, async (req, res) => {
       ) AS najdeni_dogodki
     `;
     
-    const [rezultatStevca] = await pool.query(sqlStevec, queryArgs);
+    const [rezultatStevca] = await pool.query(sqlStevec, queryArgsZaStevec);
     const skupnoStevilo = rezultatStevca[0]?.skupno || 0;
 
     let sortirajSql = ' ORDER BY d.datum_zacetka ASC';
@@ -183,6 +189,76 @@ router.get('/dogodki/:id', async (req, res) => {
   } catch (err) {
     console.error('Napaka pri pridobivanju podrobnosti dogodka:', err);
     res.status(500).json({ napaka: 'Napaka strežnika.' });
+  }
+});
+
+router.get('/priporoceni-dogodki', async (req, res) => {
+  const trenutniDogodekId = parseInt(req.query.trenutniId) || 0;
+  const uporabnikId = req.uporabnik?.id || null; 
+
+  try {
+    let query = '';
+    let parametri = [];
+
+    if (uporabnikId) {
+      query = `
+        SELECT 
+          d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+          k.ime_kraja AS kraj, kat.naziv AS kategorija
+        FROM Dogodek d
+        LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
+        LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+        WHERE d.status IN ('aktiven', 'promoviran')
+          AND d.ID_dogodek != ?
+          AND d.datum_zacetka >= NOW()
+          AND d.TK_kategorija IN (
+            SELECT TK_kategorija FROM Uporabnik_Interesi WHERE TK_uporabnik = ?
+          )
+        ORDER BY d.datum_zacetka ASC
+        LIMIT 3
+      `;
+      parametri = [trenutniDogodekId, uporabnikId];
+    } else {
+      query = `
+        SELECT 
+          d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+          k.ime_kraja AS kraj, kat.naziv AS kategorija
+        FROM Dogodek d
+        LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
+        LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+        WHERE d.status IN ('aktiven', 'promoviran')
+          AND d.ID_dogodek != ?
+          AND d.datum_zacetka >= NOW()
+        ORDER BY RAND()
+        LIMIT 3
+      `;
+      parametri = [trenutniDogodekId];
+    }
+
+    let [dogodki] = await pool.query(query, parametri);
+    
+    if (uporabnikId && dogodki.length === 0) {
+      const [splosniDogodki] = await pool.query(`
+        SELECT 
+          d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+          k.ime_kraja AS kraj, kat.naziv AS kategorija
+        FROM Dogodek d
+        LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
+        LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+        WHERE d.status IN ('aktiven', 'promoviran') 
+          AND d.ID_dogodek != ?
+          AND d.datum_zacetka >= NOW()
+        ORDER BY d.datum_zacetka ASC 
+        LIMIT 3
+      `, [trenutniDogodekId]);
+      
+      dogodki = splosniDogodki;
+    }
+
+    res.json(dogodki);
+  } catch (err) {
+    console.error('Napaka pri pridobivanju priporočenih dogodkov:', err);
+    res.status(500).json({ napaka: 'Napaka strežnika pri pridobivanju priporočil.' });
   }
 });
 

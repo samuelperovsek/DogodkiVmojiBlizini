@@ -140,11 +140,15 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
   gumb.disabled = true;
   gumb.textContent = 'Ustvarjam račun...';
 
+  const izbraniInteresi = Array.from(e.target.querySelectorAll('input[name="interesi[]"]:checked'))
+                               .map(cb => cb.value);
+
   const podatki = {
     ime:     e.target.ime.value.trim(),
     priimek: e.target.priimek.value.trim(),
     email:   e.target.email.value.trim(),
     geslo:   e.target.geslo.value,
+    interesi: izbraniInteresi 
   };
 
   try {

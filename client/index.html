@@ -96,27 +96,27 @@
             na enem mestu, prilagojeno vašim interesom.
           </p>
 
-          <form class="search-box" onsubmit="event.preventDefault(); window.location='dogodki.html';">
+          <form class="search-box" onsubmit="preusmeriZFiltri(event, this)">
             <div class="row g-2">
               <div class="col-md-4">
                 <div class="relative">
                   <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-ink-500 pointer-events-none"></i>
-                  <input type="text" class="form-control pl-9" style="padding-left: 2.4rem;" placeholder="Kaj iščete?">
+                  <input type="text" name="iskanje" class="form-control pl-9" style="padding-left: 2.4rem;" placeholder="Kaj iščete?">
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="relative">
                   <i class="bi bi-geo-alt absolute left-3 top-1/2 -translate-y-1/2 text-ink-500 pointer-events-none"></i>
-                  <input type="text" class="form-control" style="padding-left: 2.4rem;" placeholder="Lokacija">
+                  <input type="text" name="lokacija" class="form-control" style="padding-left: 2.4rem;" placeholder="Lokacija">
                 </div>
               </div>
               <div class="col-md-3">
-                <select class="form-select">
-                  <option>Kadarkoli</option>
-                  <option>Danes</option>
-                  <option>Jutri</option>
-                  <option>Ta vikend</option>
-                  <option>Ta teden</option>
+                <select name="datum" class="form-select">
+                  <option value="">Kadarkoli</option>
+                  <option value="danes">Danes</option>
+                  <option value="jutri">Jutri</option>
+                  <option value="vikend">Ta vikend</option>
+                  <option value="ta_teden">Ta teden</option>
                 </select>
               </div>
               <div class="col-md-2">

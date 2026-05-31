@@ -66,7 +66,11 @@ export function generirajPodrobnostiHtml(dogodek, p) {
                   ${orgIniciali}
                 </div>
                 <div class="flex-grow-1">
-                  <h5 class="mb-1">${orgIme}</h5>
+                  <h5 class="mb-1">
+                    <a href="organizator.html?id=${Number(dogodek.TK_uporabnik_organizator)}" class="text-decoration-none text-dark fw-bold hover-underline">
+                      ${orgIme}
+                    </a>
+                  </h5>
                   <p class="mb-0 text-muted">
                     <i class="bi bi-patch-check-fill text-primary"></i> Preverjen organizator •
                     Kontakt: ${email}
