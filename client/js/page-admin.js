@@ -1,4 +1,4 @@
-import { Auth } from './auth.js';
+import { Auth, osveziNaAkcijo } from './auth.js';
 import { naloziUporabnike } from './admin/uporabniki.js';
 import { naloziProsnje } from './admin/prosnje.js';
 import { naloziDogodke, pripraviDogodkiHandlerje } from './admin/dogodki.js';
@@ -76,18 +76,4 @@ async function osveziAdminPodatke() {
 }
 
 osveziAdminPodatke();
-
-let casovnikAdmin = null;
-document.addEventListener('app:akcija', (ev) => {
-  const pot = ev.detail?.pot || '';
-  if (pot.startsWith('/obvestila')) return;
-  if (casovnikAdmin) clearTimeout(casovnikAdmin);
-  casovnikAdmin = setTimeout(() => {
-    casovnikAdmin = null;
-    osveziAdminPodatke();
-  }, 350);
-});
-
-document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') osveziAdminPodatke();
-});
+osveziNaAkcijo(osveziAdminPodatke);

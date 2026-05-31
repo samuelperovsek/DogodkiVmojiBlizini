@@ -14,8 +14,6 @@ export function varnoUrl(url) {
   return '#';
 }
 
-window.pobegniHtml = pobegniHtml;
-window.varnoUrl = varnoUrl;
 
 function pridobiToastContainer() {
   let el = document.querySelector('.toast-container');
@@ -130,7 +128,6 @@ export function potrdiAkcijo({
   });
 }
 
-window.potrdiAkcijo = potrdiAkcijo;
 
 function ovijGesloVnos(input) {
   if (input.dataset.passwordWrapped === '1') return;

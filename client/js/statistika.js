@@ -111,7 +111,6 @@ async function naloziStatistiko() {
   try {
     const s = await apiFetch('/statistika');
     nastaviStevilo('dogodki',             s.dogodki);
-    nastaviStevilo('dogodki-vse',         s.dogodki_vse);
     nastaviStevilo('organizatorji',       s.organizatorji);
     nastaviStevilo('uporabniki',          s.uporabniki);
     nastaviStevilo('kraji',               s.kraji);

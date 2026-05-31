@@ -7,7 +7,6 @@ router.get('/statistika', async (req, res) => {
   try {
     const [
       [dogodkiVrstice],
-      [dogodkiVseVrstice],
       [organizatorjiVrstice],
       [uporabnikiVrstice],
       [krajiVrstice],
@@ -21,7 +20,6 @@ router.get('/statistika', async (req, res) => {
          FROM Dogodek
          WHERE status IN ('aktiven', 'promoviran')`
       ),
-      pool.query(`SELECT COUNT(*) AS stevilo FROM Dogodek`),
       pool.query(
         `SELECT COUNT(*) AS stevilo
          FROM Uporabnik
@@ -55,7 +53,6 @@ router.get('/statistika', async (req, res) => {
 
     res.json({
       dogodki: dogodkiVrstice[0].stevilo,
-      dogodki_vse: dogodkiVseVrstice[0].stevilo,
       organizatorji: organizatorjiVrstice[0].stevilo,
       uporabniki: uporabnikiVrstice[0].stevilo,
       kraji: krajiVrstice[0].stevilo,

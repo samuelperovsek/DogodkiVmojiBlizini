@@ -100,3 +100,18 @@ export class ApiError extends Error {
     this.podrobnosti = podrobnosti;
   }
 }
+
+export function osveziNaAkcijo(osvezi, zakasnitev = 350) {
+  let casovnik = null;
+  document.addEventListener('app:akcija', (ev) => {
+    if ((ev.detail?.pot || '').startsWith('/obvestila')) return;
+    if (casovnik) clearTimeout(casovnik);
+    casovnik = setTimeout(() => {
+      casovnik = null;
+      osvezi();
+    }, zakasnitev);
+  });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') osvezi();
+  });
+}

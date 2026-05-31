@@ -50,27 +50,4 @@ router.post('/:id/toggle-spremljaj', zahtevajPrijavo, async (req, res) => {
   }
 });
 
-router.get('/povezani/sledim', zahtevajPrijavo, async (req, res) => {
-  try {
-    const uporabnikId = req.uporabnik.id;
-
-    const [organizatorji] = await pool.query(`
-      SELECT 
-        u.ID_uporabnik,
-        u.ime,
-        u.priimek,
-        u.email,
-        u.naziv_podjetja
-      FROM Priljubljeni_organizatorji po
-      JOIN Uporabnik u ON po.TK_organizator = u.ID_uporabnik
-      WHERE po.TK_uporabnik = ?
-    `, [uporabnikId]);
-
-    res.json(organizatorji);
-  } catch (err) {
-    console.error('Napaka pri pridobivanju sledenih organizatorjev:', err);
-    res.status(500).json({ napaka: 'Napaka strežnika pri pridobivanju organizatorjev.' });
-  }
-});
-
 export default router;
