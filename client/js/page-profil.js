@@ -9,12 +9,14 @@ import {
 } from './profil/dashboard.js';
 import { initEditModal } from './profil/edit.js';
 import { renderOrganizatorBox } from './profil/prosnja.js';
+import { inicializirajMojeDogodke } from './profil/moji-dogodki.js';
 
 if (!Auth.jePrijavljen()) {
   window.location.href = 'prijava.html';
 }
 
 let trenutniUporabnik = null;
+let mojiDogodkiInicializirani = false;
 
 async function osveziPodatkeProfila() {
   try {
@@ -30,6 +32,11 @@ async function osveziPodatkeProfila() {
     renderOcene(dashboard.ocene, osveziPodatkeProfila);
     renderOrganizatorji(dashboard.organizatorji, osveziPodatkeProfila);
     renderOrganizatorBox(uporabnik);
+
+    if (uporabnik.vloga === 'organizator' && !mojiDogodkiInicializirani) {
+      mojiDogodkiInicializirani = true;
+      inicializirajMojeDogodke();
+    }
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       Auth.odjavi();

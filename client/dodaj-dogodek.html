@@ -346,16 +346,18 @@
           <h5>Razišči</h5>
           <a href="dogodki.html">Vsi dogodki</a>
           <a href="index.html#kategorije">Kategorije</a>
+          <a href="pomoc.html#pomoc">Pomoč</a>
         </div>
-        <div class="col-6 col-md-2">
+        <div class="col-6 col-md-2 d-none" data-only-organizator>
           <h5>Organizator</h5>
           <a href="dodaj-dogodek.html">Dodaj dogodek</a>
+          <a href="pomoc.html#cenik">Cenik</a>
         </div>
         <div class="col-md-4">
           <h5>Novičnik</h5>
-          <form onsubmit="event.preventDefault();">
+          <form data-novicnik-form>
             <div class="input-group">
-              <input type="email" class="form-control" placeholder="tvoja@e-posta.si">
+              <input type="email" name="email" class="form-control" placeholder="tvoja@e-posta.si" required>
               <button class="btn btn-primary" type="submit">Naroči se</button>
             </div>
           </form>
@@ -364,8 +366,8 @@
       <div class="footer-bottom d-flex justify-content-between flex-wrap">
         <span>© 2026 Eventli.si</span>
         <div>
-          <a href="#" style="display: inline; margin-right: 1rem;">Pogoji</a>
-          <a href="#" style="display: inline;">Zasebnost</a>
+          <a href="pomoc.html#pogoji" style="display: inline; margin-right: 1rem;">Pogoji</a>
+          <a href="pomoc.html#zasebnost" style="display: inline;">Zasebnost</a>
         </div>
       </div>
     </div>

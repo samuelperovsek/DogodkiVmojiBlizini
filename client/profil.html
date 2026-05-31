@@ -214,6 +214,20 @@
         </div>
       </div>
 
+      <div id="mojiDogodkiBox" class="row g-3 mt-1 d-none" data-only-organizator>
+        <div class="col-12">
+          <div class="filter-sidebar">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h4 class="mb-0"><i class="bi bi-calendar2-week text-primary"></i> Moji dogodki</h4>
+              <a href="dodaj-dogodek.html" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Dodaj dogodek</a>
+            </div>
+            <div id="mojiDogodkiList">
+              <div class="text-center text-muted py-3">Nalaganje…</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="organizatorBox" class="row g-3 mt-1 d-none">
         <div class="col-12">
           <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-700 via-brand-600 to-accent-600 p-6 text-white shadow-glow">
@@ -309,6 +323,66 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="urediDogodekModal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3><i class="bi bi-pencil-square text-primary"></i> Uredi dogodek</h3>
+        <button type="button" class="modal-close" data-zapri-dogodek-modal>&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="urediDogodekAlert" class="alert d-none mb-3"></div>
+        <form id="urediDogodekForm">
+          <input type="hidden" name="id">
+          <div class="mb-3">
+            <label class="form-label">Naslov</label>
+            <input type="text" name="naslov" class="form-control" required maxlength="100">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Kratek opis</label>
+            <input type="text" name="kratek_opis" class="form-control" required maxlength="160">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Podroben opis</label>
+            <textarea name="opis" class="form-control" rows="3"></textarea>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Datum</label>
+              <input type="date" name="datum" class="form-control">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Ura</label>
+              <input type="time" name="ura" class="form-control">
+            </div>
+          </div>
+          <div class="row g-3 mt-0">
+            <div class="col-md-4">
+              <label class="form-label">Tip cene</label>
+              <select name="tip_cene" class="form-select">
+                <option value="Plačljivo">Plačljivo</option>
+                <option value="Brezplačno">Brezplačno</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Cena (€)</label>
+              <input type="number" name="cena" class="form-control" min="0" step="0.01">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Št. mest</label>
+              <input type="number" name="st_sedezov" class="form-control" min="0">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-primary" data-zapri-dogodek-modal>Prekliči</button>
+        <button type="button" class="btn btn-primary" id="shraniDogodekBtn">
+          <i class="bi bi-check-lg"></i> Shrani
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer>
     <div class="container">
       <div class="row g-4">
@@ -325,16 +399,18 @@
           <h5>Razišči</h5>
           <a href="dogodki.html">Vsi dogodki</a>
           <a href="index.html#kategorije">Kategorije</a>
+          <a href="pomoc.html#pomoc">Pomoč</a>
         </div>
-        <div class="col-6 col-md-2">
+        <div class="col-6 col-md-2 d-none" data-only-organizator>
           <h5>Organizator</h5>
           <a href="dodaj-dogodek.html">Dodaj dogodek</a>
+          <a href="pomoc.html#cenik">Cenik</a>
         </div>
         <div class="col-md-4">
           <h5>Novičnik</h5>
-          <form onsubmit="event.preventDefault();">
+          <form data-novicnik-form>
             <div class="input-group">
-              <input type="email" class="form-control" placeholder="tvoja@e-posta.si">
+              <input type="email" name="email" class="form-control" placeholder="tvoja@e-posta.si" required>
               <button class="btn btn-primary" type="submit">Naroči se</button>
             </div>
           </form>
@@ -343,8 +419,8 @@
       <div class="footer-bottom d-flex justify-content-between flex-wrap">
         <span>© 2026 Eventli.si</span>
         <div>
-          <a href="#" style="display: inline; margin-right: 1rem;">Pogoji</a>
-          <a href="#" style="display: inline;">Zasebnost</a>
+          <a href="pomoc.html#pogoji" style="display: inline; margin-right: 1rem;">Pogoji</a>
+          <a href="pomoc.html#zasebnost" style="display: inline;">Zasebnost</a>
         </div>
       </div>
     </div>

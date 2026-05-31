@@ -156,11 +156,18 @@ function osveziIzgledGumbaSledi() {
   const gumb = document.getElementById('gumb-sledi-glavni');
   if (!gumb) return;
 
+  gumb.className = "btn btn-sm font-semibold shadow-sm px-4 py-1.5";
+  gumb.style.borderRadius = "20px";
+
   if (jeSledil) {
-    gumb.className = "btn btn-primary btn-sm font-semibold shadow-sm px-4 py-1.5";
+    gumb.style.background = "rgba(255, 255, 255, 0.18)";
+    gumb.style.border = "1.5px solid rgba(255, 255, 255, 0.85)";
+    gumb.style.color = "#ffffff";
     gumb.innerHTML = `<i class="bi bi-check-lg"></i> Sledim`;
   } else {
-    gumb.className = "btn btn-light btn-sm font-semibold shadow-sm px-4 py-1.5";
+    gumb.style.background = "#ffffff";
+    gumb.style.border = "1.5px solid #ffffff";
+    gumb.style.color = "var(--brand-700)";
     gumb.innerHTML = `<i class="bi bi-plus-lg"></i> Sledi`;
   }
 }

@@ -303,20 +303,20 @@
           <h5>Razišči</h5>
           <a href="dogodki.html">Vsi dogodki</a>
           <a href="#kategorije">Kategorije</a>
-          <a href="#">Najbližji</a>
+          <a href="dogodki.html">Najbližji</a>
+          <a href="pomoc.html#pomoc">Pomoč</a>
         </div>
-        <div class="col-6 col-md-2">
+        <div class="col-6 col-md-2 d-none" data-only-organizator>
           <h5>Organizator</h5>
           <a href="dodaj-dogodek.html">Dodaj dogodek</a>
-          <a href="#">Cenik</a>
-          <a href="#">Pomoč</a>
+          <a href="pomoc.html#cenik">Cenik</a>
         </div>
         <div class="col-md-4">
           <h5>Novičnik</h5>
           <p class="text-white/70 mb-3">Tedenski izbor najboljših dogodkov v tvojem mestu.</p>
-          <form onsubmit="event.preventDefault();">
+          <form data-novicnik-form>
             <div class="input-group">
-              <input type="email" class="form-control" placeholder="tvoja@e-posta.si" style="background-color: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff;">
+              <input type="email" name="email" class="form-control" placeholder="tvoja@e-posta.si" style="background-color: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #fff;" required>
               <button class="btn btn-primary" type="submit">Naroči se</button>
             </div>
           </form>
@@ -332,9 +332,9 @@
           © 2026 Eventli.si
         </span>
         <div class="flex gap-4">
-          <a href="#" class="inline">Pogoji uporabe</a>
-          <a href="#" class="inline">Zasebnost</a>
-          <a href="#" class="inline">Piškotki</a>
+          <a href="pomoc.html#pogoji" class="inline">Pogoji uporabe</a>
+          <a href="pomoc.html#zasebnost" class="inline">Zasebnost</a>
+          <a href="pomoc.html#piskotki" class="inline">Piškotki</a>
         </div>
       </div>
     </div>

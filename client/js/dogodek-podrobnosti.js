@@ -34,7 +34,6 @@ async function naloziPodrobnostiDogodka() {
 
     pripraviRezervacija(dogodek, dogodekId);
 
-    // Klic za nalaganje priporočenih dogodkov na dnu strani
     await naloziPriporoceneDogodke(dogodekId);
 
   } catch (err) {

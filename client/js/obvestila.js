@@ -13,7 +13,7 @@ function relativnoCas(datumStr) {
   const minute = Math.floor(sekunde / 60);
   if (minute < 60) return `pred ${minute} min`;
   const ure = Math.floor(minute / 60);
-  if (ure < 24) return `pred ${ure} ${ure === 1 ? 'uro' : ure < 5 ? 'urami' : 'urami'}`;
+  if (ure < 24) return `pred ${ure} ${ure === 1 ? 'uro' : 'urami'}`;
   const dnevi = Math.floor(ure / 24);
   if (dnevi < 7) return `pred ${dnevi} ${dnevi === 1 ? 'dnevom' : 'dnevi'}`;
   return d.toLocaleDateString('sl-SI', { day: 'numeric', month: 'short' });

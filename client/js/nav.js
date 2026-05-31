@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   });
 
+  pripraviNovicnik();
+
   document.addEventListener('app:akcija', async (ev) => {
     const pot = ev.detail?.pot || '';
     if (pot === '/me' || pot.startsWith('/admin/uporabniki')) {
@@ -76,6 +78,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     const sme = vloga === 'organizator';
     document.querySelectorAll('[data-only-organizator]').forEach(el => {
       el.classList.toggle('d-none', !sme);
+    });
+  }
+
+  function pripraviNovicnik() {
+    document.querySelectorAll('[data-novicnik-form]').forEach(forma => {
+      forma.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const vnos = forma.querySelector('input[type="email"]');
+        const gumb = forma.querySelector('button[type="submit"]');
+        const email = vnos?.value.trim();
+
+        if (!email) {
+          window.pokaziToast?.('warning', 'Vnesi svoj e-naslov.', 'Manjka email');
+          return;
+        }
+
+        const prvotniGumb = gumb.innerHTML;
+        gumb.disabled = true;
+        gumb.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+        try {
+          const odgovor = await apiFetch('/novicnik', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+          });
+          window.pokaziToast?.('success', odgovor.sporocilo, 'Naročen!');
+          forma.reset();
+        } catch (err) {
+          window.pokaziToast?.('danger', err instanceof ApiError ? err.message : 'Napaka pri naročanju.', 'Napaka');
+        } finally {
+          gumb.disabled = false;
+          gumb.innerHTML = prvotniGumb;
+        }
+      });
     });
   }
 });

@@ -103,6 +103,15 @@ function pripraviFiltre() {
   let drsnikTimeout = null;
   let iskanjeTimeout = null;
 
+  const zlozljivFilter = document.querySelector('.filter-sidebar[data-zlozljiv]');
+  const glavaFiltra = zlozljivFilter?.querySelector('.zlozljiv__glava');
+  if (glavaFiltra) {
+    glavaFiltra.addEventListener('click', () => {
+      const odprt = zlozljivFilter.getAttribute('aria-expanded') === 'true';
+      zlozljivFilter.setAttribute('aria-expanded', odprt ? 'false' : 'true');
+    });
+  }
+
   if (drsnikRazdalje && izpisRazdalje) {
     const shranjenPolmer = preberiShranjenPolmer();
     if (shranjenPolmer !== null) {

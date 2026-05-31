@@ -1,19 +1,19 @@
 import express from 'express';
-import db from '../db.js'; 
-import { zahtevajPrijavo } from '../middleware/auth.js'; 
+import pool from '../db.js';
+import { zahtevajPrijavo } from '../middleware/auth.js';
 
 const router = express.Router();
 
 router.get('/:id', zahtevajPrijavo, async (req, res) => {
   const organizatorId = parseInt(req.params.id);
-  const trenutniUporabnikId = req.user ? req.user.id : null;
+  const trenutniUporabnikId = req.uporabnik ? req.uporabnik.id : null;
 
   if (isNaN(organizatorId)) {
     return res.status(400).json({ error: 'Napačen ID organizatorja.' });
   }
 
   try {
-    const [orgPodatki] = await db.query(`
+    const [orgPodatki] = await pool.query(`
       SELECT 
         u.ID_uporabnik, 
         u.ime, 
@@ -34,7 +34,7 @@ router.get('/:id', zahtevajPrijavo, async (req, res) => {
 
     let jeSledil = false;
     if (trenutniUporabnikId) {
-      const [sledenje] = await db.query(`
+      const [sledenje] = await pool.query(`
         SELECT 1 FROM Priljubljeni_organizatorji 
         WHERE TK_uporabnik = ? AND TK_organizator = ?
       `, [trenutniUporabnikId, organizatorId]);
@@ -42,7 +42,7 @@ router.get('/:id', zahtevajPrijavo, async (req, res) => {
       jeSledil = sledenje.length > 0;
     }
 
-    const [dogodki] = await db.query(`
+    const [dogodki] = await pool.query(`
       SELECT 
         d.ID_dogodek, 
         d.Naslov, 

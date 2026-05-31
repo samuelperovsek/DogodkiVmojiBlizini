@@ -102,11 +102,16 @@
       <div class="row g-4">
 
         <aside class="col-lg-3">
-          <div class="filter-sidebar sticky top-[90px]">
-            <div class="flex items-center justify-between mb-4">
-              <h4 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtri</h4>
-              <span id="st-aktivnih-filtrov" class="text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full">0 aktivnih</span>
-            </div>
+          <div class="filter-sidebar sticky top-[90px] zlozljiv" data-zlozljiv aria-expanded="false">
+            <button type="button" class="zlozljiv__glava">
+              <div class="flex items-center justify-between flex-grow-1">
+                <h4 class="mb-0"><i class="bi bi-funnel-fill"></i> Filtri</h4>
+                <span id="st-aktivnih-filtrov" class="text-xs font-semibold text-brand-700 bg-brand-50 px-2 py-0.5 rounded-full">0 aktivnih</span>
+              </div>
+              <i class="bi bi-chevron-down zlozljiv__chevron"></i>
+            </button>
+
+            <div class="zlozljiv__telo">
 
             <div class="mb-3">
               <label class="form-label">Iskanje</label>
@@ -199,6 +204,8 @@
               <button id="gumb-uporabi-filtre" class="btn btn-primary w-100 mb-2"><i class="bi bi-check2-circle"></i> Uporabi filtre</button>
               <button id="gumb-ponastavi-filtre" class="btn btn-outline-primary w-100"><i class="bi bi-arrow-counterclockwise"></i> Ponastavi</button>
             </div>
+
+            </div>
           </div>
         </aside>
 
@@ -229,17 +236,18 @@
           <h5>Razišči</h5>
           <a href="dogodki.html">Vsi dogodki</a>
           <a href="index.html#kategorije">Kategorije</a>
+          <a href="pomoc.html#pomoc">Pomoč</a>
         </div>
-        <div class="col-6 col-md-2">
+        <div class="col-6 col-md-2 d-none" data-only-organizator>
           <h5>Organizator</h5>
           <a href="dodaj-dogodek.html">Dodaj dogodek</a>
-          <a href="#">Pomoč</a>
+          <a href="pomoc.html#cenik">Cenik</a>
         </div>
         <div class="col-md-4">
           <h5>Novičnik</h5>
-          <form onsubmit="event.preventDefault();">
+          <form data-novicnik-form>
             <div class="input-group">
-              <input type="email" class="form-control" placeholder="tvoja@e-posta.si">
+              <input type="email" name="email" class="form-control" placeholder="tvoja@e-posta.si" required>
               <button class="btn btn-primary" type="submit">Naroči se</button>
             </div>
           </form>
@@ -248,8 +256,8 @@
       <div class="footer-bottom d-flex justify-content-between flex-wrap">
         <span>© 2026 Eventli.si</span>
         <div>
-          <a href="#" style="display: inline; margin-right: 1rem;">Pogoji</a>
-          <a href="#" style="display: inline;">Zasebnost</a>
+          <a href="pomoc.html#pogoji" style="display: inline; margin-right: 1rem;">Pogoji</a>
+          <a href="pomoc.html#zasebnost" style="display: inline;">Zasebnost</a>
         </div>
       </div>
     </div>

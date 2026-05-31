@@ -159,4 +159,123 @@ router.get('/organizator-podatki', zahtevajPrijavo, zahtevajOrganizatorja, async
   }
 });
 
+router.get('/moji-dogodki', zahtevajPrijavo, zahtevajOrganizatorja, async (req, res) => {
+  try {
+    const [dogodki] = await pool.query(
+      `SELECT
+         d.ID_dogodek, d.Naslov, d.kratek_opis, d.opis, d.datum_zacetka, d.datum_konca,
+         d.cena, d.tip_cene, d.slika, d.status, d.st_sedezov, d.st_prostih_sedezov,
+         k.ime_kraja AS kraj, kat.naziv AS kategorija,
+         (SELECT COUNT(*) FROM Prijava p WHERE p.TK_dogodek = d.ID_dogodek) AS st_prijav
+       FROM Dogodek d
+       LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
+       LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
+       WHERE d.TK_uporabnik_organizator = ?
+       ORDER BY d.datum_zacetka DESC`,
+      [req.uporabnik.id]
+    );
+    res.json({ dogodki });
+  } catch (err) {
+    console.error('Napaka pri /moji-dogodki:', err);
+    res.status(500).json({ napaka: 'Napaka strežnika.' });
+  }
+});
+
+router.patch('/dogodki/:id', zahtevajPrijavo, zahtevajOrganizatorja, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ napaka: 'Neveljaven ID.' });
+  }
+
+  try {
+    const [obstojeci] = await pool.query(
+      'SELECT TK_uporabnik_organizator, st_sedezov, st_prostih_sedezov FROM Dogodek WHERE ID_dogodek = ?',
+      [id]
+    );
+    if (obstojeci.length === 0) {
+      return res.status(404).json({ napaka: 'Dogodek ne obstaja.' });
+    }
+    if (obstojeci[0].TK_uporabnik_organizator !== req.uporabnik.id) {
+      return res.status(403).json({ napaka: 'Urejaš lahko samo svoje dogodke.' });
+    }
+
+    const p = req.body;
+    const polja = [];
+    const vrednosti = [];
+
+    if (typeof p.naslov === 'string' && p.naslov.trim()) {
+      polja.push('Naslov = ?');
+      vrednosti.push(p.naslov.trim().slice(0, 100));
+    }
+    if (typeof p.kratek_opis === 'string' && p.kratek_opis.trim()) {
+      polja.push('kratek_opis = ?');
+      vrednosti.push(p.kratek_opis.trim().slice(0, 160));
+    }
+    if (p.opis !== undefined) {
+      polja.push('opis = ?');
+      vrednosti.push(p.opis ? String(p.opis) : null);
+    }
+    if (p.tip_cene === 'Plačljivo' || p.tip_cene === 'Brezplačno') {
+      polja.push('tip_cene = ?');
+      vrednosti.push(p.tip_cene);
+    }
+    if (p.cena !== undefined) {
+      const cena = parseFloat(p.cena);
+      polja.push('cena = ?');
+      vrednosti.push(Number.isFinite(cena) && cena >= 0 ? cena : 0);
+    }
+    if (typeof p.datum_zacetka === 'string' && p.datum_zacetka.trim()) {
+      polja.push('datum_zacetka = ?');
+      vrednosti.push(p.datum_zacetka.trim());
+    }
+    if (p.st_sedezov !== undefined && p.st_sedezov !== null && p.st_sedezov !== '') {
+      const novoSkupno = parseInt(p.st_sedezov, 10);
+      if (Number.isInteger(novoSkupno) && novoSkupno >= 0) {
+        const zasedeni = Math.max(0, (obstojeci[0].st_sedezov || 0) - (obstojeci[0].st_prostih_sedezov || 0));
+        const prosta = Math.max(0, novoSkupno - zasedeni);
+        polja.push('st_sedezov = ?', 'st_prostih_sedezov = ?');
+        vrednosti.push(novoSkupno, prosta);
+      }
+    }
+
+    if (polja.length === 0) {
+      return res.status(400).json({ napaka: 'Ni sprememb za shraniti.' });
+    }
+
+    vrednosti.push(id);
+    await pool.query(`UPDATE Dogodek SET ${polja.join(', ')} WHERE ID_dogodek = ?`, vrednosti);
+
+    res.json({ sporocilo: 'Dogodek uspešno posodobljen.' });
+  } catch (err) {
+    console.error('Napaka pri urejanju dogodka:', err);
+    res.status(500).json({ napaka: 'Napaka strežnika.' });
+  }
+});
+
+router.delete('/dogodki/:id', zahtevajPrijavo, zahtevajOrganizatorja, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ napaka: 'Neveljaven ID.' });
+  }
+
+  try {
+    const [obstojeci] = await pool.query(
+      'SELECT TK_uporabnik_organizator FROM Dogodek WHERE ID_dogodek = ?',
+      [id]
+    );
+    if (obstojeci.length === 0) {
+      return res.status(404).json({ napaka: 'Dogodek ne obstaja.' });
+    }
+    if (obstojeci[0].TK_uporabnik_organizator !== req.uporabnik.id) {
+      return res.status(403).json({ napaka: 'Brišeš lahko samo svoje dogodke.' });
+    }
+
+    await pool.query('DELETE FROM Dogodek WHERE ID_dogodek = ?', [id]);
+    res.json({ sporocilo: 'Dogodek uspešno izbrisan.' });
+  } catch (err) {
+    console.error('Napaka pri brisanju dogodka:', err);
+    res.status(500).json({ napaka: 'Napaka strežnika.' });
+  }
+});
+
 export default router;
