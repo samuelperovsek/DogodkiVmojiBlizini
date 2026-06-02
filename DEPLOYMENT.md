@@ -226,6 +226,26 @@ Podatki v bazi in naložene slike ostanejo (so v volumes).
 
 ---
 
+## Google prijava (OAuth) v produkciji
+
+Projekt podpira prijavo z Googlom. Za produkcijo:
+
+1. V **Google Cloud Console → APIs & Services → Credentials** odpri svoj OAuth 2.0 Client.
+2. Pod **Authorized redirect URIs** dodaj produkcijski naslov:
+   ```
+   https://tvoja-domena/api/auth/google/callback
+   ```
+3. V `.env` na strežniku nastavi:
+   ```
+   GOOGLE_CLIENT_ID=<iz Google Console>
+   GOOGLE_CLIENT_SECRET=<iz Google Console>
+   GOOGLE_CALLBACK_URL=https://tvoja-domena/api/auth/google/callback
+   ```
+
+> Brez `GOOGLE_CLIENT_ID` in `GOOGLE_CLIENT_SECRET` se Google prijava ob zagonu ne inicializira pravilno — zato morata biti vedno nastavljena.
+
+---
+
 ## Pogoste težave
 
 | Težava | Rešitev |
