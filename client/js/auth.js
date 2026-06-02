@@ -1,4 +1,5 @@
-export const SERVER_URL = 'http://localhost:3001';
+const jeLokalnoOkolje = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+export const SERVER_URL = jeLokalnoOkolje ? 'http://localhost:3001' : '';
 const API_URL = `${SERVER_URL}/api`;
 
 export const Auth = {

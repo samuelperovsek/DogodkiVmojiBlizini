@@ -3,6 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import authRoutes from './routes/auth.js';
@@ -24,6 +26,16 @@ import novicnikRoutes from './routes/novicnik.js';
 import './services/opomnik.js';
 
 const app = express();
+
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+}
+
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
 
 const PORT = process.env.PORT || 3000;
 const dovoljeniOrigini = (process.env.FRONTEND_ORIGIN || '')
@@ -54,6 +66,16 @@ app.use((req, res, next) => {
 app.get('/api/zdravje', (req, res) => {
   res.json({ status: 'OK', cas: new Date().toISOString() });
 });
+
+const obcutljiviLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { napaka: 'Preveč poskusov. Poskusi znova čez nekaj minut.' },
+});
+
+app.use(['/api/prijava', '/api/registracija', '/api/pozabljeno-geslo', '/api/reset-geslo'], obcutljiviLimit);
 
 app.use('/api', authRoutes);
 app.use('/api', pozabljenoGesloRoutes);

@@ -1,0 +1,78 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: eventli_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      TZ: Europe/Ljubljana
+    command: --default-time-zone='+02:00'
+    volumes:
+      - eventli_db_data:/var/lib/mysql
+      - ./server/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    networks:
+      - eventli
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: eventli_app
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
+      FRONTEND_URL: ${FRONTEND_URL}
+      EMAIL_HOST: ${EMAIL_HOST}
+      EMAIL_PORT: ${EMAIL_PORT}
+      EMAIL_USER: ${EMAIL_USER}
+      EMAIL_PASS: ${EMAIL_PASS}
+      EMAIL_FROM: ${EMAIL_FROM}
+    volumes:
+      - eventli_uploads:/app/server/public/uploads
+    networks:
+      - eventli
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: eventli_caddy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMENA: ${DOMENA}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - eventli
+
+networks:
+  eventli:
+
+volumes:
+  eventli_db_data:
+  eventli_uploads:
+  caddy_data:
+  caddy_config:
