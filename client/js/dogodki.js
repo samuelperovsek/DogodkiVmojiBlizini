@@ -10,6 +10,9 @@ let trenutnoRazvrscanje = 'datum';
 let trenutnaStran = 1;
 const DOGODKOV_NA_STRAN = 6;
 
+let mapa = null;
+let skupinaMarkerjev = null;
+
 export async function inicializirajPriljubljene() {
   if (initPriljubljenihPromise) return initPriljubljenihPromise;
   if (!Auth.jePrijavljen()) return Promise.resolve();
@@ -29,6 +32,66 @@ export function osveziSrckeNaStrani() {
     if (ikona) ikona.className = aktiven ? 'bi bi-heart-fill' : 'bi bi-heart';
     gumb.setAttribute('aria-label', aktiven ? 'Odstrani iz priljubljenih' : 'Dodaj med priljubljene');
   });
+}
+
+function inicializirajZemljevid() {
+  const kontejner = document.getElementById('zemljevid-dogodkov');
+  if (!kontejner || mapa) return;
+
+  // Postavi pogled na sredino Slovenije
+  mapa = L.map('zemljevid-dogodkov').setView([46.1512, 14.9955], 8);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+  }).addTo(mapa);
+
+  skupinaMarkerjev = L.layerGroup().addTo(mapa);
+}
+
+function osveziMarkerjeNaZemljevidu(dogodki, privzetaSlika) {
+  inicializirajZemljevid();
+  if (!skupinaMarkerjev) return;
+
+  skupinaMarkerjev.clearLayers();
+
+  dogodki.forEach(dogodek => {
+    const lat = dogodek.latitud || dogodek.lat || dogodek.latitude;
+    const lng = dogodek.longitud || dogodek.lng || dogodek.longitude;
+
+    if (lat && lng) {
+      const marker = L.marker([parseFloat(lat), parseFloat(lng)]);
+      const slikaUrl = pridobiPotSlike(dogodek.slika, privzetaSlika);
+      const naslovVarno = pobegniHtml(dogodek.Naslov || dogodek.naslov);
+      
+      const cena = parseFloat(dogodek.cena);
+      const cenaTekst = cena > 0 ? `${cena.toFixed(0)} €` : 'Brezplačno';
+
+      const popupHtml = `
+        <div style="font-family: 'Inter', sans-serif; width: 180px;">
+          <img src="${pobegniHtml(slikaUrl)}" style="width:100%; height:80px; object-fit:cover; border-radius:6px; margin-bottom:6px;">
+          <span class="badge bg-primary text-white mb-1" style="font-size: 0.65rem;">${pobegniHtml(dogodek.kategorija || 'Dogodek')}</span>
+          <h6 class="mb-1" style="font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
+            <a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}" style="text-decoration:none; color:inherit;">${naslovVarno}</a>
+          </h6>
+          <small class="text-muted d-block mb-1" style="font-size: 0.75rem;"><i class="bi bi-geo-alt"></i> ${pobegniHtml(dogodek.kraj || '')}</small>
+          <div class="d-flex justify-content-between align-items-center mt-2 pt-1 border-top">
+            <strong style="font-size: 0.8rem; color: #10b981;">${cenaTekst}</strong>
+            <a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}" class="btn btn-primary btn-sm text-white px-2 py-0.5" style="font-size:0.7rem;">Več</a>
+          </div>
+        </div>
+      `;
+
+      marker.bindPopup(popupHtml);
+      skupinaMarkerjev.addLayer(marker);
+    }
+  });
+
+  if (dogodki.length > 0 && skupinaMarkerjev.getLayers().length > 0) {
+    const zbirka = L.featureGroup(skupinaMarkerjev.getLayers());
+    mapa.fitBounds(zbirka.getBounds().pad(0.15));
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -244,7 +307,7 @@ function generirajKartico(dogodek, stolpecRazred, privzetaSlika, useFreeBadge = 
   const stolpec = document.createElement('div');
   stolpec.className = stolpecRazred;
 
-  const naslovVarno = pobegniHtml(dogodek.Naslov);
+  const naslovVarno = pobegniHtml(dogodek.Naslov || dogodek.naslov);
   const polnaLokacijaVarno = pobegniHtml(polnaLokacija);
 
   stolpec.innerHTML = `
@@ -264,11 +327,11 @@ function generirajKartico(dogodek, stolpecRazred, privzetaSlika, useFreeBadge = 
           <span class="ms-2"><i class="bi bi-clock"></i> ${ura}</span>
           ${razdaljaTekst}
         </div>
-        <h5><a href="dogodek.html?id=${Number(dogodek.ID_dogodek)}">${naslovVarno}</a></h5>
+        <h5><a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}">${naslovVarno}</a></h5>
         <p class="event-card-desc">${pobegniHtml(kratekOpis)}</p>
         <div class="d-flex justify-content-between align-items-center mt-2">
           ${cenaHTML}
-          ${srcekIkona(dogodek.ID_dogodek)}
+          ${srcekIkona(dogodek.ID_dogodek || dogodek.id)}
         </div>
       </div>
     </div>
@@ -418,6 +481,9 @@ async function naloziVseDogodke() {
     if (seznamDogodkov.length === 0) {
       kontejner.innerHTML = '<p class="text-center w-100 mt-4">Noben aktiven dogodek ne ustreza izbranim kriterijem.</p>';
       if (paginacijaKontejner) paginacijaKontejner.innerHTML = '';
+      
+      // Osvežimo zemljevid s praznim seznamom, da izbrišemo stare markerje
+      osveziMarkerjeNaZemljevidu([], privzeta);
       return;
     }
 
@@ -425,6 +491,9 @@ async function naloziVseDogodke() {
     seznamDogodkov.forEach(dogodek => {
       kontejner.appendChild(generirajKartico(dogodek, 'col-md-6 mb-4', privzeta, false));
     });
+
+    // POSODOBITEV: Osvežimo zemljevid z novimi filtriranimi zadetki
+    osveziMarkerjeNaZemljevidu(seznamDogodkov, privzeta);
 
     if (paginacijaKontejner) {
       const vseStrani = Math.ceil(skupnoStevilo / DOGODKOV_NA_STRAN);

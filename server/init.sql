@@ -14,16 +14,9 @@ CREATE TABLE Uporabnik (
     PRIMARY KEY (ID_uporabnik)
 );
 
-CREATE TABLE Regija (
-    ID_regija int(10) NOT NULL AUTO_INCREMENT, 
-    ime_regije varchar(100) NOT NULL, 
-    PRIMARY KEY (ID_regija)
-);
-
 CREATE TABLE Kraj (
     postna_stevilka int(10) NOT NULL,
     ime_kraja varchar(100) NOT NULL, 
-    TK_regija int(10) NOT NULL, 
     PRIMARY KEY (postna_stevilka)
 );
 
@@ -143,8 +136,6 @@ CREATE TABLE Uporabnik_Interesi (
     FOREIGN KEY (TK_kategorija) REFERENCES Kategorija(ID_kategorija) ON DELETE CASCADE
 );
 
-ALTER TABLE Kraj ADD CONSTRAINT FKKraj_Regija FOREIGN KEY (TK_regija) REFERENCES Regija (ID_regija);
-
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_Kraj FOREIGN KEY (TK_kraj) REFERENCES Kraj (postna_stevilka);
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_Kategorija FOREIGN KEY (TK_kategorija) REFERENCES Kategorija (ID_kategorija);
 ALTER TABLE Dogodek ADD CONSTRAINT FKDogodek_UporabnikOrg FOREIGN KEY (TK_uporabnik_organizator) REFERENCES Uporabnik (ID_uporabnik);
@@ -168,11 +159,8 @@ CREATE INDEX idx_ocena_dogodek         ON Ocena_komentar (TK_dogodek);
 CREATE INDEX idx_prijava_dogodek       ON Prijava (TK_dogodek);
 CREATE INDEX idx_prosnja_status        ON Prosnja_organizator (status, datum_prosnje);
 
-INSERT INTO Regija (ime_regije) VALUES
-('Osrednjeslovenska'), ('Obalno-kraška'), ('Štajerska'), ('Gorenjska'), ('Dolenjska');
-
-INSERT INTO Kraj (postna_stevilka, ime_kraja, TK_regija) VALUES 
-(1000, 'Ljubljana', 1), (6000, 'Koper', 2), (2000, 'Maribor', 3), (4000, 'Kranj', 4), (8000, 'Novo mesto', 5);
+INSERT INTO Kraj (postna_stevilka, ime_kraja) VALUES 
+(1000, 'Ljubljana'), (6000, 'Koper'), (2000, 'Maribor'), (4000, 'Kranj'), (8000, 'Novo mesto');
 
 INSERT INTO Kategorija (naziv) VALUES
 ('Koncerti'), ('Šport'), ('Delavnice'), ('Kultura'), ('Izobraževanja'), ('Zabave'), ('Sejmi'), ('Družinski'), ('Drugo');

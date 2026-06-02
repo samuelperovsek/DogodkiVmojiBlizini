@@ -29,6 +29,66 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  const vnosMesto = document.getElementById('lokacija_mesto');
+  
+  if (vnosMesto) {
+    vnosMesto.parentElement.classList.add('position-relative');
+    vnosMesto.setAttribute('autocomplete', 'off');
+
+    const predlogiMeni = document.createElement('div');
+    predlogiMeni.className = 'dropdown-menu w-100 shadow';
+    predlogiMeni.style.position = 'absolute';
+    predlogiMeni.style.top = '100%';
+    predlogiMeni.style.left = '0';
+    predlogiMeni.style.zIndex = '1050';
+    vnosMesto.parentElement.appendChild(predlogiMeni);
+
+    let timeoutId = null;
+
+    vnosMesto.addEventListener('input', (e) => {
+      const iskanje = e.target.value.trim();
+
+      clearTimeout(timeoutId);
+      if (iskanje.length < 2) {
+        predlogiMeni.classList.remove('show');
+        return;
+      }
+
+      timeoutId = setTimeout(async () => {
+        try {
+          const kraji = await apiFetch(`/kraji/iskanje?q=${encodeURIComponent(iskanje)}`);
+          
+          if (kraji && kraji.length > 0) {
+            predlogiMeni.innerHTML = kraji.map(k => `
+              <button type="button" class="dropdown-item predlog-kraj-gumb" data-kraj="${k.kraj}">
+                <strong>${k.kraj}</strong> <span class="text-muted small">(${k.postna_stevilka})</span>
+              </button>
+            `).join('');
+            predlogiMeni.classList.add('show');
+          } else {
+            predlogiMeni.classList.remove('show');
+          }
+        } catch (err) {
+          console.error('Napaka pri pridobivanju predlogov krajev:', err);
+        }
+      }, 250);
+    });
+
+    predlogiMeni.addEventListener('click', (e) => {
+      const gumb = e.target.closest('.predlog-kraj-gumb');
+      if (gumb) {
+        vnosMesto.value = gumb.dataset.kraj;
+        predlogiMeni.classList.remove('show');
+      }
+    });
+
+    document.addEventListener('click', (e) => {
+      if (e.target !== vnosMesto) {
+        predlogiMeni.classList.remove('show');
+      }
+    });
+  }
+
   const forma = document.getElementById('formaDogodek');
 
   if (forma) {
@@ -44,7 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       formData.append('opis', document.getElementById('podroben_opis')?.value || '');
 
       formData.append('lokacija_naslov', document.getElementById('lokacija_naslov')?.value || '');
-      formData.append('lokacija_mesto', document.getElementById('lokacija_mesto')?.value || '');
+      formData.append('lokacija_mesto', document.getElementById('lokacija_mesto')?.value || ''); // <-- Tvoj backend zdaj prejme npr: "Vodice" ali "Ljubljana – Šentvid"
       formData.append('lokacija_prizorisce', document.getElementById('lokacija_prizorisce')?.value || '');
 
       formData.append('datum_zacetka', document.querySelector('[data-zacetni-datum]')?.value || '');

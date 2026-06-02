@@ -1,7 +1,43 @@
 import { Auth, apiFetch, ApiError } from './auth.js';
 import { ObvestilaBell } from './obvestila.js';
 
+(function preveriGoogleToken() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenIzGoogla = urlParams.get('token');
+
+  if (tokenIzGoogla) {
+    try {
+      const base64Url = tokenIzGoogla.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const podatkiTokena = JSON.parse(atob(base64));
+
+      const uporabnik = {
+        id: podatkiTokena.id,
+        ID_uporabnik: podatkiTokena.id,
+        email: podatkiTokena.email,
+        vloga: podatkiTokena.vloga,
+        ime: podatkiTokena.ime || 'Google',
+        priimek: podatkiTokena.priimek || 'Uporabnik'
+      };
+
+      Auth.prijavi(tokenIzGoogla, uporabnik, true);
+
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      let ciljnaPot = 'profil.html';
+      if (uporabnik.vloga === 'admin') ciljnaPot = 'admin.html';
+      else if (uporabnik.vloga === 'organizator') ciljnaPot = 'dodaj-dogodek.html';
+
+      window.location.replace(ciljnaPot);
+    } catch (err) {
+      console.error('Napaka pri prebiranju Google žetona znotraj nav.js:', err);
+    }
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', async () => {
+  if (new URLSearchParams(window.location.search).has('token')) return;
+
   const gumbi = document.querySelector('[data-auth-buttons]');
   const meni  = document.querySelector('[data-user-menu]');
 
@@ -60,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     meni.classList.remove('d-none');
 
     const ime = meni.querySelector('[data-user-name]');
-    if (ime) ime.textContent = u.ime;
+    if (ime) ime.textContent = u.ime || 'Uporabnik';
 
     const vlogaEl = meni.querySelector('[data-user-vloga]');
     if (vlogaEl) vlogaEl.textContent = u.vloga;

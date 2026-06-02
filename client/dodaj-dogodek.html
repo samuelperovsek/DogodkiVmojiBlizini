@@ -185,16 +185,15 @@
                   <input type="text" class="form-control" id="lokacija_naslov" placeholder="npr. Trg francoske revolucije 1" required>
                 </div>
                 <div class="col-md-4">
-                  <label class="form-label">Mesto *</label>
-                  <select class="form-select" id="lokacija_mesto" required>
-                    <option value="">Izberi...</option>
-                    <option value="1000">Ljubljana</option>
-                    <option value="2000">Maribor</option>
-                    <option value="3000">Celje</option>
-                    <option value="4000">Kranj</option>
-                    <option value="6000">Koper</option>
-                    <option value="5000">Drugo</option>
-                  </select>
+                  <label class="form-label" for="lokacija_mesto">Mesto *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="lokacija_mesto" 
+                    placeholder="Začni tipkati kraj..." 
+                    required 
+                    autocomplete="off"
+                  >
                 </div>
               </div>
 

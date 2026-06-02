@@ -10,6 +10,7 @@ router.get('/dogodki/najboljsi', async (req, res) => {
     const [dogodki] = await pool.query(`
       SELECT 
         d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+        d.lat, d.lng,
         k.ime_kraja AS kraj, kat.naziv AS kategorija
       FROM Dogodek d
       LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
@@ -137,6 +138,7 @@ router.get('/dogodki', async (req, res) => {
     let sqlGlavni = `
       SELECT 
         d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+        d.lat, d.lng,
         k.ime_kraja AS kraj, kat.naziv AS kategorija
         ${razdaljaStolpec}
       FROM Dogodek d
@@ -204,6 +206,7 @@ router.get('/priporoceni-dogodki', async (req, res) => {
       query = `
         SELECT 
           d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+          d.lat, d.lng,
           k.ime_kraja AS kraj, kat.naziv AS kategorija
         FROM Dogodek d
         LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
@@ -222,6 +225,7 @@ router.get('/priporoceni-dogodki', async (req, res) => {
       query = `
         SELECT 
           d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+          d.lat, d.lng,
           k.ime_kraja AS kraj, kat.naziv AS kategorija
         FROM Dogodek d
         LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
@@ -241,6 +245,7 @@ router.get('/priporoceni-dogodki', async (req, res) => {
       const [splosniDogodki] = await pool.query(`
         SELECT 
           d.ID_dogodek, d.Naslov, d.opis, d.ulica, d.datum_zacetka, d.slika, d.cena, d.status,
+          d.lat, d.lng,
           k.ime_kraja AS kraj, kat.naziv AS kategorija
         FROM Dogodek d
         LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka

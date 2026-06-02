@@ -3,9 +3,9 @@ import multer from 'multer';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import csv from 'csv-parser';
 
 import pool from '../db.js';
-
 import { zahtevajPrijavo, zahtevajAdmina, zahtevajOrganizatorja } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -19,10 +19,51 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+let seznamKrajev = [];
+
+function naloziKrajeIzCSV() {
+  const csvPot = path.join(__dirname, '..', 'podatki', 'poste.csv');
+  
+  if (!fs.existsSync(csvPot)) {
+    console.warn(`[CSV OPOZORILO] Datoteka ${csvPot} ne obstaja. Iskanje po kraji ne bo delovalo.`);
+    return;
+  }
+
+  fs.createReadStream(csvPot)
+    .pipe(csv()) 
+    .on('data', (row) => {
+      const kljucPosta = Object.keys(row).find(k => k.includes('poštna') || k.includes('stevilka'));
+      const kljucObcina = Object.keys(row).find(k => k.includes('občina') || k.includes('obcina'));
+
+      const postna = row[kljucPosta]?.trim();
+      const krajIme = row[kljucObcina]?.trim();
+
+      if (postna && krajIme) {
+        seznamKrajev.push({
+          postna_stevilka: postna,
+          kraj: krajIme
+        });
+      }
+    })
+    .on('end', () => {
+      console.log(`[CSV] Uspešno naloženih ${seznamKrajev.length} poštnih uradov iz CSV datoteke.`);
+    });
+}
+
+naloziKrajeIzCSV();
+
+router.get('/kraji/iskanje', (req, res) => {
+  const iskanje = req.query.q?.toLowerCase().trim() || '';
+  if (iskanje.length < 2) return res.json([]);
+
+  const rezultati = seznamKrajev.filter(k => 
+    k.kraj.toLowerCase().includes(iskanje) || k.postna_stevilka.includes(iskanje)
+  );
+  res.json(rezultati.slice(0, 10));
+});
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
+  destination: (req, file, cb) => { cb(null, uploadDir); },
   filename: (req, file, cb) => {
     const unikatno = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, unikatno + path.extname(file.originalname));
@@ -53,22 +94,42 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
     }
 
     const datumZacetka = `${p.datum_zacetka} ${p.ura_zacetka}:00`;
-    
     const datumKonca = (p.vecdnevno === 'true' && p.datum_konca && p.ura_konca) 
       ? `${p.datum_konca} ${p.ura_konca}:00` 
       : null;
 
-    const postnaStevilka = Number.isNaN(parseInt(p.lokacija_mesto)) ? 1000 : parseInt(p.lokacija_mesto);
+    const vpisanoImeKraja = p.lokacija_mesto?.trim();
+
+    const najdenKraj = seznamKrajev.find(
+      k => k.kraj.toLowerCase() === vpisanoImeKraja?.toLowerCase()
+    );
+    
+    const postnaStevilkaForDB = najdenKraj ? najdenKraj.postna_stevilka : '1000';
+    const krajImeZaGeo = najdenKraj ? najdenKraj.kraj : vpisanoImeKraja;
+
+    try {
+      const [obstajaVKraj] = await pool.query(
+        'SELECT postna_stevilka FROM Kraj WHERE postna_stevilka = ?', 
+        [postnaStevilkaForDB]
+      );
+      
+      if (obstajaVKraj.length === 0) {
+        await pool.query(
+          'INSERT INTO Kraj (postna_stevilka, ime_kraja) VALUES (?, ?)', 
+          [parseInt(postnaStevilkaForDB), krajImeZaGeo]
+        );
+        console.log(`[Baza] Kraj ${krajImeZaGeo} (${postnaStevilkaForDB}) uspešno zagotovljen v SQL.`);
+      }
+    } catch (krajDbErr) {
+      console.error('Težava pri zagotavljanju kraja v SQL tabeli Kraj:', krajDbErr);
+    }
 
     let lat = null;
     let lng = null;
 
     try {
-      const [krajRes] = await pool.query('SELECT ime_kraja FROM Kraj WHERE postna_stevilka = ?', [postnaStevilka]);
-      const krajIme = krajRes.length > 0 ? krajRes[0].ime_kraja : '';
-
-      if (p.lokacija_naslov && krajIme) {
-        const polnNaslov = `${p.lokacija_naslov}, ${krajIme}, Slovenia`;
+      if (p.lokacija_naslov && krajImeZaGeo) {
+        const polnNaslov = `${p.lokacija_naslov}, ${krajImeZaGeo}, Slovenia`;
         
         const response = await fetch(
           `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(polnNaslov)}&limit=1`,
@@ -79,7 +140,7 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
         if (data && data.length > 0) {
           lat = parseFloat(data[0].lat);
           lng = parseFloat(data[0].lon);
-          console.log(`[GEO] Uspešno geokodirano: ${polnNaslov} -> Lat: ${lat}, Lng: ${lng}`);
+          console.log(`[GEO] Uspešno geokodirano preko imena kraja: ${polnNaslov} -> Lat: ${lat}, Lng: ${lng}`);
         } else {
           console.warn(`[GEO] Ni mogoče najti koordinat za naslov: ${polnNaslov}`);
         }
@@ -93,7 +154,7 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
       p.naslov,
       p.kratek_opis, 
       p.opis || null, 
-      postnaStevilka,      
+      postnaStevilkaForDB,     
       p.lokacija_naslov,                
       p.lokacija_prizorisce || null, 
       datumZacetka, 
@@ -109,7 +170,7 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
       parseFloat(p.cena) || 0.00, 
       p.prijave_omogocene === 'true' ? 1 : 0, 
       p.opomnik_omogocen === 'true' ? 1 : 0, 
-      Number.isNaN(parseInt(p.kategorija)) ? 1 : parseInt(p.kategorija),         
+      Number.isNaN(parseInt(p.kategorija)) ? 1 : parseInt(p.kategorija),        
       p.podkategorija || null,
       lat,
       lng,
@@ -135,7 +196,7 @@ router.post('/dogodki', zahtevajPrijavo, zahtevajOrganizatorja, upload.single('s
     console.error('Napaka pri vstavljanju dogodka:', err);
     res.status(500).json({ 
       uspeh: false, 
-      napaka: 'Prišlo je do napake na strežniku pri shranjevanju dogodka.' 
+      napaka: 'Prišlo je do napake na strežniku pri shranjevanjo dogodka.' 
     });
   }
 });
@@ -163,18 +224,26 @@ router.get('/moji-dogodki', zahtevajPrijavo, zahtevajOrganizatorja, async (req, 
   try {
     const [dogodki] = await pool.query(
       `SELECT
-         d.ID_dogodek, d.Naslov, d.kratek_opis, d.opis, d.datum_zacetka, d.datum_konca,
-         d.cena, d.tip_cene, d.slika, d.status, d.st_sedezov, d.st_prostih_sedezov,
-         k.ime_kraja AS kraj, kat.naziv AS kategorija,
-         (SELECT COUNT(*) FROM Prijava p WHERE p.TK_dogodek = d.ID_dogodek) AS st_prijav
+          d.ID_dogodek, d.Naslov, d.kratek_opis, d.opis, d.datum_zacetka, d.datum_konca,
+          d.cena, d.tip_cene, d.slika, d.status, d.st_sedezov, d.st_prostih_sedezov,
+          d.TK_kraj, kat.naziv AS kategorija,
+          (SELECT COUNT(*) FROM Prijava p WHERE p.TK_dogodek = d.ID_dogodek) AS st_prijav
        FROM Dogodek d
-       LEFT JOIN Kraj k ON d.TK_kraj = k.postna_stevilka
        LEFT JOIN Kategorija kat ON d.TK_kategorija = kat.ID_kategorija
        WHERE d.TK_uporabnik_organizator = ?
        ORDER BY d.datum_zacetka DESC`,
       [req.uporabnik.id]
     );
-    res.json({ dogodki });
+
+    const posodobljeniDogodki = dogodki.map(d => {
+      const najdenKraj = seznamKrajev.find(k => k.postna_stevilka == d.TK_kraj);
+      return {
+        ...d,
+        kraj: najdenKraj ? najdenKraj.kraj : `Pošta ${d.TK_kraj}`
+      };
+    });
+
+    res.json({ dogodki: posodobljeniDogodki });
   } catch (err) {
     console.error('Napaka pri /moji-dogodki:', err);
     res.status(500).json({ napaka: 'Napaka strežnika.' });

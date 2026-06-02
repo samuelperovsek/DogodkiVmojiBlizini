@@ -12,7 +12,7 @@ import { renderOrganizatorBox } from './profil/prosnja.js';
 import { inicializirajMojeDogodke } from './profil/moji-dogodki.js';
 
 if (!Auth.jePrijavljen()) {
-  window.location.href = 'prijava.html';
+  window.location.replace('prijava.html?razlog=potrebna-prijava');
 }
 
 let trenutniUporabnik = null;
@@ -20,11 +20,17 @@ let mojiDogodkiInicializirani = false;
 
 async function osveziPodatkeProfila() {
   try {
-    const [{ uporabnik }, dashboard] = await Promise.all([
+    const [odgovorMe, dashboard] = await Promise.all([
       apiFetch('/me'),
       apiFetch('/me/dashboard'),
     ]);
+
+    const uporabnik = odgovorMe.uporabnik || odgovorMe;
+
     trenutniUporabnik = uporabnik;
+    
+    Auth.osveziUporabnika(uporabnik);
+
     napolniProfil(uporabnik);
     nastaviStatistike(dashboard.statistike);
     renderPrijave(dashboard.prijave);
@@ -38,11 +44,11 @@ async function osveziPodatkeProfila() {
       inicializirajMojeDogodke();
     }
   } catch (err) {
+    console.error('Kritična napaka pri nalaganju podatkov profila:', err);
+
     if (err instanceof ApiError && err.status === 401) {
       Auth.odjavi();
-      window.location.href = 'prijava.html';
-    } else {
-      console.error('Napaka pri nalaganju dashboarda:', err);
+      window.location.replace('prijava.html?razlog=potrebna-prijava');
     }
   }
 }

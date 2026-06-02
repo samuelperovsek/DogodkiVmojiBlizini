@@ -179,6 +179,21 @@ async function pripraviRezervacija(dogodek, dogodekId) {
   kontejner.id = 'rezervacija-kontejner';
   izvorniGumb.replaceWith(kontejner);
 
+  let trenutnoProstih = parseInt(dogodek.st_prostih_sedezov);
+  const fiksnoStSedezov = dogodek.st_sedezov;
+
+  function posodobiTekstNaZaslonu() {
+    const elementSedezov = document.getElementById('dinamicni-sedez-st');
+    if (elementSedezov) {
+      if (!isNaN(trenutnoProstih)) {
+        const skupnoIzpis = fiksnoStSedezov ? ` / ${fiksnoStSedezov}` : '';
+        elementSedezov.textContent = `${trenutnoProstih}${skupnoIzpis} prostih mest`;
+      } else {
+        elementSedezov.textContent = 'Razpoložljivo';
+      }
+    }
+  }
+
   function renderRezerviraj() {
     kontejner.innerHTML = `
       <button id="btn-rezerviraj" class="btn btn-primary btn-lg w-100 mb-2">
@@ -223,6 +238,7 @@ async function pripraviRezervacija(dogodek, dogodekId) {
       tipGumba: 'btn-primary',
       gumbPreklic: 'Prekliči',
     });
+    
     if (potrjeno === null || potrjeno === undefined) return;
 
     renderLoading();
@@ -230,6 +246,12 @@ async function pripraviRezervacija(dogodek, dogodekId) {
       const odgovor = await apiFetch(`/dogodki/${dogodekId}/rezervacija`, { method: 'POST' });
       if (odgovor.uspeh || odgovor.message === 'Rezervacija uspešna.') {
         window.pokaziToast?.('success', 'Vstopnica uspešno rezervirana! Opomnik je vklopljen.', 'Uspelo!');
+        
+        if (!isNaN(trenutnoProstih) && trenutnoProstih > 0) {
+          trenutnoProstih--;
+          posodobiTekstNaZaslonu();
+        }
+        
         renderPrijavljen();
       } else {
         window.pokaziToast?.('warning', 'Strežnik je javil: ' + (odgovor.message || 'Neznana napaka'));
@@ -256,6 +278,12 @@ async function pripraviRezervacija(dogodek, dogodekId) {
     try {
       await apiFetch(`/dogodki/${dogodekId}/rezervacija`, { method: 'DELETE' });
       window.pokaziToast?.('success', 'Uspešno odjavljen z dogodka.');
+      
+      if (!isNaN(trenutnoProstih)) {
+        trenutnoProstih++;
+        posodobiTekstNaZaslonu();
+      }
+      
       renderRezerviraj();
     } catch (err) {
       console.error('[Odjava] Napaka:', err);

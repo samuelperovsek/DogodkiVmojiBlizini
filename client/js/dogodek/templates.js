@@ -115,7 +115,7 @@ export function generirajPodrobnostiHtml(dogodek, p) {
               <p class="mb-2"><i class="bi bi-calendar-event text-primary"></i> <strong>${p.danVTednu.toUpperCase()}, ${p.dan}. ${p.mesecKratica}. ${p.leto}</strong></p>
               <p class="mb-2"><i class="bi bi-clock text-primary"></i> Začetek ob ${p.ura}</p>
               <p class="mb-2"><i class="bi bi-geo-alt text-primary"></i> ${lokacija}</p>
-              <p class="mb-2"><i class="bi bi-people text-primary"></i> <span class="text-success">${pobegniHtml(p.sedezevProstih)}</span></p>
+              <p class="mb-2"><i class="bi bi-people text-primary"></i> <span class="text-success" id="dinamicni-sedez-st">${pobegniHtml(p.sedezevProstih)}</span></p>
               <p class="mb-3"><i class="bi bi-telephone text-primary"></i> ${telefon}</p>
 
               <button id="gumb-rezervacija" class="btn btn-primary btn-lg w-100 mb-2" data-id="${Number(dogodek.ID_dogodek)}">

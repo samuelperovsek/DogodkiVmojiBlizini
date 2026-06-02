@@ -5,6 +5,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import passport from 'passport';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 import authRoutes from './routes/auth.js';

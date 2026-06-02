@@ -1,9 +1,7 @@
 import { apiFetch, Auth, ApiError } from './auth.js';
 import { pobegniHtml, potrdiAkcijo, pokaziToast } from './components.js';
 
-if (window.location.hash === '#registracija') {
-  document.querySelector('[data-bs-target="#register"]').click();
-}
+let isGoogleProcessing = false;
 
 function pot(vloga) {
   if (vloga === 'admin') return 'admin.html';
@@ -11,8 +9,61 @@ function pot(vloga) {
   return 'profil.html';
 }
 
+function nadaljujPoPrijavi(uporabnik) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const povratek = urlParams.get('povratek');
+  window.location.href = povratek || pot(uporabnik.vloga);
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenIzGoogla = urlParams.get('token');
+
+  if (tokenIzGoogla) {
+    isGoogleProcessing = true;
+    try {
+      const base64Url = tokenIzGoogla.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+
+      const podatkiTokena = JSON.parse(jsonPayload);
+
+      const uporabnik = {
+        ID_uporabnik: podatkiTokena.id,
+        email: podatkiTokena.email,
+        vloga: podatkiTokena.vloga
+      };
+
+      Auth.prijavi(tokenIzGoogla, uporabnik, true);
+
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      pokaziToast('success', 'Uspešna prijava preko Googla!', 'Dobrodošli');
+
+      setTimeout(() => {
+        nadaljujPoPrijavi(uporabnik);
+      }, 400);
+
+    } catch (err) {
+      console.error('Napaka pri prebiranju Google žetona:', err);
+      pokaziToast('danger', 'Prijava preko Googla ni uspela. Poskusite znova.');
+      isGoogleProcessing = false;
+    }
+  } else {
+    if (Auth.jePrijavljen()) {
+      const povratek = urlParams.get('povratek');
+      window.location.href = povratek || pot(Auth.getUporabnik()?.vloga);
+    }
+  }
+});
+
+if (window.location.hash === '#registracija') {
+  document.querySelector('[data-bs-target="#register"]').click();
+}
+
 const url = new URL(window.location.href);
-const povratek = url.searchParams.get('povratek');
 const razlog = url.searchParams.get('razlog');
 
 if (razlog) {
@@ -23,22 +74,15 @@ if (razlog) {
     'samo-organizator': 'Ta stran je dostopna samo organizatorjem.',
   };
   const msg = sporocila[razlog];
-  if (msg) {
+  if (msg && el) {
     el.querySelector('strong').textContent = msg;
     el.classList.remove('d-none');
   }
 }
 
-if (Auth.jePrijavljen()) {
-  window.location.href = povratek || pot(Auth.getUporabnik()?.vloga);
-}
-
-function nadaljujPoPrijavi(uporabnik) {
-  window.location.href = povratek || pot(uporabnik.vloga);
-}
-
 function pokaziNapako(elId, sporocilo, podrobnosti = []) {
   const el = document.getElementById(elId);
+  if (!el) return;
   let html = `<strong>${pobegniHtml(sporocilo)}</strong>`;
   if (podrobnosti.length) {
     html += '<ul class="mb-0 mt-1">' +
@@ -50,7 +94,8 @@ function pokaziNapako(elId, sporocilo, podrobnosti = []) {
 }
 
 function skrijNapako(elId) {
-  document.getElementById(elId).classList.add('d-none');
+  const el = document.getElementById(elId);
+  if (el) el.classList.add('d-none');
 }
 
 const regGeslo = document.getElementById('regGeslo');
@@ -100,7 +145,7 @@ document.querySelectorAll('input[type="email"]').forEach(input => {
   });
 });
 
-document.getElementById('loginForm').addEventListener('submit', async (e) => {
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   skrijNapako('loginError');
 
@@ -112,7 +157,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     email: e.target.email.value.trim(),
     geslo: e.target.geslo.value,
   };
-  const zapomni = document.getElementById('remember').checked;
+  const zapomni = document.getElementById('remember')?.checked || false;
 
   try {
     const odgovor = await apiFetch('/prijava', {
@@ -132,7 +177,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
   }
 });
 
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
+document.getElementById('registerForm')?.addEventListener('submit', async (e) => {
   e.preventDefault();
   skrijNapako('registerError');
 

@@ -3344,3 +3344,32 @@ html[data-tema="dark"] .modal-overlay {
 #organizatorContent small {
   color: rgba(255, 255, 255, 0.85);
 }
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  color: #1f2937 !important; 
+}
+
+
+.leaflet-popup-content h6 a {
+  color: #0d6efd !important; 
+  text-decoration: none !important;
+  display: inline-block;
+}
+
+.leaflet-popup-content h6 a:hover {
+  color: #0b5ed7 !important; 
+  text-decoration: underline !important;
+}
+
+.leaflet-bar button, .leaflet-bar a {
+  background-color: #fff !important;
+  color: #333 !important;
+  border-bottom: 1px solid #ccc;
+}
+
+#zemljevid-dogodkov img {
+  max-width: none !important;
+}
