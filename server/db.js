@@ -13,14 +13,24 @@ const pool = mysql.createPool({
   queueLimit: 0,
 });
 
-pool.getConnection()
-  .then(conn => {
-    console.log('✓ Povezava z MySQL bazo v Dockerju deluje.');
-    conn.release();
-  })
-  .catch(err => {
-    console.error('✗ Napaka pri povezovanju z bazo:', err.message);
-    console.error('  Preveri, da Docker kontejner teče in da so podatki v .env pravilni.');
-  });
+async function preveriPovezavo(poskusi = 10, zamikMs = 2000) {
+  for (let i = 1; i <= poskusi; i++) {
+    try {
+      const conn = await pool.getConnection();
+      console.log('✓ Povezava z MySQL bazo deluje.');
+      conn.release();
+      return;
+    } catch (err) {
+      if (i === poskusi) {
+        console.error('✗ Napaka pri povezovanju z bazo:', err.message);
+        console.error('  Preveri, da Docker kontejner teče in da so podatki v .env pravilni.');
+        return;
+      }
+      await new Promise(resolve => setTimeout(resolve, zamikMs));
+    }
+  }
+}
+
+preveriPovezavo();
 
 export default pool;
