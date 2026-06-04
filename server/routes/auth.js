@@ -70,15 +70,14 @@ router.get('/auth/google/callback',
     session: false, 
     failureRedirect: process.env.NODE_ENV === 'production' 
       ? '/prijava.html?napaka=google' 
-      : 'http://127.0.0.1:5500/DogodkiVmojiBlizini/client/prijava.html?napaka=google'
+      : '/prijava.html?napaka=google'
   }),
   (req, res) => {
-    // Ustvarimo JWT žeton z ustreznimi podatki uporabnika
     const token = ustvariToken(req.user);
 
     const frontendUrl = process.env.NODE_ENV === 'production' 
       ? `/?token=${token}` 
-      : `http://127.0.0.1:5500/DogodkiVmojiBlizini/client/index.html?token=${token}`;
+      : `/index.html?token=${token}`;
       
     res.redirect(frontendUrl);
   }

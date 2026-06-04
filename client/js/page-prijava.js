@@ -1,7 +1,10 @@
-import { apiFetch, Auth, ApiError } from './auth.js';
+import { apiFetch, Auth, ApiError, SERVER_URL } from './auth.js';
 import { pobegniHtml, potrdiAkcijo, pokaziToast } from './components.js';
 
 let isGoogleProcessing = false;
+
+const googleLoginBtn = document.querySelector('[data-google-login]');
+if (googleLoginBtn) googleLoginBtn.href = `${SERVER_URL}/api/auth/google`;
 
 function pot(vloga) {
   if (vloga === 'admin') return 'admin.html';
