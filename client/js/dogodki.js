@@ -73,12 +73,12 @@ function osveziMarkerjeNaZemljevidu(dogodki, privzetaSlika) {
           <img src="${pobegniHtml(slikaUrl)}" style="width:100%; height:80px; object-fit:cover; border-radius:6px; margin-bottom:6px;">
           <span class="badge bg-primary text-white mb-1" style="font-size: 0.65rem;">${pobegniHtml(dogodek.kategorija || 'Dogodek')}</span>
           <h6 class="mb-1" style="font-size: 0.85rem; font-weight: 600; line-height: 1.2;">
-            <a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}" style="text-decoration:none; color:inherit;">${naslovVarno}</a>
+            <a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}" style="text-decoration:none; color:FFFFFF;">${naslovVarno}</a>
           </h6>
           <small class="text-muted d-block mb-1" style="font-size: 0.75rem;"><i class="bi bi-geo-alt"></i> ${pobegniHtml(dogodek.kraj || '')}</small>
           <div class="d-flex justify-content-between align-items-center mt-2 pt-1 border-top">
             <strong style="font-size: 0.8rem; color: #10b981;">${cenaTekst}</strong>
-            <a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}" class="btn btn-primary btn-sm text-white px-2 py-0.5" style="font-size:0.7rem;">Več</a>
+            <a href="dogodek.html?id=${Number(dogodek.ID_dogodek || dogodek.id)}" class="btn btn-primary btn-sm text-white! px-2 py-0.5" style="font-size:0.7rem;">Več</a>
           </div>
         </div>
       `;
