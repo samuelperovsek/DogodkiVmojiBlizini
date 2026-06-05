@@ -57,8 +57,18 @@ app.use(cors({
 
 app.use(express.json());
 app.use(passport.initialize());
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.endsWith('.html')) {
+    const cista = req.path === '/index.html' ? '/' : req.path.slice(0, -5);
+    const qIndex = req.originalUrl.indexOf('?');
+    const poizvedba = qIndex >= 0 ? req.originalUrl.slice(qIndex) : '';
+    return res.redirect(301, cista + poizvedba);
+  }
+  next();
+});
+
 app.use(express.static('public'));
-app.use(express.static(path.join(__dirname, '..', 'client')));
+app.use(express.static(path.join(__dirname, '..', 'client'), { extensions: ['html'] }));
 
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} ${req.method} ${req.url}`);
@@ -98,6 +108,10 @@ app.use('/api', novicnikRoutes);
 
 app.use('/api', (req, res) => {
   res.status(404).json({ napaka: 'Endpoint ne obstaja.' });
+});
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(__dirname, '..', 'client', '404.html'));
 });
 
 app.use((err, req, res, next) => {
