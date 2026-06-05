@@ -1,7 +1,7 @@
 (() => {
   try {
     const raw = localStorage.getItem('nastavitve');
-    const tema = (raw && JSON.parse(raw).tema) || 'auto';
+    const tema = (raw && JSON.parse(raw).tema) || 'light';
     const dejansko = tema === 'auto'
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : tema;
