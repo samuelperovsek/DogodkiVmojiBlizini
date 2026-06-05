@@ -166,11 +166,11 @@ INSERT INTO Kategorija (naziv) VALUES
 ('Koncerti'), ('Šport'), ('Delavnice'), ('Kultura'), ('Izobraževanja'), ('Zabave'), ('Sejmi'), ('Družinski'), ('Drugo');
 
 INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga, naziv_podjetja, spletna_stran, telefon) VALUES
-('Janez', 'Novak', 'janez@email.si', 'geslo123', 'organizator', 'Glasbeni klub Bunker', 'https://www.bunker.si', '041 555 100'),
-('Samuel', 'Admin', 'admin@eventli.si', 'varnoGeslo!', 'admin', NULL, NULL, NULL),
-('Maja', 'Kovač', 'maja.kovac@email.si', 'skritoGeslo1', 'uporabnik', NULL, NULL, NULL),
-('Luka', 'Zupan', 'luka.zupan@email.si', 'superVarno!', 'uporabnik', NULL, NULL, NULL),
-('Ana', 'Bizjak', 'ana.bizjak@kinosiska.si', 'organVarno!', 'organizator', 'Kino Šiška', 'https://www.kinosiska.si', '01 500 30 00');
+('Janez', 'Novak', 'janez@email.si', '$2b$10$iZQQXQ8zB24g3a0WnbYcI.pgbIshY8gZemQ2Nrwh/IQFrmPl31ula', 'organizator', 'Glasbeni klub Bunker', 'https://www.bunker.si', '041 555 100'),
+('Samuel', 'Admin', 'admin@eventli.si', '$2b$10$yNosSa1SYb0fODhv079OruNMwjda8EAgeNsvYKFrXtdyQe.Igz/a2', 'admin', NULL, NULL, NULL),
+('Maja', 'Kovač', 'maja.kovac@email.si', '$2b$10$i0Iv9b/uNIMwkWsxDmYj0eVGkvqVCSu4ozJEoUMTmM9aLRDM44fVq', 'uporabnik', NULL, NULL, NULL),
+('Luka', 'Zupan', 'luka.zupan@email.si', '$2b$10$ygcHGsjh8Giq82eZfB3TJOSDPg8In4BNp8Rl8iPvS8iwpPDHBMd0G', 'uporabnik', NULL, NULL, NULL),
+('Ana', 'Bizjak', 'ana.bizjak@kinosiska.si', '$2b$10$kAD.nxefFrcN8dzH.PfEpuDEHpv2Pcd1LV05QvfMZFgdlq9FWsxoC', 'organizator', 'Kino Šiška', 'https://www.kinosiska.si', '01 500 30 00');
 
 INSERT INTO Dogodek (TK_uporabnik_organizator, Naslov, kratek_opis, opis, TK_kraj, ulica, ime_prizorisca, datum_zacetka, datum_konca, vecdnevno, telefon, email, spletna_stran, slika, st_sedezov, st_prostih_sedezov, tip_cene, cena, status, TK_kategorija, lat, lng) VALUES
 (1, 'Koncert pod zvezdami', 'Nepozaben večer slovenske popevke.', 'Nepozaben večer slovenske popevke na prostem s krasnim ambientom.', 1000, 'Prešernov trg 1', 'Prešernov trg', '2026-06-15 20:00:00', '2026-06-15 23:00:00', 0, '041 555 100', 'info@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80', 1500, 1262, 'Plačljivo', 22.00, 'aktiven', 1, 46.0569, 14.5058),
