@@ -12,4 +12,4 @@ export const transporter = nodemailer.createTransport({
   socketTimeout: 15000,
 });
 
-export const FROM = process.env.EMAIL_FROM || '"Eventli" <info@eventli.si>';
+export const FROM = process.env.EMAIL_FROM || '"Eventli" <info@eventli.tech>';

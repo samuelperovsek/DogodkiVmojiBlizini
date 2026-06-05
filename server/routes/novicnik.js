@@ -22,6 +22,7 @@ router.post(
     }
 
     const { email } = req.body;
+    const frontendUrl = process.env.FRONTEND_URL || 'https://eventli.tech';
 
     try {
       await transporter.sendMail({
@@ -34,7 +35,7 @@ router.post(
             <p>Uspešno si se naročil/a na <strong>Eventli novičnik</strong>.</p>
             <p>Vsak teden ti bomo poslali izbor najboljših dogodkov v tvoji okolici — koncerti, delavnice, šport in več.</p>
             <div style="text-align: center; margin: 28px 0;">
-              <a href="https://www.eventli.si/dogodki.html" style="background: linear-gradient(135deg, #6d28d9, #8b5cf6); color: #fff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+              <a href="${frontendUrl}/dogodki.html" style="background: linear-gradient(135deg, #6d28d9, #8b5cf6); color: #fff; padding: 12px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                 Razišči dogodke
               </a>
             </div>
