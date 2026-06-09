@@ -219,7 +219,7 @@ function pripraviFiltre() {
   if (gumbUporabi) {
     gumbUporabi.addEventListener('click', async () => {
       const drsnik = document.getElementById('filter-razdalja');
-      const vrednostRazdalje = drsnik ? parseInt(drsnik.value) : 25;
+      const vrednostRazdalje = drsnik ? parseInt(drsnik.value) : 100;
       
       if (drsnik && vrednostRazdalje < 100 && !uporabnikLokacija) {
         gumbUporabi.disabled = true;
@@ -246,8 +246,8 @@ function pripraviFiltre() {
       if (lokacijaInput) lokacijaInput.value = '';
       if (datumSelect) datumSelect.value = 'kadarkoli';
       if (drsnik) {
-        drsnik.value = '25';
-        if (izpisRazdalje) izpisRazdalje.textContent = '25 km';
+        drsnik.value = '100';
+        if (izpisRazdalje) izpisRazdalje.textContent = 'Vsa Slovenija';
       }
       
       document.querySelectorAll('.filter-cena, .filter-kategorija').forEach(el => el.checked = false);
@@ -419,7 +419,7 @@ async function naloziVseDogodke() {
   
   const lokacija = lokacijaInput ? lokacijaInput.value.trim() : '';
   const datum = datumSelect ? datumSelect.value : 'kadarkoli';
-  const razdalja = drsnikRazdalje ? drsnikRazdalje.value : '25';
+  const razdalja = drsnikRazdalje ? drsnikRazdalje.value : '100';
   const iskanje = iskanjeInput ? iskanjeInput.value.trim() : '';
   
   const izbraneCene = [];
