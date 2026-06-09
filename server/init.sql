@@ -174,10 +174,10 @@ INSERT INTO Uporabnik (ime, priimek, email, geslo, vloga, naziv_podjetja, spletn
 
 INSERT INTO Dogodek (TK_uporabnik_organizator, Naslov, kratek_opis, opis, TK_kraj, ulica, ime_prizorisca, datum_zacetka, datum_konca, vecdnevno, telefon, email, spletna_stran, slika, st_sedezov, st_prostih_sedezov, tip_cene, cena, status, TK_kategorija, lat, lng) VALUES
 (1, 'Koncert pod zvezdami', 'Nepozaben večer slovenske popevke.', 'Nepozaben večer slovenske popevke na prostem s krasnim ambientom.', 1000, 'Prešernov trg 1', 'Prešernov trg', '2026-06-15 20:00:00', '2026-06-15 23:00:00', 0, '041 555 100', 'info@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80', 1500, 1262, 'Plačljivo', 22.00, 'aktiven', 1, 46.0569, 14.5058),
-(5, 'Lokalni maraton', 'Tek po Pokljuki za vse generacije.', 'Tek po Pokljuki za vse generacije in stopnje pripravljenosti.', 6000, 'Pristaniška ulica 2', 'Pristanišče Koper', '2026-07-10 09:00:00', '2026-07-10 13:00:00', 0, '056667788', 'maraton@koper.si', NULL, 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&q=80', 500, 312, 'Plačljivo', 45.00, 'aktiven', 2, 45.5481, 13.7302),
+(5, 'Lokalni maraton', 'Tek po Pokljuki za vse generacije.', 'Tek po Pokljuki za vse generacije in stopnje pripravljenosti.', 6000, 'Pristaniška ulica 2', 'Pristanišče Koper', '2026-07-10 09:00:00', '2026-07-10 13:00:00', 0, '056667788', 'maraton@koper.si', NULL, 'https://images.unsplash.com/photo-1502224562085-639556652f33?w=800&q=80', 500, 312, 'Plačljivo', 45.00, 'aktiven', 2, 45.5481, 13.7302),
 (1, 'Indie Rock Večer', 'Nastop treh neuveljavljenih slovenskih indie skupin.', 'Nastop treh neuveljavljenih slovenskih indie skupin v dvorani Komuna.', 1000, 'Vodnikova cesta 8', 'Klub Bunker', '2026-08-20 20:00:00', '2026-08-20 23:59:00', 0, '041 555 100', 'rock@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80', 300, 145, 'Plačljivo', 15.00, 'aktiven', 1, 46.0569, 14.5058),
 (5, 'Teden programiranja', 'Sklop delavnic za začetnike v Pythonu in JavaScriptu.', 'Večdnevni intenzivni tečaj programiranja, namenjen popolnim začetnikom.', 2000, 'Gosposvetska cesta 83', 'ŠOUM', '2026-09-01 16:00:00', '2026-09-05 20:00:00', 1, '031 222 333', 'info@sou.si', NULL, 'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=800&q=80', 80, 12, 'Plačljivo', 68.00, 'v_pripravi', 3, 46.5547, 15.6459),
-(5, 'Lutkovna predstava za otroke', 'Tradicionalna slovenska pravljica v obliki lutkovne predstave.', 'Tradicionalna slovenska pravljica v obliki lutkovne predstave za najmlajše.', 4000, 'Glavni trg 2', 'Mestno gledališče', '2026-10-15 10:00:00', '2026-10-15 11:30:00', 0, '040 741 242', 'lutke@kinosiska.si', NULL, 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=800&q=80', 120, 80, 'Brezplačno', 0.00, 'aktiven', 4, 46.2389, 14.3556);
+(5, 'Lutkovna predstava za otroke',  'Tradicionalna slovenska pravljica v obliki lutkovne predstave.',  'Tradicionalna slovenska pravljica v obliki lutkovne predstave za najmlajše.',  4000, 'Glavni trg 2', 'Mestno gledališče',  '2026-10-15 10:00:00', '2026-10-15 11:30:00',  0, '040 741 242', 'lutke@kinosiska.si', NULL,  'https://images.unsplash.com/photo-1743485753836-11560b0462e8?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 120, 80, 'Brezplačno', 0.00, 'aktiven', 4, 46.2389, 14.3556);
 
 INSERT INTO Prijava (TK_uporabnik, TK_dogodek, opomnik_poslan) VALUES
 (1, 1, 0), (3, 3, 0), (4, 4, 1), (1, 4, 0);
@@ -201,17 +201,68 @@ INSERT INTO Prosnja_organizator (TK_uporabnik, naziv_podjetja, spletna_stran, op
 
 
 INSERT INTO Dogodek (TK_uporabnik_organizator, Naslov, kratek_opis, opis, TK_kraj, ulica, ime_prizorisca, datum_zacetka, datum_konca, vecdnevno, telefon, email, spletna_stran, slika, st_sedezov, st_prostih_sedezov, tip_cene, cena, status, TK_kategorija, lat, lng) VALUES
-(1, 'Jazz pod zvezdami', 'Večer vrhunskega jazza v starem mestnem jedru.', 'Tradicionalni poletni večer, kjer bodo nastopili domači in tuji jazz virtuozi.', 1000, 'Gornji trg 4', 'Stari trg', '2026-06-20 21:00:00', '2026-06-21 00:30:00', 0, '041 555 100', 'jazz@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&q=80', 200, 45, 'Plačljivo', 12.00, 'aktiven', 1, 46.0498, 14.5068),
+(1, 'Jazz pod zvezdami', 'Večer vrhunskega jazza v starem mestnem jedru.', 'Tradicionalni poletni večer, kjer bodo nastopili domači in tuji jazz virtuozi.',  1000, 'Gornji trg 4', 'Stari trg',  '2026-06-20 21:00:00', '2026-06-21 00:30:00', 0, '041 555 100', 'jazz@bunker.si', 'https://www.bunker.si',  'https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=800&q=80', 200, 45, 'Plačljivo', 12.00, 'aktiven', 1, 46.0498, 14.5068),
 (1, 'Metal Open Air', 'Glasni kitarski rifi na prostem.', 'Enodnevni mini festival za vse ljubitelje trših ritmov in dobre družbe.', 2000, 'Koroška cesta 12', 'Mestni park Maribor', '2026-06-28 17:00:00', '2026-06-28 23:55:00', 0, '041 555 100', 'metal@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80', 800, 540, 'Plačljivo', 25.00, 'aktiven', 1, 46.5624, 15.6455),
 (5, 'Letni kino: Klasike', 'Ogled kultnega filma pod milim nebom.', 'Brezplačen ogled filmske klasike z brezplačnimi pokovkami za prve obiskovalce.', 4000, 'Koroška cesta 1', 'Grajsko dvorišče Kranj', '2026-07-02 21:15:00', '2026-07-02 23:15:00', 0, '040 123 456', 'info@kranj.si', NULL, 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=80', 150, 150, 'Brezplačno', 0.00, 'aktiven', 4, 46.2420, 14.3542),
 (5, 'Nočni tek mesta', 'Tek po osvetljenih ulicah za pokal mesta.', 'Preizkusi svojo pripravljenost na 5 ali 10 kilometrov pod uličnimi svetilkami.', 1000, 'Slovenska cesta 15', 'Center mesta', '2026-07-15 21:00:00', '2026-07-15 23:00:00', 0, '031 999 888', 'tek@ljubljana.si', 'https://www.nocnitek.si', 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&q=80', 1000, 850, 'Plačljivo', 18.00, 'aktiven', 2, 46.0522, 14.5042),
-(5, 'Kolesarski vzpon', 'Tradicionalno kolesarjenje na lokalni vrh.', 'Začetek v dolini, cilj na vrhu hriba z golažem za vse udeležence.', 2000, 'Koroška cesta 5', 'Mestna vrata Maribor', '2026-07-22 10:00:00', '2026-07-22 14:00:00', 0, '03 757 00 00', 'vzpon@maribor.si', NULL, 'https://images.unsplash.com/photo-1541614101331-1a5a3a194e92?w=800&q=80', 300, 112, 'Plačljivo', 10.00, 'aktiven', 2, 46.5547, 15.6459),
+(5, 'Kolesarski vzpon', 'Tradicionalno kolesarjenje na lokalni vrh.', 'Začetek v dolini, cilj na vrhu hriba z golažem za vse udeležence.', 2000, 'Koroška cesta 5', 'Mestna vrata Maribor', '2026-07-22 10:00:00', '2026-07-22 14:00:00', 0, '03 757 00 00', 'vzpon@maribor.si', NULL, 'https://images.unsplash.com/photo-1534787238916-9ba6764efd4f?q=80&w=1631&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 300, 112, 'Plačljivo', 10.00, 'aktiven', 2, 46.5547, 15.6459),
 (5, 'Turnir v ulični košarki', '3 na 3 turnir za prehodni pokal.', 'Zberi ekipo in pokaži svoje znanje na zunanjem igrišču. Bogate nagrade!', 2000, 'Gosposvetska cesta 20', 'Športni park Tabor', '2026-08-05 15:00:00', '2026-08-05 21:00:00', 0, '041 555 444', 'basket@maribor.si', NULL, 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800&q=80', 50, 22, 'Brezplačno', 0.00, 'aktiven', 2, 46.5512, 15.6321),
 (1, 'Uvod v UI in ChatGPT', 'Kratka delavnica o uporabi umetne inteligence.', 'Naučite se, kako učinkovito pisati ukaze (prompte) in si olajšati vsakdanje delo.', 1000, 'Dunajska cesta 56', 'Tehnološki park', '2026-08-12 18:00:00', '2026-08-12 20:30:00', 0, '041 555 100', 'ai@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80', 60, 4, 'Plačljivo', 35.00, 'aktiven', 3, 46.0722, 14.5102),
 (5, 'Kulinarični tečaj: Suši', 'Naučite se pripraviti popoln suši doma.', 'Delavnica pod vodstvom profesionalnega kuharja. Vse sestavine so vštete v ceno.', 6000, 'Ferrarska ulica 8', 'Kuharski studio Koper', '2026-08-25 17:00:00', '2026-08-25 21:00:00', 0, '05 611 22 33', 'sushi@koper.si', NULL, 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80', 15, 0, 'Plačljivo', 55.00, 'aktiven', 3, 45.5462, 13.7345),
 (1, 'Fotografija za začetnike', 'Spoznajte nastavitve svojega DSLR fotoaparata.', 'Praktična delavnica na terenu, kjer se bomo naučili osnov kompozicije in svetlobe.', 4000, 'Maistrova ulica 5', 'Kulturni dom Kranj', '2026-09-05 09:00:00', '2026-09-05 14:00:00', 0, '041 555 100', 'foto@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=800&q=80', 25, 14, 'Plačljivo', 40.00, 'aktiven', 3, 46.2415, 14.3599),
 (5, 'Festival ulične hrane', 'Najboljši slovenski food trucki na enem mestu.', 'Okusite burgerje, taccose, šmorn in ostale dobrote s cele Slovenije.', 2000, 'Trg svobode 1', 'Trg svobode Maribor', '2026-09-12 11:00:00', '2026-09-12 22:00:00', 0, '02 333 44 55', 'food@maribor.si', NULL, 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80', 2000, 2000, 'Brezplačno', 0.00, 'aktiven', 4, 46.5599, 15.6489),
-(1, 'Stand Up Večer smeha', 'Nastop štirih znanih domačih komikov.', 'Pridite na porcijo smeha v dvorano kulturnega doma. Smeh do solz zagotovljen!', 4000, 'Koroška ulica 10', 'Kulturni center Kranj', '2026-09-18 20:00:00', '2026-09-18 22:00:00', 0, '041 555 100', 'smeh@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1585699324551-f6c309eed262?w=800&q=80', 250, 89, 'Plačljivo', 15.00, 'aktiven', 4, 46.2420, 14.3542),
+(1, 'Stand Up Večer smeha', 'Nastop štirih znanih domačih komikov.', 'Pridite na porcijo smeha v dvorano kulturnega doma. Smeh do solz zagotovljen!', 4000, 'Koroška ulica 10', 'Kulturni center Kranj', '2026-09-18 20:00:00', '2026-09-18 22:00:00', 0, '041 555 100', 'smeh@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1611956425642-d5a8169abd63?q=80&w=1511&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 250, 89, 'Plačljivo', 15.00, 'aktiven', 4, 46.2420, 14.3542),
 (1, 'Komedija: Popolna zmeda', 'Gledališka uspešnica v izvedbi lokalnega društva.', 'Zabavna dvoranska predstava o dveh sosedih, ki si nenehno nagajata.', 4000, 'Glavni trg 12', 'Mestno gledališče Kranj', '2026-10-02 19:30:00', '2026-10-02 21:30:00', 0, '041 555 100', 'gledalisce@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&q=80', 400, 310, 'Plačljivo', 12.00, 'aktiven', 4, 46.2395, 14.3562),
 (1, 'Veliki koncert: Siddharta', 'Ekskluzivni stadionski spektakel ob obletnici.', 'Skupina Siddharta se vrača na domači oder z vsemi največjimi uspešnicami.', 1000, 'Vojkova cesta 100', 'Stadion Stožice', '2026-06-18 21:00:00', '2026-06-18 23:55:00', 0, '041 555 100', 'karte@bunker.si', 'https://www.bunker.si', 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80', 10000, 4320, 'Plačljivo', 35.00, 'promoviran', 1, 46.0804, 14.5245),
 (5, 'Vinski sejem Primorske', 'Degustacija najboljših vin in lokalnih sirov.', 'Spoznajte primorske vinarje in poskusite vrhunske avtohtone sorte.', 6000, 'Ukmarjev trg 2', 'Ukmarjev trg Koper', '2026-06-25 14:00:00', '2026-06-25 21:00:00', 0, '05 666 99 00', 'vino@koper.si', NULL, 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=800&q=80', 500, 210, 'Plačljivo', 20.00, 'promoviran', 4, 45.5488, 13.7261);
+
+INSERT INTO Dogodek (
+  TK_uporabnik_organizator, Naslov, kratek_opis, opis, 
+  TK_kraj, ulica, ime_prizorisca, datum_zacetka, datum_konca, 
+  vecdnevno, telefon, email, spletna_stran, slika, 
+  st_sedezov, st_prostih_sedezov, tip_cene, cena, status, TK_kategorija, podkategorija, lat, lng
+) VALUES
+(1, 'Sodobna umetna inteligenca v praksi', 
+ 'Intenzivno izobraževanje o uporabi AI orodij.', 
+ 'Celodnevna praktična delavnica, kjer bomo spoznali uporabo LLM modelov in avtomatizacijo poslovnih procesov. Primerno za začetnike in napredne uporabnike.', 
+ 1000, 'Tehnološki park 19', 'Stavba B, Konferenčna dvorana', 
+ '2026-09-10 09:00:00', '2026-09-10 16:00:00', 
+ 0, '01 620 34 00', 'izobrazevanje@eventli.si', 'https://www.tehnoloskipark.si', 
+ 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80', 
+ 60, 45, 'Plačljivo', 45.00, 'aktiven', 5, 'AI & IT', 46.0503, 14.4687),
+
+(1, 'Poletni Študentski Open Air', 
+ 'Največja osvežitev letošnjega poletja ob reki Dravi.', 
+ 'Tradicionalni poletni študentski party z lokalnimi in tujimi DJ-ji. Vstop zgolj za polnoletne. V primeru dežja se dogodek prestavi v pokrit šotor.', 
+ 2000, 'Kneza Koclja 9', 'Uskokova ulica - Trg ob Dravi', 
+ '2026-07-03 21:00:00', '2026-07-04 04:00:00', 
+ 0, '02 211 3000', 'info@stuki.si', 'https://www.stuki.si', 
+ 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=800&q=80', 
+ 2000, 1850, 'Plačljivo', 10.00, 'aktiven', 6, 'Techno', 46.5574, 15.6455),
+
+(1, 'Slovenski sejem unikatnih izdelkov', 
+ 'Predstavitev domačih obrtnikov, oblikovalcev in umetnikov.', 
+ 'Tridnevni sejem, kjer se bo predstavilo več kos 150 slovenskih ustvarjalcev unikatnih oblačil, nakita, pohištva in kulinarike.', 
+ 1000, 'Dunajska cesta 18', 'Gospodarsko razstavišče - Dvorana Kurent', 
+ '2026-10-16 10:00:00', '2026-10-18 19:00:00', 
+ 1, '01 300 26 00', 'sejem@gr-ljubljana.si', 'https://www.gr-ljubljana.si', 
+ 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&q=80', 
+ 5000, 5000, 'Brezplačno', 0.00, 'aktiven', 7, 'Dizajn', 46.0609, 14.5097),
+
+(1, 'Čarobni dan ob morju', 
+ 'Dan poln kreativnih delavnic, športnih igier in animacije za celo družino.', 
+ 'Preživite čudovito nedeljo v Taverni. Za otroke pripravljamo iskanje skritega zaklada, poslikavo obraza, lutkovne predstave in rajanje z maskotami.', 
+ 6000, 'Pristaniška ulica 1', 'Taverna Koper', 
+ '2026-06-21 10:00:00', '2026-06-21 18:00:00', 
+ 0, '05 664 64 00', 'info@koper.si', 'https://www.koper.si', 
+ 'https://images.unsplash.com/photo-1472162072942-cd5147eb3902?w=800&q=80', 
+ 800, 412, 'Plačljivo', 5.00, 'aktiven', 8, 'Otroški program', 45.5481, 13.7275),
+
+(1, 'Ljubljanska Ekološka Izmenjevalnica', 
+ 'Prinesi stara oblačila, odnesi nova in podpri trajnostni življenjski slog.', 
+ 'Prinesite čista in ohranjena oblačila, ki jih več ne nosite, ter jih zamenjajte za unikatne kose drugih udeležencev. Vstop je brezplačen, zbirajo se prostovoljni prispevki.', 
+ 1000, 'Tržaška cesta 2', 'Mladinski center Vič', 
+ '2026-09-19 14:00:00', '2026-09-19 18:00:00', 
+ 0, '01 420 22 00', 'ekologija@ljubljana.si', 'https://www.visitljubljana.com', 
+ 'https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?w=800&q=80', 
+ 120, 120, 'Brezplačno', 0.00, 'aktiven', 9, 'Trajnost', 46.0461, 14.4889);
