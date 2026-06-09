@@ -492,8 +492,16 @@ async function naloziVseDogodke() {
       kontejner.appendChild(generirajKartico(dogodek, 'col-md-6 mb-4', privzeta, false));
     });
 
-    // POSODOBITEV: Osvežimo zemljevid z novimi filtriranimi zadetki
-    osveziMarkerjeNaZemljevidu(seznamDogodkov, privzeta);
+    const paramsZemljevid = new URLSearchParams(params);
+    paramsZemljevid.set('page', '1');
+    paramsZemljevid.set('limit', '10000');
+    try {
+      const odgovorZemljevid = await apiFetch(`/dogodki?${paramsZemljevid.toString()}`);
+      const vsiZaZemljevid = Array.isArray(odgovorZemljevid) ? odgovorZemljevid : (odgovorZemljevid.dogodki || []);
+      osveziMarkerjeNaZemljevidu(vsiZaZemljevid, privzeta);
+    } catch {
+      osveziMarkerjeNaZemljevidu(seznamDogodkov, privzeta);
+    }
 
     if (paginacijaKontejner) {
       const vseStrani = Math.ceil(skupnoStevilo / DOGODKOV_NA_STRAN);
