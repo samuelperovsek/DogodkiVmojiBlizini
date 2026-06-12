@@ -419,6 +419,17 @@ small, .small { font-size: 0.85em; }
 .btn:hover { color: var(--brand-700); }
 .btn:focus { outline: none; box-shadow: 0 0 0 3px rgba(139,92,246,0.3); }
 
+.btn-light {
+  background: #fff;
+  color: var(--brand-700);
+  border-color: transparent;
+}
+.btn-light:hover,
+.btn-light:focus {
+  background: var(--brand-50);
+  color: var(--brand-800);
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--brand-700) 0%, var(--brand-500) 50%, var(--accent-500) 100%);
   background-size: 200% 100%;

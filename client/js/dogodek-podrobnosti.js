@@ -228,6 +228,8 @@ async function pripraviRezervacija(dogodek, dogodekId) {
   async function onRezerviraj() {
     if (!Auth.getUporabnik()) {
       window.pokaziToast?.('warning', 'Za rezervacijo vstopnice se moraš prijaviti.', 'Prijava potrebna');
+      const cilj = encodeURIComponent(window.location.pathname + window.location.search);
+      setTimeout(() => { window.location.href = `prijava.html?povratek=${cilj}`; }, 900);
       return;
     }
 

@@ -19,7 +19,7 @@ export async function renderOrganizatorBox(uporabnik) {
           <h3 class="text-white mb-1">Si potrjen organizator</h3>
           <p class="text-white/85 mb-0">Lahko dodajaš dogodke in jih upravljaš.</p>
         </div>
-        <a href="dodaj-dogodek.html" class="btn bg-white text-brand-700 hover:bg-brand-50 hover:text-brand-800 ms-auto">
+        <a href="dodaj-dogodek.html" class="btn btn-light ms-auto">
           <i class="bi bi-plus-circle"></i> Nov dogodek
         </a>
       </div>
@@ -46,7 +46,7 @@ function renderProsnjaForm() {
         <h3 class="text-white mb-1">Ste podjetje ali organizator?</h3>
         <p class="text-white/85 mb-0">Zaprosi za status organizatorja in začni dodajati dogodke.</p>
       </div>
-      <button id="odpriProsnjoBtn" class="btn bg-white text-brand-700 hover:bg-brand-50 hover:text-brand-800">
+      <button id="odpriProsnjoBtn" class="btn btn-light">
         <i class="bi bi-rocket-takeoff"></i> Postani organizator
       </button>
     </div>
@@ -75,7 +75,7 @@ function renderProsnjaForm() {
       </div>
 
       <div class="d-flex gap-2 mt-3">
-        <button type="submit" class="btn bg-white text-brand-700 hover:bg-brand-50 hover:text-brand-800" id="prosnjaSubmit">
+        <button type="submit" class="btn btn-light" id="prosnjaSubmit">
           <i class="bi bi-send"></i> Pošlji prošnjo
         </button>
         <button type="button" id="prekliciProsnjoBtn" class="btn text-white border border-white/30 hover:bg-white/10 hover:text-white">
@@ -121,7 +121,7 @@ function renderProsnjaZavrnjena(p) {
         <p class="text-white/85 mb-1">Prošnja za <strong>${pobegniHtml(p.naziv_podjetja)}</strong> je bila zavrnjena (${datum}).</p>
         ${p.opomba_admina ? `<p class="text-white/85 mb-0"><strong>Razlog:</strong> ${pobegniHtml(p.opomba_admina)}</p>` : ''}
       </div>
-      <button id="novaProsnjaBtn" class="btn bg-white text-brand-700 hover:bg-brand-50">Oddaj novo prošnjo</button>
+      <button id="novaProsnjaBtn" class="btn btn-light">Oddaj novo prošnjo</button>
     </div>
   `;
   document.getElementById('novaProsnjaBtn').addEventListener('click', renderProsnjaForm);
